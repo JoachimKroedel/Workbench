@@ -1,7 +1,9 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using HeatFuzzy.Logic;
+using OxyPlot;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -16,10 +18,12 @@ namespace HeatFuzzy.Mvvm
 
         private readonly BinaryHeaterLogic _binaryHeaterLogic;
         private readonly SimpleFuzzyHeaterLogic _simpleFuzzyHeaterLogic;
+        private readonly DoubleFuzzyHeaterLogic _doubleFuzzyHeaterLogic;
 
         private bool _playSimulation;
         private bool _binaryLogicSelected;
         private bool _simpleFuzzyLogicSelected;
+        private bool _doubleFuzzyLogicSelected;
         private double _binaryLogicDesiredTemperature;
         private readonly RelayCommand _setBinaryLogicDesiredTemperatureCommand;
 
@@ -30,10 +34,12 @@ namespace HeatFuzzy.Mvvm
             _temperatureSimulator = new TemperatureSimulator(Temperature);
             _binaryHeaterLogic = new BinaryHeaterLogic();
             _simpleFuzzyHeaterLogic = new SimpleFuzzyHeaterLogic();
+            _doubleFuzzyHeaterLogic = new DoubleFuzzyHeaterLogic();
 
             _temperatureSimulator.SimulationTimeFactor = SimulationFactors.First();
 
             _temperatureSimulator.PropertyChanged += TemperatureSimulator_PropertyChanged;
+            Temperature.PropertyChanged += Temperature_PropertyChanged;
 
             BinaryLogicSelected = false;
             BinaryLogicDesiredTemperature = 27.5;
@@ -42,9 +48,27 @@ namespace HeatFuzzy.Mvvm
             Temperature.InsideTemperature = 20;
             Temperature.DesiredTemperature = 25;
 
-            SimpleFuzzyLogicSelected = true;
+            DoubleFuzzyLogicSelected = true;
 
             _setBinaryLogicDesiredTemperatureCommand = new RelayCommand(SetBinaryLogicDesiredTemperatureCommand_Execute, SetBinaryLogicDesiredTemperatureCommand_CanExecute);
+
+            foreach(var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Colder))
+            {
+                ColderPoints.Add(new DataPoint(point.X, point.Y));
+            }
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleColder))
+            {
+                LitleColderPoints.Add(new DataPoint(point.X, point.Y));
+            }
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleWarmer))
+            {
+                LitleWarmerPoints.Add(new DataPoint(point.X, point.Y));
+            }
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Hotter))
+            {
+                HotterPoints.Add(new DataPoint(point.X, point.Y));
+            }
+
             SetDesignTimeData();
         }
 
@@ -124,6 +148,28 @@ namespace HeatFuzzy.Mvvm
             }
         }
 
+        
+        public bool DoubleFuzzyLogicSelected
+        {
+            get { return _doubleFuzzyLogicSelected; }
+            set
+            {
+                if (AreValuesDifferent(value, _doubleFuzzyLogicSelected))
+                {
+                    _doubleFuzzyLogicSelected = value;
+                    NotifyPropertyChanged();
+                    if (_doubleFuzzyLogicSelected && _temperatureSimulator.HeaterLogic != _doubleFuzzyHeaterLogic)
+                    {
+                        _temperatureSimulator.HeaterLogic = _doubleFuzzyHeaterLogic;
+                    }
+                    else if (!_doubleFuzzyLogicSelected && _temperatureSimulator.HeaterLogic == _doubleFuzzyHeaterLogic)
+                    {
+                        _temperatureSimulator.HeaterLogic = null;
+                    }
+                }
+            }
+        }
+
         public int SelectedSimulationFactor
         {
             get { return _temperatureSimulator.SimulationTimeFactor; }
@@ -172,6 +218,13 @@ namespace HeatFuzzy.Mvvm
             get { return _temperatureSimulator.SimulationTime; }
         }
 
+        public IList<DataPoint> ColderPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> LitleColderPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> LitleWarmerPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> HotterPoints { get; } = new List<DataPoint>();
+
+        public ObservableCollection<DataPoint> ActualDiffPoints { get; private set; } = new ObservableCollection<DataPoint>();
+
         protected override void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             base.NotifyPropertyChanged(propertyName);
@@ -190,6 +243,20 @@ namespace HeatFuzzy.Mvvm
                     break;
                 case nameof(_temperatureSimulator.RadiatorControl):
                     NotifyPropertyChanged(nameof(RadiatorControl));
+                    break;
+            }
+        }
+
+        private void Temperature_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Temperature.InsideTemperature):
+                case nameof(Temperature.DesiredTemperature):
+                    var testValue = Temperature.InsideTemperature - Temperature.DesiredTemperature;
+                    ActualDiffPoints.Clear();
+                    ActualDiffPoints.Add(new DataPoint(testValue, 0.0));
+                    ActualDiffPoints.Add(new DataPoint(testValue, 1.0));
                     break;
             }
         }

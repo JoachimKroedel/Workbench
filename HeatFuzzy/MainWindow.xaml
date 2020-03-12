@@ -6,9 +6,10 @@
         xmlns:local="clr-namespace:HeatFuzzy"
         xmlns:mvvm="clr-namespace:HeatFuzzy.Mvvm"
         xmlns:converters="clr-namespace:HeatFuzzy.Converters"
+        xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=mvvm:TemperatureMainViewModel, IsDesignTimeCreatable=True}"
-        Title="MainWindow" Height="374.766" Width="625.625"
+        Title="MainWindow" Height="400" Width="800"
     >
 
     <Window.DataContext>
@@ -20,7 +21,7 @@
         <converters:IntToStringConverter x:Key="IntToStringConverterKey"></converters:IntToStringConverter>
         <converters:TimeToStringConverter x:Key="TimeToStringConverterKey"></converters:TimeToStringConverter>
         <converters:EnumToStringConverter x:Key="EnumToStringConverterKey"></converters:EnumToStringConverter>
-        
+
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -82,7 +83,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    
+
                     <Label Grid.Column="0" Grid.Row="0" Content="Desired temperature:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
                     <TextBox Grid.Column="1" Grid.Row="0" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding BinaryLogicDesiredTemperature, Converter={StaticResource DoubleToStringConverterKey}}" Margin="5" />
                     <Button Grid.Column="2" Grid.Row="0" Content="Set" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding SetBinaryLogicDesiredTemperatureCommand}" Margin="5" />
@@ -111,6 +112,19 @@
 
                     <Label Grid.Column="0" Grid.Row="2" Content="Fuzzy Diff Temperature:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
                     <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding SimpleFuzzyHeaterLogic.FuzzyDiffTemperature, Converter={StaticResource EnumToStringConverterKey}}" Width="90"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Double Fuzzy" IsSelected="{Binding DoubleFuzzyLogicSelected}">
+                <Grid>
+                    <oxy:Plot Title="Fuzzy Different Temperatures" Background="AliceBlue" Margin="40,20,26,160">
+                        <oxy:Plot.Series>
+                            <oxy:LineSeries ItemsSource="{Binding ColderPoints}" Title="Colder" />
+                            <oxy:LineSeries ItemsSource="{Binding LitleColderPoints}" Title="LitleColder"/>
+                            <oxy:LineSeries ItemsSource="{Binding LitleWarmerPoints}" Title="LitleWarmer" />
+                            <oxy:LineSeries ItemsSource="{Binding HotterPoints}" Title="Hotter" />
+                            <oxy:LineSeries ItemsSource="{Binding ActualDiffPoints}" Title="Actual" />
+                        </oxy:Plot.Series>
+                    </oxy:Plot>
                 </Grid>
             </TabItem>
         </TabControl>

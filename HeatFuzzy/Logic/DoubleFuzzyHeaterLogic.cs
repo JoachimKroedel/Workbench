@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace HeatFuzzy.Logic
 {
@@ -78,19 +79,6 @@ namespace HeatFuzzy.Logic
             }
         }
 
-        public FuzzyTemperatureTypes DesiredFuzzyTemperature
-        {
-            get { return _desiredFuzzyTemperature; }
-            set
-            {
-                if (AreValuesDifferent(_desiredFuzzyTemperature, value))
-                {
-                    _desiredFuzzyTemperature = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public FuzzyTemperatureTypes InsideFuzzyTemperature
         {
             get { return _insideFuzzyTemperature; }
@@ -99,6 +87,19 @@ namespace HeatFuzzy.Logic
                 if (AreValuesDifferent(_insideFuzzyTemperature, value))
                 {
                     _insideFuzzyTemperature = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public FuzzyTemperatureTypes DesiredFuzzyTemperature
+        {
+            get { return _desiredFuzzyTemperature; }
+            set
+            {
+                if (AreValuesDifferent(_desiredFuzzyTemperature, value))
+                {
+                    _desiredFuzzyTemperature = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -130,7 +131,6 @@ namespace HeatFuzzy.Logic
             }
         }
 
-
         public override bool SetInputValues(IList<object> inputValues)
         {
             throw new NotImplementedException();
@@ -149,13 +149,16 @@ namespace HeatFuzzy.Logic
             Defuzzification();
         }
 
+        private List<FuzzyObject<FuzzyTemperatureTypes>> _insideTemperatureObjects = new List<FuzzyObject<FuzzyTemperatureTypes>>();
         private void Fuzzification()
         {
+            _insideTemperatureObjects.Clear();
             double membershipFactorInside = 0.0;
             FuzzyTemperatureTypes memberType = FuzzyTemperatureTypes.Cold;
             foreach (FuzzyTemperatureTypes fuzzyTemperature in Enum.GetValues(typeof(FuzzyTemperatureTypes)))
             {
                 var temperaturMembershipFactor = GetFuzzyMembership(fuzzyTemperature, _insideTemperature);
+                _insideTemperatureObjects.Add(new FuzzyObject<FuzzyTemperatureTypes>(fuzzyTemperature, temperaturMembershipFactor));
                 if (membershipFactorInside < temperaturMembershipFactor)
                 {
                     membershipFactorInside = temperaturMembershipFactor;
@@ -228,6 +231,54 @@ namespace HeatFuzzy.Logic
                 case FuzzyTemperatureTypes.Hot: return GetTransitionAreaResult(30.0, 40.0, temperature, true);
                 default: throw new NotImplementedException($"Unknown {nameof(FuzzyTemperatureTypes)} with value {fuzzyTemperature}.");
             }
+        }
+        
+        private double GetFuzzyMembership(FuzzyDiffTemperatureTypes fuzzyDiffTemperature, double diffTemperature)
+        {
+            switch (fuzzyDiffTemperature)
+            {
+                case FuzzyDiffTemperatureTypes.Colder: return GetTransitionAreaResult(-5.0, 0.0, diffTemperature, false);
+                case FuzzyDiffTemperatureTypes.LitleColder: return GetTriangleResult(-2.0, 0.0, 0.0, diffTemperature);
+                case FuzzyDiffTemperatureTypes.LitleWarmer: return GetTriangleResult( 0.0, 2.0, 0.0, diffTemperature);
+                case FuzzyDiffTemperatureTypes.Hotter: return GetTransitionAreaResult(0.0, 5.0, diffTemperature, true);
+                default: throw new NotImplementedException($"Unknown {nameof(FuzzyDiffTemperatureTypes)} with value {fuzzyDiffTemperature}.");
+            }
+        }
+
+        public List<Point> GetPoints(FuzzyDiffTemperatureTypes fuzzyDiffTemperature)
+        {
+            List<Point> result = new List<Point>();
+            switch (fuzzyDiffTemperature)
+            {
+                case FuzzyDiffTemperatureTypes.Colder:
+                    result.Add(new Point(-10.0, 1.0));
+                    result.Add(new Point( -5.0, 1.0));
+                    result.Add(new Point(  0.0, 0.0));
+                    result.Add(new Point( 10.0, 0.0));
+                    break;
+                case FuzzyDiffTemperatureTypes.LitleColder:
+                    result.Add(new Point(-10.0, 0.0));
+                    result.Add(new Point( -2.0, 0.0));
+                    result.Add(new Point( -0.1, 1.0));
+                    result.Add(new Point(  0.0, 0.0));
+                    result.Add(new Point( 10.0, 0.0));
+                    break;
+                case FuzzyDiffTemperatureTypes.LitleWarmer:
+                    result.Add(new Point(-10.0, 0.0));
+                    result.Add(new Point(  0.0, 0.0));
+                    result.Add(new Point(  0.1, 1.0));
+                    result.Add(new Point(  2.0, 0.0));
+                    result.Add(new Point( 10.0, 0.0));
+                    break;
+                case FuzzyDiffTemperatureTypes.Hotter:
+                    result.Add(new Point(-10.0, 0.0));
+                    result.Add(new Point(  0.0, 0.0));
+                    result.Add(new Point(  5.0, 1.0));
+                    result.Add(new Point( 10.0, 1.0));
+                    break;
+                default: throw new NotImplementedException($"Unknown {nameof(FuzzyDiffTemperatureTypes)} with value {fuzzyDiffTemperature}.");
+            }
+            return result;
         }
     }
 }

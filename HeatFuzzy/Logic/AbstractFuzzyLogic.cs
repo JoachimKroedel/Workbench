@@ -83,5 +83,33 @@ namespace HeatFuzzy.Logic
 
             return result;
         }
+
+        protected double GetTriangleResult(double minValue, double maxValue, double peakValue, double value)
+        {
+            if (!AreValuesDifferent(minValue, maxValue))
+            {
+                return 1.0;
+            }
+
+            double result = 0.0;
+
+            if (value >= minValue && value <= maxValue)
+            {
+                if (value <= peakValue && minValue < peakValue)
+                {
+                    result = (value - minValue) / (peakValue - minValue);
+                }
+                else if (value > peakValue && maxValue > peakValue)
+                {
+                    result = (maxValue - value) / (maxValue - peakValue);
+                }
+                else
+                {
+                    result = 1.0;
+                }
+            }
+
+            return result;
+        }
     }
 }

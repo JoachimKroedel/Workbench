@@ -4,6 +4,8 @@
     {
         Undefined,
         Colder,
+        LitleColder,
+        LitleWarmer,
         Hotter
     }
 }
