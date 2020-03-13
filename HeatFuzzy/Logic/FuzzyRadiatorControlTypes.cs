@@ -2,10 +2,10 @@
 {
     public enum FuzzyRadiatorControlTypes
     {
-        Closed,
+        FullClosed,
         NearClosed,
         Normal,
         NearOpen,
-        Open,
+        FullOpend,
     }
 }

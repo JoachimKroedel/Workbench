@@ -10,6 +10,7 @@ namespace HeatFuzzy.Logic
         private double _insideTemperature;
         private double _desiredTemperature;
         private double _radiatorControl;
+        private double _radiatorControlChange;
 
         private FuzzyTemperatureTypes _desiredFuzzyTemperature;
         private FuzzyTemperatureTypes _insideFuzzyTemperature;
@@ -46,7 +47,7 @@ namespace HeatFuzzy.Logic
             (
                 FuzzyDiffTemperatureTypes.Colder, new List<Point>()
                 {
-                    new Point( -5.0, 1.0),
+                    new Point( -1.0, 1.0),
                     new Point(  0.0, 0.0)
                 }
             );
@@ -73,7 +74,7 @@ namespace HeatFuzzy.Logic
                 FuzzyDiffTemperatureTypes.Warmer, new List<Point>()
                 {
                     new Point(  0.0, 0.0),
-                    new Point(  5.0, 1.0)
+                    new Point(  1.0, 1.0)
                 }
             );
             _diffTemperatureCurvePoints.Add
@@ -174,6 +175,21 @@ namespace HeatFuzzy.Logic
                 }
             }
         }
+
+        public double RadiatorControlChange
+        {
+            get { return _radiatorControlChange; }
+            set
+            {
+                double newValue = Math.Max(-5.0, Math.Min(5.0, value));
+                if (AreValuesDifferent(_radiatorControlChange, newValue))
+                {
+                    _radiatorControlChange = newValue;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
         public double InsideTemperatureChangePerSecond
         {
@@ -276,14 +292,14 @@ namespace HeatFuzzy.Logic
             _insideTemperatureObjects.Clear();
             foreach (FuzzyTemperatureTypes fuzzyTemperature in Enum.GetValues(typeof(FuzzyTemperatureTypes)))
             {
-                var temperaturMembershipFactor = GetFuzzyMembership(fuzzyTemperature, _insideTemperature);
+                var temperaturMembershipFactor = GetFuzzyDegree(fuzzyTemperature, _insideTemperature);
                 _insideTemperatureObjects.Add(new FuzzyObject<FuzzyTemperatureTypes>(fuzzyTemperature, temperaturMembershipFactor));
             }
 
             _desiredTemperatureObjects.Clear();
             foreach (FuzzyTemperatureTypes fuzzyTemperature in Enum.GetValues(typeof(FuzzyTemperatureTypes)))
             {
-                var temperaturMembershipFactor = GetFuzzyMembership(fuzzyTemperature, _desiredTemperature);
+                var temperaturMembershipFactor = GetFuzzyDegree(fuzzyTemperature, _desiredTemperature);
                 _desiredTemperatureObjects.Add(new FuzzyObject<FuzzyTemperatureTypes>(fuzzyTemperature, temperaturMembershipFactor));
             }
 
@@ -294,7 +310,7 @@ namespace HeatFuzzy.Logic
                 {
                     continue;
                 }
-                var diffTemperatureValue = GetFuzzyMembership(fuzzyDiff, _diffTemperature);
+                var diffTemperatureValue = GetFuzzyDegree(fuzzyDiff, _diffTemperature);
                 _diffTemperatureObjects.Add(new FuzzyObject<FuzzyDiffTemperatureTypes>(fuzzyDiff, diffTemperatureValue));
             }
 
@@ -305,26 +321,167 @@ namespace HeatFuzzy.Logic
                 {
                     continue;
                 }
-                var diffTemperatureValue = GetFuzzyMembership(fuzzyTemperatureChangeType, _insideTemperatureChangedPerSecond);
+                var diffTemperatureValue = GetFuzzyDegree(fuzzyTemperatureChangeType, _insideTemperatureChangedPerSecond);
                 _temperatureChangeObjects.Add(new FuzzyObject<FuzzyTemperatureChangeTypes>(fuzzyTemperatureChangeType, diffTemperatureValue));
             }
         }
 
+        private IList<FuzzyObject<FuzzyRadiatorControlTypes>> _radiatorControlObjects = new List<FuzzyObject<FuzzyRadiatorControlTypes>>();
+        private IList<FuzzyObject<FuzzyRadiatorControlChangeTypes>> _radiatorControlChangeObjects = new List<FuzzyObject<FuzzyRadiatorControlChangeTypes>>();
+        
         private void Implication()
         {
-            _fuzzyRadiatorControlDegree = _fuzzyDiffTemperatureDegree;
-            if (FuzzyDiffTemperature.Equals(FuzzyDiffTemperatureTypes.Warmer))
+            // ToDo: Think about to make that stuff fluent ...
+
+            _radiatorControlObjects.Clear();
+            // If it's much colder the RadiatorControl has to be full open
+            double muchColderDegree = _diffTemperatureObjects.FirstOrDefault(x => x.Value == FuzzyDiffTemperatureTypes.MuchColder).Degree;
+            if (muchColderDegree > 0.0)
             {
-                _fuzzyRadiatorControlDegree *= -1.0;
+                _radiatorControlObjects.Add(new FuzzyObject<FuzzyRadiatorControlTypes>(FuzzyRadiatorControlTypes.FullOpend, muchColderDegree));
+            }
+            // If it's much warmer the RadiatorControl has to be full closed
+            double muchWarmerDegree = _diffTemperatureObjects.FirstOrDefault(x => x.Value == FuzzyDiffTemperatureTypes.MuchWarmer).Degree;
+            if (muchWarmerDegree > 0.0)
+            {
+                _radiatorControlObjects.Add(new FuzzyObject<FuzzyRadiatorControlTypes>(FuzzyRadiatorControlTypes.FullClosed, muchWarmerDegree));
+            }
+
+            _radiatorControlChangeObjects.Clear();
+            // If it's only litle colder AND the temperature get fast warmer THEN the radiator has to be more closed
+            double litleColderDegree = _diffTemperatureObjects.FirstOrDefault(x => x.Value == FuzzyDiffTemperatureTypes.LitleColder).Degree;
+            double fastWarmerDegree = _temperatureChangeObjects.FirstOrDefault(x => x.Value == FuzzyTemperatureChangeTypes.FastWarmer).Degree;
+            var litleColderAndFastWarmerDegree = Math.Min(litleColderDegree, fastWarmerDegree);
+            if (litleColderAndFastWarmerDegree > 0.0)
+            {
+                _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreClosed, litleColderAndFastWarmerDegree));
+            }
+
+            // If it's only litle warmer AND the temperature get fast colder THEN the radiator has to be more opend
+            double litleWarmerDegree = _diffTemperatureObjects.FirstOrDefault(x => x.Value == FuzzyDiffTemperatureTypes.LitleWarmer).Degree;
+            double fastColderDegree = _temperatureChangeObjects.FirstOrDefault(x => x.Value == FuzzyTemperatureChangeTypes.FastColder).Degree;
+            var litleWarmerAndFastColderDegree = Math.Min(litleColderDegree, fastWarmerDegree);
+            if (litleWarmerAndFastColderDegree > 0.0)
+            {
+                _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreOpend, litleWarmerAndFastColderDegree));
+            }
+
+            // IF it's colder AND the temperature get colder THEN the radiator has to be more opend
+            double colderDegree = _diffTemperatureObjects.FirstOrDefault(x => x.Value == FuzzyDiffTemperatureTypes.Colder).Degree;
+            double getColderDegree = _temperatureChangeObjects.FirstOrDefault(x => x.Value == FuzzyTemperatureChangeTypes.Colder).Degree;
+            var colderAndgetColderDegree = Math.Min(colderDegree, getColderDegree);
+            if (colderAndgetColderDegree > 0.0)
+            {
+                _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreOpend, colderAndgetColderDegree));
+            }
+
+            // IF it's warmer AND the temperature get warmer THEN the radiator has to be more closed
+            double getWarmerDegree = _temperatureChangeObjects.FirstOrDefault(x => x.Value == FuzzyTemperatureChangeTypes.Warmer).Degree;
+            double warmerDegree = _diffTemperatureObjects.FirstOrDefault(x => x.Value == FuzzyDiffTemperatureTypes.Warmer).Degree;
+            var warmerAndGetWarmerDegree = Math.Min(warmerDegree, getWarmerDegree);
+            if (warmerAndGetWarmerDegree > 0.0)
+            {
+                _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreClosed, warmerAndGetWarmerDegree));
+            }
+
+            // IF it's colder AND the temperature getting NOT warmer THEN the radiator has to be more opend
+            double getNotWarmerDegree = 1.0 - _temperatureChangeObjects.FirstOrDefault(x => x.Value == FuzzyTemperatureChangeTypes.Warmer).Degree;
+            var colderAndGetNotWarmerDegree = Math.Min(colderDegree, getNotWarmerDegree);
+            if (colderAndGetNotWarmerDegree > 0.0)
+            {
+                _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MuchMoreOpend, colderAndGetNotWarmerDegree));
+            }
+
+            // IF it's warmer AND the temperature getting NOT colder THEN the radiator has to be more closed
+            double getNotColderDegree = 1.0 - _temperatureChangeObjects.FirstOrDefault(x => x.Value == FuzzyTemperatureChangeTypes.Colder).Degree;
+            var warmerAndGetNotColderDegree = Math.Min(warmerDegree, getNotColderDegree);
+            if (warmerAndGetNotColderDegree > 0.0)
+            {
+                _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MuchMoreClosed, warmerAndGetNotColderDegree));
             }
         }
 
         private void Defuzzification()
         {
+            int valuesCount = 0;
+            double sumOfRadiatorControl = 0.0;
+            foreach (FuzzyObject<FuzzyRadiatorControlTypes> fuzzyRadiatorControl in _radiatorControlObjects)
+            {
+                var radiatorControl = GetValueByDegree(fuzzyRadiatorControl.Value, fuzzyRadiatorControl.Degree);
+                if (double.IsNaN(radiatorControl))
+                {
+                    continue;
+                }
+                sumOfRadiatorControl += radiatorControl;
+                valuesCount++;
+            }
+            if (valuesCount > 0)
+            {
+                RadiatorControl = sumOfRadiatorControl / valuesCount;
+            }
+
+            valuesCount = 0;
+            double sumOfRadiatorControlChange = 0.0;
+            foreach (FuzzyObject<FuzzyRadiatorControlChangeTypes> fuzzyRadiatorControlChange in _radiatorControlChangeObjects)
+            {
+                var radiatorControlChange = GetValueByDegree(fuzzyRadiatorControlChange.Value, fuzzyRadiatorControlChange.Degree);
+                if (double.IsNaN(radiatorControlChange))
+                {
+                    continue;
+                }
+                sumOfRadiatorControlChange += radiatorControlChange;
+                valuesCount++;
+            }
+            if (valuesCount > 0)
+            {
+                RadiatorControlChange = sumOfRadiatorControlChange / valuesCount;
+            }
 
         }
 
-        private double GetFuzzyMembership(FuzzyTemperatureTypes fuzzyTemperature, double temperature)
+        private double GetValueByDegree(FuzzyRadiatorControlTypes fuzzyRadiatorControlType, double degree)
+        {
+            // ToDo: find a better dynamic way to defuzzification like fuzzification with curve points
+            switch (fuzzyRadiatorControlType)
+            {
+                case FuzzyRadiatorControlTypes.FullClosed:
+                    if (degree >= 1.0) return 0.0;
+                    if (degree > 0.0) return 0.5 - degree / 2.0;
+                    break;
+                case FuzzyRadiatorControlTypes.FullOpend:
+                    if (degree >= 1.0) return 5.0;
+                    if (degree > 0.0) return 4.5 + degree / 2.0;
+                    break;
+            }
+            return double.NaN;
+        }
+
+        private double GetValueByDegree(FuzzyRadiatorControlChangeTypes fuzzyRadiatorControlChangeType, double degree)
+        {
+            // ToDo: find a better dynamic way to defuzzification like fuzzification with curve points
+            switch (fuzzyRadiatorControlChangeType)
+            {
+                case FuzzyRadiatorControlChangeTypes.MuchMoreClosed:
+                    if (degree >= 1.0) return -1.0;
+                    if (degree > 0.0) return -degree;
+                    break;
+                case FuzzyRadiatorControlChangeTypes.MoreClosed:
+                    if (degree >= 1.0) return -0.1;
+                    if (degree > 0.0) return -degree / 10.0;
+                    break;
+                case FuzzyRadiatorControlChangeTypes.MoreOpend:
+                    if (degree >= 1.0) return 0.1;
+                    if (degree > 0.0) return degree / 10;
+                    break;
+                case FuzzyRadiatorControlChangeTypes.MuchMoreOpend:
+                    if (degree >= 1.0) return 1.0;
+                    if (degree > 0.0) return degree;
+                    break;
+            }
+            return double.NaN;
+        }
+
+        private double GetFuzzyDegree(FuzzyTemperatureTypes fuzzyTemperature, double temperature)
         {
             // ToDo: This definitions should also be done in curve definition
             switch (fuzzyTemperature)
@@ -338,7 +495,7 @@ namespace HeatFuzzy.Logic
             }
         }
         
-        private double GetFuzzyMembership(FuzzyDiffTemperatureTypes fuzzyDiffTemperatureType, double diffTemperature)
+        private double GetFuzzyDegree(FuzzyDiffTemperatureTypes fuzzyDiffTemperatureType, double diffTemperature)
         {
             if(!_diffTemperatureCurvePoints.ContainsKey(fuzzyDiffTemperatureType))
             {
@@ -347,7 +504,7 @@ namespace HeatFuzzy.Logic
             return GetFuzzyDegree(_diffTemperatureCurvePoints[fuzzyDiffTemperatureType], diffTemperature);
         }
 
-        private double GetFuzzyMembership(FuzzyTemperatureChangeTypes fuzzyTemperatureChangeType, double temperatureChange)
+        private double GetFuzzyDegree(FuzzyTemperatureChangeTypes fuzzyTemperatureChangeType, double temperatureChange)
         {
             if (!_temperatureChangeCurvePoints.ContainsKey(fuzzyTemperatureChangeType))
             {

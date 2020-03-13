@@ -24,40 +24,40 @@ namespace HeatFuzzy.Logic
             // Definieren der Heizungseinstellungen bei unterschiedlichen Temperaturvorgaben
             var coldDesiredDictonary = new Dictionary<FuzzyTemperatureTypes, FuzzyRadiatorControlTypes>();
             coldDesiredDictonary.Add(FuzzyTemperatureTypes.Cold, FuzzyRadiatorControlTypes.NearClosed);
-            coldDesiredDictonary.Add(FuzzyTemperatureTypes.Fresh, FuzzyRadiatorControlTypes.Closed);
-            coldDesiredDictonary.Add(FuzzyTemperatureTypes.Normal, FuzzyRadiatorControlTypes.Closed);
-            coldDesiredDictonary.Add(FuzzyTemperatureTypes.Warm, FuzzyRadiatorControlTypes.Closed);
-            coldDesiredDictonary.Add(FuzzyTemperatureTypes.Hot, FuzzyRadiatorControlTypes.Closed);
+            coldDesiredDictonary.Add(FuzzyTemperatureTypes.Fresh, FuzzyRadiatorControlTypes.FullClosed);
+            coldDesiredDictonary.Add(FuzzyTemperatureTypes.Normal, FuzzyRadiatorControlTypes.FullClosed);
+            coldDesiredDictonary.Add(FuzzyTemperatureTypes.Warm, FuzzyRadiatorControlTypes.FullClosed);
+            coldDesiredDictonary.Add(FuzzyTemperatureTypes.Hot, FuzzyRadiatorControlTypes.FullClosed);
             _ruleSetDesiredAndInsideTemperatureToRadiatorControl.Add(FuzzyTemperatureTypes.Cold, coldDesiredDictonary);
 
             var freshDesiredDictonary = new Dictionary<FuzzyTemperatureTypes, FuzzyRadiatorControlTypes>();
             freshDesiredDictonary.Add(FuzzyTemperatureTypes.Cold, FuzzyRadiatorControlTypes.Normal);
             freshDesiredDictonary.Add(FuzzyTemperatureTypes.Fresh, FuzzyRadiatorControlTypes.NearClosed);
-            freshDesiredDictonary.Add(FuzzyTemperatureTypes.Normal, FuzzyRadiatorControlTypes.Closed);
-            freshDesiredDictonary.Add(FuzzyTemperatureTypes.Warm, FuzzyRadiatorControlTypes.Closed);
-            freshDesiredDictonary.Add(FuzzyTemperatureTypes.Hot, FuzzyRadiatorControlTypes.Closed);
+            freshDesiredDictonary.Add(FuzzyTemperatureTypes.Normal, FuzzyRadiatorControlTypes.FullClosed);
+            freshDesiredDictonary.Add(FuzzyTemperatureTypes.Warm, FuzzyRadiatorControlTypes.FullClosed);
+            freshDesiredDictonary.Add(FuzzyTemperatureTypes.Hot, FuzzyRadiatorControlTypes.FullClosed);
             _ruleSetDesiredAndInsideTemperatureToRadiatorControl.Add(FuzzyTemperatureTypes.Fresh, freshDesiredDictonary);
 
             var normalDesiredDictonary = new Dictionary<FuzzyTemperatureTypes, FuzzyRadiatorControlTypes>();
-            normalDesiredDictonary.Add(FuzzyTemperatureTypes.Cold, FuzzyRadiatorControlTypes.Open);
+            normalDesiredDictonary.Add(FuzzyTemperatureTypes.Cold, FuzzyRadiatorControlTypes.FullOpend);
             normalDesiredDictonary.Add(FuzzyTemperatureTypes.Fresh, FuzzyRadiatorControlTypes.NearOpen);
             normalDesiredDictonary.Add(FuzzyTemperatureTypes.Normal, FuzzyRadiatorControlTypes.Normal);
             normalDesiredDictonary.Add(FuzzyTemperatureTypes.Warm, FuzzyRadiatorControlTypes.NearClosed);
-            normalDesiredDictonary.Add(FuzzyTemperatureTypes.Hot, FuzzyRadiatorControlTypes.Closed);
+            normalDesiredDictonary.Add(FuzzyTemperatureTypes.Hot, FuzzyRadiatorControlTypes.FullClosed);
             _ruleSetDesiredAndInsideTemperatureToRadiatorControl.Add(FuzzyTemperatureTypes.Normal, normalDesiredDictonary);
 
             var warmDesiredDictonary = new Dictionary<FuzzyTemperatureTypes, FuzzyRadiatorControlTypes>();
-            warmDesiredDictonary.Add(FuzzyTemperatureTypes.Cold, FuzzyRadiatorControlTypes.Open);
-            warmDesiredDictonary.Add(FuzzyTemperatureTypes.Fresh, FuzzyRadiatorControlTypes.Open);
+            warmDesiredDictonary.Add(FuzzyTemperatureTypes.Cold, FuzzyRadiatorControlTypes.FullOpend);
+            warmDesiredDictonary.Add(FuzzyTemperatureTypes.Fresh, FuzzyRadiatorControlTypes.FullOpend);
             warmDesiredDictonary.Add(FuzzyTemperatureTypes.Normal, FuzzyRadiatorControlTypes.NearOpen);
             warmDesiredDictonary.Add(FuzzyTemperatureTypes.Warm, FuzzyRadiatorControlTypes.Normal);
             warmDesiredDictonary.Add(FuzzyTemperatureTypes.Hot, FuzzyRadiatorControlTypes.NearClosed);
             _ruleSetDesiredAndInsideTemperatureToRadiatorControl.Add(FuzzyTemperatureTypes.Warm, warmDesiredDictonary);
 
             var hotDesiredDictonary = new Dictionary<FuzzyTemperatureTypes, FuzzyRadiatorControlTypes>();
-            hotDesiredDictonary.Add(FuzzyTemperatureTypes.Cold, FuzzyRadiatorControlTypes.Open);
-            hotDesiredDictonary.Add(FuzzyTemperatureTypes.Fresh, FuzzyRadiatorControlTypes.Open);
-            hotDesiredDictonary.Add(FuzzyTemperatureTypes.Normal, FuzzyRadiatorControlTypes.Open);
+            hotDesiredDictonary.Add(FuzzyTemperatureTypes.Cold, FuzzyRadiatorControlTypes.FullOpend);
+            hotDesiredDictonary.Add(FuzzyTemperatureTypes.Fresh, FuzzyRadiatorControlTypes.FullOpend);
+            hotDesiredDictonary.Add(FuzzyTemperatureTypes.Normal, FuzzyRadiatorControlTypes.FullOpend);
             hotDesiredDictonary.Add(FuzzyTemperatureTypes.Warm, FuzzyRadiatorControlTypes.NearOpen);
             hotDesiredDictonary.Add(FuzzyTemperatureTypes.Hot, FuzzyRadiatorControlTypes.Normal);
             _ruleSetDesiredAndInsideTemperatureToRadiatorControl.Add(FuzzyTemperatureTypes.Hot, hotDesiredDictonary);
@@ -282,7 +282,7 @@ namespace HeatFuzzy.Logic
             RadiatorControl = Math.Min(5.0, result);
 
             double maxMembershipFactor = 0.0;
-            var fuzzyRadiatorControl = FuzzyRadiatorControlTypes.Closed;
+            var fuzzyRadiatorControl = FuzzyRadiatorControlTypes.FullClosed;
             _degreeOfMembershipDesiredTemp.Clear();
             foreach (FuzzyRadiatorControlTypes fuzzyRadiatorControlType in Enum.GetValues(typeof(FuzzyRadiatorControlTypes)))
             {
@@ -313,11 +313,11 @@ namespace HeatFuzzy.Logic
         {
             switch (radiatorControl)
             {
-                case FuzzyRadiatorControlTypes.Closed: return GetTransitionAreaResult(0.0, 0.5, position, false);
+                case FuzzyRadiatorControlTypes.FullClosed: return GetTransitionAreaResult(0.0, 0.5, position, false);
                 case FuzzyRadiatorControlTypes.NearClosed: return GetIsoscelesTriangleResult(0.0, 2.0, position);
                 case FuzzyRadiatorControlTypes.Normal: return GetIsoscelesTriangleResult(1.5, 3.5, position);
                 case FuzzyRadiatorControlTypes.NearOpen: return GetIsoscelesTriangleResult(3.0, 5.0, position);
-                case FuzzyRadiatorControlTypes.Open: return GetTransitionAreaResult(4.5, 5.0, position, true);
+                case FuzzyRadiatorControlTypes.FullOpend: return GetTransitionAreaResult(4.5, 5.0, position, true);
                 default: throw new NotImplementedException($"Unknown {nameof(FuzzyRadiatorControlTypes)} with value {radiatorControl}.");
             }
         }
@@ -326,11 +326,11 @@ namespace HeatFuzzy.Logic
         {
             switch(radiatorControl)
             {
-                case FuzzyRadiatorControlTypes.Closed:      return 0.0;
+                case FuzzyRadiatorControlTypes.FullClosed:      return 0.0;
                 case FuzzyRadiatorControlTypes.NearClosed:  return 1.0;
                 case FuzzyRadiatorControlTypes.Normal:      return 2.5;
                 case FuzzyRadiatorControlTypes.NearOpen:    return 4.0;
-                case FuzzyRadiatorControlTypes.Open:        return 5.0;
+                case FuzzyRadiatorControlTypes.FullOpend:        return 5.0;
                 default: throw new NotImplementedException($"Unknown {nameof(FuzzyRadiatorControlTypes)} with value {radiatorControl}.");
             }
         }

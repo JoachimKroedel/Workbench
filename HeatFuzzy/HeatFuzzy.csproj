@@ -68,6 +68,7 @@
     <Compile Include="Logic\FuzzyControlerChangeTypes.cs" />
     <Compile Include="Logic\FuzzyDiffTemperatureTypes.cs" />
     <Compile Include="Logic\FuzzyObject.cs" />
+    <Compile Include="Logic\FuzzyRadiatorControlChangeTypes.cs" />
     <Compile Include="Logic\FuzzyRadiatorControlTypes.cs" />
     <Compile Include="Logic\FuzzyTemperatureChangeTypes.cs" />
     <Compile Include="Logic\FuzzyTemperatureTypes.cs" />

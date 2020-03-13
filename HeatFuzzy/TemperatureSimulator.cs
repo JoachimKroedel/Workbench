@@ -8,7 +8,7 @@ namespace HeatFuzzy
     public class TemperatureSimulator : BaseNotifyPropertyChanged
     {
         private static double _percentageClosedWindowInfluence = 0.5;
-        private static double _percentageRadiatorControlInfluence = 1.5;
+        private static double _percentageRadiatorControlInfluence = 0.5;
         private static double _percentageIndoorToRadiatorInfluence = 2.0;
         private static double _percentageRadiatorToIndoorInfluence = 0.5;
 
@@ -161,6 +161,7 @@ namespace HeatFuzzy
 
                 doubleFuzzyHeaterLogic.CalculateOutput();
                 RadiatorControl = doubleFuzzyHeaterLogic.RadiatorControl;
+                RadiatorControl += doubleFuzzyHeaterLogic.RadiatorControlChange * deltaTime;
             }
 
             _timeStamp = DateTime.Now;

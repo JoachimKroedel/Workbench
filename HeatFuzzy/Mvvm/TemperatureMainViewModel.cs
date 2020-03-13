@@ -58,6 +58,10 @@ namespace HeatFuzzy.Mvvm
             {
                 IsMuchColderPoints.Add(new DataPoint(point.X, point.Y));
             }
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Colder))
+            {
+                IsColderPoints.Add(new DataPoint(point.X, point.Y));
+            }
             foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleColder))
             {
                 IsLitleColderPoints.Add(new DataPoint(point.X, point.Y));
@@ -65,6 +69,10 @@ namespace HeatFuzzy.Mvvm
             foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleWarmer))
             {
                 IsLitleWarmerPoints.Add(new DataPoint(point.X, point.Y));
+            }
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Warmer))
+            {
+                IsWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
             foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchWarmer))
             {
@@ -256,8 +264,10 @@ namespace HeatFuzzy.Mvvm
         }
 
         public IList<DataPoint> IsMuchColderPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> IsColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> IsLitleColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> IsLitleWarmerPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> IsWarmerPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> IsMuchWarmerPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualDiffPoints { get; private set; } = new ObservableCollection<DataPoint>();
         
