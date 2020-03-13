@@ -36,43 +36,51 @@ namespace HeatFuzzy.Logic
             // Set default values for curve
             _diffTemperatureCurvePoints.Add
             (
-                FuzzyDiffTemperatureTypes.Colder, new List<Point>()
+                FuzzyDiffTemperatureTypes.MuchColder, new List<Point>()
                 {
                     new Point(-10.0, 1.0),
+                    new Point( -5.0, 0.0)
+                }
+            );
+            _diffTemperatureCurvePoints.Add
+            (
+                FuzzyDiffTemperatureTypes.Colder, new List<Point>()
+                {
                     new Point( -5.0, 1.0),
-                    new Point(  0.0, 0.0),
-                    new Point( 10.0, 0.0)
+                    new Point(  0.0, 0.0)
                 }
             );
             _diffTemperatureCurvePoints.Add
             (
                 FuzzyDiffTemperatureTypes.LitleColder, new List<Point>()
                 {
-                    new Point(-10.0, 0.0),
                     new Point( -2.0, 0.0),
                     new Point( -0.1, 1.0),
-                    new Point(  0.0, 0.0),
-                    new Point( 10.0, 0.0)
+                    new Point(  0.0, 0.0)
                 }
             );
             _diffTemperatureCurvePoints.Add
             (
                 FuzzyDiffTemperatureTypes.LitleWarmer, new List<Point>()
                 {
-                    new Point(-10.0, 0.0),
                     new Point(  0.0, 0.0),
                     new Point(  0.1, 1.0),
-                    new Point(  2.0, 0.0),
-                    new Point( 10.0, 0.0)
+                    new Point(  2.0, 0.0)
                 }
             );
             _diffTemperatureCurvePoints.Add
             (
-                FuzzyDiffTemperatureTypes.Hotter, new List<Point>()
+                FuzzyDiffTemperatureTypes.Warmer, new List<Point>()
                 {
-                    new Point(-10.0, 0.0),
                     new Point(  0.0, 0.0),
-                    new Point(  5.0, 1.0),
+                    new Point(  5.0, 1.0)
+                }
+            );
+            _diffTemperatureCurvePoints.Add
+            (
+                FuzzyDiffTemperatureTypes.MuchWarmer, new List<Point>()
+                {
+                    new Point(  5.0, 0.0),
                     new Point( 10.0, 1.0)
                 }
             );
@@ -81,7 +89,6 @@ namespace HeatFuzzy.Logic
             (
                 FuzzyTemperatureChangeTypes.FastWarmer, new List<Point>()
                 {
-                    new Point( 0.00, 0.0),
                     new Point( 0.20, 0.0),
                     new Point( 0.50, 1.0)
                 }
@@ -91,15 +98,13 @@ namespace HeatFuzzy.Logic
                 FuzzyTemperatureChangeTypes.Warmer, new List<Point>()
                 {
                     new Point( 0.00, 0.0),
-                    new Point( 0.02, 1.0),
-                    new Point( 0.50, 1.0)
+                    new Point( 0.02, 1.0)
                 }
             );
             _temperatureChangeCurvePoints.Add
             (
                 FuzzyTemperatureChangeTypes.Colder, new List<Point>()
                 {
-                    new Point(-0.50, 1.0),
                     new Point(-0.02, 1.0),
                     new Point( 0.00, 0.0)
                 }
@@ -109,8 +114,7 @@ namespace HeatFuzzy.Logic
                 FuzzyTemperatureChangeTypes.FastColder, new List<Point>()
                 {
                     new Point(-0.50, 1.0),
-                    new Point(-0.20, 0.0),
-                    new Point( 0.00, 0.0)
+                    new Point(-0.20, 0.0)
                 }
             );
         }
@@ -309,7 +313,7 @@ namespace HeatFuzzy.Logic
         private void Implication()
         {
             _fuzzyRadiatorControlDegree = _fuzzyDiffTemperatureDegree;
-            if (FuzzyDiffTemperature.Equals(FuzzyDiffTemperatureTypes.Hotter))
+            if (FuzzyDiffTemperature.Equals(FuzzyDiffTemperatureTypes.Warmer))
             {
                 _fuzzyRadiatorControlDegree *= -1.0;
             }
@@ -317,6 +321,7 @@ namespace HeatFuzzy.Logic
 
         private void Defuzzification()
         {
+
         }
 
         private double GetFuzzyMembership(FuzzyTemperatureTypes fuzzyTemperature, double temperature)

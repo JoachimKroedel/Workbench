@@ -54,9 +54,9 @@ namespace HeatFuzzy.Mvvm
 
             _setBinaryLogicDesiredTemperatureCommand = new RelayCommand(SetBinaryLogicDesiredTemperatureCommand_Execute, SetBinaryLogicDesiredTemperatureCommand_CanExecute);
 
-            foreach(var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Colder))
+            foreach(var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchColder))
             {
-                IsColderPoints.Add(new DataPoint(point.X, point.Y));
+                IsMuchColderPoints.Add(new DataPoint(point.X, point.Y));
             }
             foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleColder))
             {
@@ -66,9 +66,9 @@ namespace HeatFuzzy.Mvvm
             {
                 IsLitleWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Hotter))
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchWarmer))
             {
-                IsWarmerPoints.Add(new DataPoint(point.X, point.Y));
+                IsMuchWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
             foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastColder))
@@ -255,10 +255,10 @@ namespace HeatFuzzy.Mvvm
             get { return _temperatureSimulator.SimulationTime; }
         }
 
-        public IList<DataPoint> IsColderPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> IsMuchColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> IsLitleColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> IsLitleWarmerPoints { get; } = new List<DataPoint>();
-        public IList<DataPoint> IsWarmerPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> IsMuchWarmerPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualDiffPoints { get; private set; } = new ObservableCollection<DataPoint>();
         
         public IList<DataPoint> GettingFastColderPoints { get; } = new List<DataPoint>();

@@ -163,7 +163,7 @@ namespace HeatFuzzy.Logic
             if (colderDegree < hotterDegree)
             {
                 _fuzzyDiffTemperatureDegree = hotterDegree;
-                FuzzyDiffTemperature = FuzzyDiffTemperatureTypes.Hotter;
+                FuzzyDiffTemperature = FuzzyDiffTemperatureTypes.Warmer;
             }
             else
             {
@@ -175,7 +175,7 @@ namespace HeatFuzzy.Logic
         private void Implication()
         {
             _fuzzyRadiatorControlDegree = _fuzzyDiffTemperatureDegree;
-            if (FuzzyDiffTemperature.Equals(FuzzyDiffTemperatureTypes.Hotter))
+            if (FuzzyDiffTemperature.Equals(FuzzyDiffTemperatureTypes.Warmer))
             {
                 _fuzzyRadiatorControlDegree *= -1.0;
             }

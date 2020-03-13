@@ -125,10 +125,10 @@
 
                     <oxy:Plot Grid.Row="0" Title="Fuzzy Different Temperatures" Background="AliceBlue">
                         <oxy:Plot.Series>
-                            <oxy:LineSeries ItemsSource="{Binding IsColderPoints}" Title="Colder" />
+                            <oxy:LineSeries ItemsSource="{Binding IsMuchColderPoints}" Title="Much Colder" />
                             <oxy:LineSeries ItemsSource="{Binding IsLitleColderPoints}" Title="Litle Colder"/>
                             <oxy:LineSeries ItemsSource="{Binding IsLitleWarmerPoints}" Title="Litle Warmer" />
-                            <oxy:LineSeries ItemsSource="{Binding IsWarmerPoints}" Title="Warmer" />
+                            <oxy:LineSeries ItemsSource="{Binding IsMuchWarmerPoints}" Title="Much Warmer" />
                             <oxy:LineSeries ItemsSource="{Binding ActualDiffPoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
                         </oxy:Plot.Series>
                     </oxy:Plot>
