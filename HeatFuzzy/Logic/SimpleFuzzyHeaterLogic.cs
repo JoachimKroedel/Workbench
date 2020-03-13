@@ -117,7 +117,7 @@ namespace HeatFuzzy.Logic
             throw new NotImplementedException();
         }
 
-        public override void CalculateOutput(double deltaTimeInSeconds)
+        public void CalculateOutput(double deltaTimeInSeconds)
         {
             _deltaTimeInSeconds = Math.Abs(deltaTimeInSeconds);
             Fuzzification();

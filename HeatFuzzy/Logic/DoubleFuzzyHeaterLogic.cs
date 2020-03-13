@@ -14,12 +14,10 @@ namespace HeatFuzzy.Logic
         private FuzzyTemperatureTypes _desiredFuzzyTemperature;
         private FuzzyTemperatureTypes _insideFuzzyTemperature;
 
-        private double _lastInsideTemperature = double.NaN;
         private double _insideTemperatureChangedPerSecond = 0.0;
 
         private double _diffTemperature;
         private double _fuzzyDiffTemperatureDegree = 0.0;
-        private double _deltaTimeInSeconds = 0.1;
         private double _fuzzyRadiatorControlDegree = 0.0;
 
         private FuzzyDiffTemperatureTypes _fuzzyDiffTemperature;
@@ -173,6 +171,19 @@ namespace HeatFuzzy.Logic
             }
         }
 
+        public double InsideTemperatureChangePerSecond
+        {
+            get { return _insideTemperatureChangedPerSecond; }
+            set
+            {
+                if (AreValuesDifferent(_insideTemperatureChangedPerSecond, value))
+                {
+                    _insideTemperatureChangedPerSecond = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public FuzzyTemperatureTypes InsideFuzzyTemperature
         {
             get { return _insideFuzzyTemperature; }
@@ -230,14 +241,8 @@ namespace HeatFuzzy.Logic
             throw new NotImplementedException();
         }
 
-        public override void CalculateOutput(double deltaTimeInSeconds)
+        public override void CalculateOutput()
         {
-            _deltaTimeInSeconds = Math.Abs(deltaTimeInSeconds);
-            if (!double.IsNaN(_lastInsideTemperature) && _deltaTimeInSeconds > 0.0)
-            {
-                _insideTemperatureChangedPerSecond = (InsideTemperature - _lastInsideTemperature) / _deltaTimeInSeconds;
-            }
-            _lastInsideTemperature = InsideTemperature;
             _diffTemperature = InsideTemperature - DesiredTemperature;
             Fuzzification();
             Implication();
@@ -312,7 +317,6 @@ namespace HeatFuzzy.Logic
 
         private void Defuzzification()
         {
-            RadiatorControl += _fuzzyRadiatorControlDegree * _deltaTimeInSeconds * 0.01;
         }
 
         private double GetFuzzyMembership(FuzzyTemperatureTypes fuzzyTemperature, double temperature)

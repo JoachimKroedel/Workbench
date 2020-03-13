@@ -4,13 +4,13 @@ using System.Windows;
 
 namespace HeatFuzzy.Logic
 {
-    abstract public class AbstractFuzzyLogic : BaseNotifyPropertyChanged, ILogic
+    abstract public class AbstractFuzzyLogic : BaseNotifyPropertyChanged, IFuzzyLogic
     {
         public virtual object[] InputValues => throw new NotImplementedException();
 
         public virtual object OutputValue => throw new NotImplementedException();
 
-        public virtual void CalculateOutput(double deltaTimeInSeconds)
+        public virtual void CalculateOutput()
         {
             throw new NotImplementedException();
         }

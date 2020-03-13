@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace HeatFuzzy.Mvvm
 {
@@ -26,6 +27,7 @@ namespace HeatFuzzy.Mvvm
         private bool _doubleFuzzyLogicSelected;
         private double _binaryLogicDesiredTemperature;
         private readonly RelayCommand _setBinaryLogicDesiredTemperatureCommand;
+        private double _actualDiffTemperature;
 
         public TemperatureMainViewModel()
         {
@@ -119,6 +121,24 @@ namespace HeatFuzzy.Mvvm
                     NotifyPropertyChanged();
                 }
             }
+        }
+        
+        public double ActualDiffTemperature
+        {
+            get { return _actualDiffTemperature; }
+            set
+            {
+                if (AreValuesDifferent(value, _actualDiffTemperature))
+                {
+                    _actualDiffTemperature = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double InsideTemperatureChangePerSecond
+        {
+            get { return _temperatureSimulator.InsideTemperatureChangePerSecond; }
         }
 
         public List<int> SimulationFactors { get; }
@@ -239,14 +259,13 @@ namespace HeatFuzzy.Mvvm
         public IList<DataPoint> IsLitleColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> IsLitleWarmerPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> IsWarmerPoints { get; } = new List<DataPoint>();
-
         public ObservableCollection<DataPoint> ActualDiffPoints { get; private set; } = new ObservableCollection<DataPoint>();
-
         
         public IList<DataPoint> GettingFastColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> GettingColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> GettingWarmerPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> GettingFastWarmerPoints { get; } = new List<DataPoint>();
+        public ObservableCollection<DataPoint> ActualChangesPoints { get; private set; } = new ObservableCollection<DataPoint>();
 
         protected override void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -264,6 +283,10 @@ namespace HeatFuzzy.Mvvm
                 case nameof(_temperatureSimulator.SimulationTime):
                     NotifyPropertyChanged(nameof(SimulationTime));
                     break;
+                case nameof(_temperatureSimulator.InsideTemperatureChangePerSecond):
+                    NotifyPropertyChanged(nameof(InsideTemperatureChangePerSecond));
+                    Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualChangesPoints()));
+                    break;
                 case nameof(_temperatureSimulator.RadiatorControl):
                     NotifyPropertyChanged(nameof(RadiatorControl));
                     break;
@@ -276,23 +299,24 @@ namespace HeatFuzzy.Mvvm
             {
                 case nameof(Temperature.InsideTemperature):
                 case nameof(Temperature.DesiredTemperature):
-                    var testValue = Temperature.InsideTemperature - Temperature.DesiredTemperature;
-                    try
-                    {
-                        ActualDiffPoints.Clear();
-                        ActualDiffPoints.Add(new DataPoint(testValue, 0.0));
-                        ActualDiffPoints.Add(new DataPoint(testValue, 1.0));
-                    }
-                    catch (NotSupportedException)
-                    {
-                        // ToDo: Handle Exception while simulation thread should allow to change values (invoke again, i think so)
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        // ToDo: Handle Exception while simulation is running and user should change values
-                    }
+                    Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualDiffPoints()));
                     break;
             }
+        }
+
+        private void SetActualDiffPoints()
+        {
+            ActualDiffTemperature = Temperature.InsideTemperature - Temperature.DesiredTemperature;
+            ActualDiffPoints.Clear();
+            ActualDiffPoints.Add(new DataPoint(ActualDiffTemperature, 0.0));
+            ActualDiffPoints.Add(new DataPoint(ActualDiffTemperature, 1.0));
+        }
+
+        private void SetActualChangesPoints()
+        {
+            ActualChangesPoints.Clear();
+            ActualChangesPoints.Add(new DataPoint(InsideTemperatureChangePerSecond, 0.0));
+            ActualChangesPoints.Add(new DataPoint(InsideTemperatureChangePerSecond, 1.0));
         }
 
         private void SetDesignTimeData()

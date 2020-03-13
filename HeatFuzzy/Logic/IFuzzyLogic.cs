@@ -2,13 +2,11 @@
 
 namespace HeatFuzzy.Logic
 {
-    public interface ILogic
+    public interface IFuzzyLogic
     {
         object[] InputValues { get; }
         object OutputValue { get; }
         bool SetInputValues(IList<object> inputValues);
-
-        void CalculateOutput(double deltaTimeInSeconds);
-
+        void CalculateOutput();
     }
 }

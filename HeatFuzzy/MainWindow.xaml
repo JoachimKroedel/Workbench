@@ -118,26 +118,41 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <oxy:Plot Grid.Row="0" Title="Fuzzy Different Temperatures" Background="AliceBlue">
                         <oxy:Plot.Series>
                             <oxy:LineSeries ItemsSource="{Binding IsColderPoints}" Title="Colder" />
-                            <oxy:LineSeries ItemsSource="{Binding IsLitleColderPoints}" Title="LitleColder"/>
-                            <oxy:LineSeries ItemsSource="{Binding IsLitleWarmerPoints}" Title="LitleWarmer" />
-                            <oxy:LineSeries ItemsSource="{Binding IsWarmerPoints}" Title="Hotter" />
+                            <oxy:LineSeries ItemsSource="{Binding IsLitleColderPoints}" Title="Litle Colder"/>
+                            <oxy:LineSeries ItemsSource="{Binding IsLitleWarmerPoints}" Title="Litle Warmer" />
+                            <oxy:LineSeries ItemsSource="{Binding IsWarmerPoints}" Title="Warmer" />
                             <oxy:LineSeries ItemsSource="{Binding ActualDiffPoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
                         </oxy:Plot.Series>
                     </oxy:Plot>
-                    <oxy:Plot Grid.Row="1" Title="Fuzzy Temperatures Changes" Background="AliceBlue">
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <Label Content="Actual Different Value:" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding ActualDiffTemperature}"  VerticalAlignment="Center" />
+                        <Label Content="°C" VerticalAlignment="Center" />
+                    </StackPanel>
+                    
+                    <oxy:Plot Grid.Row="2" Title="Fuzzy Temperatures Changes" Background="AliceBlue">
                         <oxy:Plot.Series>
                             <oxy:LineSeries ItemsSource="{Binding GettingFastColderPoints}" Title="Fast Colder" />
                             <oxy:LineSeries ItemsSource="{Binding GettingColderPoints}" Title="Colder"/>
                             <oxy:LineSeries ItemsSource="{Binding GettingWarmerPoints}" Title="Warmer" />
                             <oxy:LineSeries ItemsSource="{Binding GettingFastWarmerPoints}" Title="Fast Warmer" />
+                            <oxy:LineSeries ItemsSource="{Binding ActualChangesPoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
                         </oxy:Plot.Series>
                     </oxy:Plot>
+                    <StackPanel Grid.Row="3" Orientation="Horizontal">
+                        <Label Content="Actual changes by simulation:" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding InsideTemperatureChangePerSecond}"  VerticalAlignment="Center" />
+                        <Label Content="°C/s" VerticalAlignment="Center" />
+                    </StackPanel>
+                    
                 </Grid>
             </TabItem>
         </TabControl>

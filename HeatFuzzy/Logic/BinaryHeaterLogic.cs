@@ -2,7 +2,7 @@
 
 namespace HeatFuzzy.Logic
 {
-    public class BinaryHeaterLogic : BaseNotifyPropertyChanged, ILogic
+    public class BinaryHeaterLogic : BaseNotifyPropertyChanged, IFuzzyLogic
     {
         private readonly double[] _inputValues = new double[2];
         private bool _switchHeaterOn;
@@ -41,7 +41,7 @@ namespace HeatFuzzy.Logic
                     NotifyPropertyChanged();
                     _inputValues[1] = _desiredTemperature;
                     NotifyPropertyChanged(nameof(InputValues));
-                    CalculateOutput(1.0);
+                    CalculateOutput();
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace HeatFuzzy.Logic
                     NotifyPropertyChanged();
                     _inputValues[0] = _insideTemperature;
                     NotifyPropertyChanged(nameof(InputValues));
-                    CalculateOutput(1.0);
+                    CalculateOutput();
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace HeatFuzzy.Logic
             }
         }
 
-        public void CalculateOutput(double deltaTimeInSeconds)
+        public void CalculateOutput()
         {
             SwitchHeaterOn = DesiredTemperature > InsideTemperature;
         }

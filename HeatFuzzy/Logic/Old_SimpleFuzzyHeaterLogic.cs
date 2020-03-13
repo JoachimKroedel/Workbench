@@ -335,7 +335,7 @@ namespace HeatFuzzy.Logic
             }
         }
 
-        public override void CalculateOutput(double deltaTimeInSeconds)
+        public override void CalculateOutput()
         {
             throw new NotImplementedException();
         }
