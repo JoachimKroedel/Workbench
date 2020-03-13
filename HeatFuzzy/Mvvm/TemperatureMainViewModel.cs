@@ -54,19 +54,36 @@ namespace HeatFuzzy.Mvvm
 
             foreach(var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Colder))
             {
-                ColderPoints.Add(new DataPoint(point.X, point.Y));
+                IsColderPoints.Add(new DataPoint(point.X, point.Y));
             }
             foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleColder))
             {
-                LitleColderPoints.Add(new DataPoint(point.X, point.Y));
+                IsLitleColderPoints.Add(new DataPoint(point.X, point.Y));
             }
             foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleWarmer))
             {
-                LitleWarmerPoints.Add(new DataPoint(point.X, point.Y));
+                IsLitleWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
             foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Hotter))
             {
-                HotterPoints.Add(new DataPoint(point.X, point.Y));
+                IsWarmerPoints.Add(new DataPoint(point.X, point.Y));
+            }
+
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastColder))
+            {
+                GettingFastColderPoints.Add(new DataPoint(point.X, point.Y));
+            }
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.Colder))
+            {
+                GettingColderPoints.Add(new DataPoint(point.X, point.Y));
+            }
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.Warmer))
+            {
+                GettingWarmerPoints.Add(new DataPoint(point.X, point.Y));
+            }
+            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastWarmer))
+            {
+                GettingFastWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
             SetDesignTimeData();
@@ -218,12 +235,18 @@ namespace HeatFuzzy.Mvvm
             get { return _temperatureSimulator.SimulationTime; }
         }
 
-        public IList<DataPoint> ColderPoints { get; } = new List<DataPoint>();
-        public IList<DataPoint> LitleColderPoints { get; } = new List<DataPoint>();
-        public IList<DataPoint> LitleWarmerPoints { get; } = new List<DataPoint>();
-        public IList<DataPoint> HotterPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> IsColderPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> IsLitleColderPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> IsLitleWarmerPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> IsWarmerPoints { get; } = new List<DataPoint>();
 
         public ObservableCollection<DataPoint> ActualDiffPoints { get; private set; } = new ObservableCollection<DataPoint>();
+
+        
+        public IList<DataPoint> GettingFastColderPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> GettingColderPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> GettingWarmerPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> GettingFastWarmerPoints { get; } = new List<DataPoint>();
 
         protected override void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {

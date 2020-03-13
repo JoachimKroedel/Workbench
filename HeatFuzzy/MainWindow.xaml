@@ -116,13 +116,26 @@
             </TabItem>
             <TabItem Header="Double Fuzzy" IsSelected="{Binding DoubleFuzzyLogicSelected}">
                 <Grid>
-                    <oxy:Plot Title="Fuzzy Different Temperatures" Background="AliceBlue" Margin="40,20,26,160">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <oxy:Plot Grid.Row="0" Title="Fuzzy Different Temperatures" Background="AliceBlue">
                         <oxy:Plot.Series>
-                            <oxy:LineSeries ItemsSource="{Binding ColderPoints}" Title="Colder" />
-                            <oxy:LineSeries ItemsSource="{Binding LitleColderPoints}" Title="LitleColder"/>
-                            <oxy:LineSeries ItemsSource="{Binding LitleWarmerPoints}" Title="LitleWarmer" />
-                            <oxy:LineSeries ItemsSource="{Binding HotterPoints}" Title="Hotter" />
-                            <oxy:LineSeries ItemsSource="{Binding ActualDiffPoints}" Title="Actual" />
+                            <oxy:LineSeries ItemsSource="{Binding IsColderPoints}" Title="Colder" />
+                            <oxy:LineSeries ItemsSource="{Binding IsLitleColderPoints}" Title="LitleColder"/>
+                            <oxy:LineSeries ItemsSource="{Binding IsLitleWarmerPoints}" Title="LitleWarmer" />
+                            <oxy:LineSeries ItemsSource="{Binding IsWarmerPoints}" Title="Hotter" />
+                            <oxy:LineSeries ItemsSource="{Binding ActualDiffPoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
+                        </oxy:Plot.Series>
+                    </oxy:Plot>
+                    <oxy:Plot Grid.Row="1" Title="Fuzzy Temperatures Changes" Background="AliceBlue">
+                        <oxy:Plot.Series>
+                            <oxy:LineSeries ItemsSource="{Binding GettingFastColderPoints}" Title="Fast Colder" />
+                            <oxy:LineSeries ItemsSource="{Binding GettingColderPoints}" Title="Colder"/>
+                            <oxy:LineSeries ItemsSource="{Binding GettingWarmerPoints}" Title="Warmer" />
+                            <oxy:LineSeries ItemsSource="{Binding GettingFastWarmerPoints}" Title="Fast Warmer" />
                         </oxy:Plot.Series>
                     </oxy:Plot>
                 </Grid>

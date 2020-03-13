@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace HeatFuzzy.Logic
 {
@@ -110,6 +111,37 @@ namespace HeatFuzzy.Logic
             }
 
             return result;
+        }
+
+        protected double GetFuzzyDegree(IList<Point> curvePoints, double value)
+        {
+            // ToDo: List should be sorted by x values
+            Point leftPoint = new Point(double.MinValue, double.NaN);
+            foreach (Point rightPoint in curvePoints)
+            {
+                if (value <= rightPoint.X)
+                {
+                    // if diffTemperature is on the left side of the curve point we have to return a value
+                    if (double.IsNaN(leftPoint.Y))
+                    {
+                        // in that case there was no left point defined (diffTemperature is left outside the curve definition)
+                        return rightPoint.Y;
+                    }
+
+                    double range = rightPoint.X - leftPoint.X;
+                    if (range == 0.0)
+                    {
+                        // in that case the left and right points are on the same x-Axis value. To protect for Zero-Devision return the avarange of both points 
+                        return (leftPoint.Y + rightPoint.Y) / 2.0;
+                    }
+                    // in that case calculate the linear percentage value between left and right point
+                    double percentage = (value - leftPoint.X) / range;
+                    return (rightPoint.Y - leftPoint.Y) * percentage + leftPoint.Y;
+                }
+                leftPoint = rightPoint;
+            }
+            // In the last case diffTemperature is right outside the curve definition.
+            return leftPoint.Y;
         }
     }
 }
