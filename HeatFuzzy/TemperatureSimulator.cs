@@ -130,6 +130,14 @@ namespace HeatFuzzy
                 simpleFuzzyHeaterLogic.CalculateOutput(deltaTime);
                 RadiatorControl = simpleFuzzyHeaterLogic.RadiatorControl;
             }
+            else if (HeaterLogic is DoubleFuzzyHeaterLogic doubleFuzzyHeaterLogic)
+            {
+                doubleFuzzyHeaterLogic.InsideTemperature = Temperature.InsideTemperature;
+                doubleFuzzyHeaterLogic.DesiredTemperature = Temperature.DesiredTemperature;
+                doubleFuzzyHeaterLogic.RadiatorControl = RadiatorControl;
+                doubleFuzzyHeaterLogic.CalculateOutput(deltaTime);
+                RadiatorControl = doubleFuzzyHeaterLogic.RadiatorControl;
+            }
 
             _timeStamp = DateTime.Now;
             _simulationTimer.Enabled = _isSimulationActive;

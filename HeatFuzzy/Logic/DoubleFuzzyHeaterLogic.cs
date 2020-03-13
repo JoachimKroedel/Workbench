@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace HeatFuzzy.Logic
@@ -22,6 +23,59 @@ namespace HeatFuzzy.Logic
 
         private FuzzyDiffTemperatureTypes _fuzzyDiffTemperature;
         private FuzzyTemperatureChangeTypes _fuzzyTemperatureChange;
+
+        private List<FuzzyObject<FuzzyTemperatureTypes>> _insideTemperatureObjects = new List<FuzzyObject<FuzzyTemperatureTypes>>();
+        private List<FuzzyObject<FuzzyTemperatureTypes>> _desiredTemperatureObjects = new List<FuzzyObject<FuzzyTemperatureTypes>>();
+        private List<FuzzyObject<FuzzyDiffTemperatureTypes>> _diffTemperatureObjects = new List<FuzzyObject<FuzzyDiffTemperatureTypes>>();
+
+        private readonly Dictionary<FuzzyDiffTemperatureTypes, IList<Point>> _diffTemperatureCurvePoints = new Dictionary<FuzzyDiffTemperatureTypes, IList<Point>>();
+
+        public DoubleFuzzyHeaterLogic()
+        {
+            // Set default values for curve
+            _diffTemperatureCurvePoints.Add
+            (
+                FuzzyDiffTemperatureTypes.Colder, new List<Point>()
+                {
+                    new Point(-10.0, 1.0),
+                    new Point( -5.0, 1.0),
+                    new Point(  0.0, 0.0),
+                    new Point( 10.0, 0.0)
+                }
+            );
+            _diffTemperatureCurvePoints.Add
+            (
+                FuzzyDiffTemperatureTypes.LitleColder, new List<Point>()
+                {
+                    new Point(-10.0, 0.0),
+                    new Point( -2.0, 0.0),
+                    new Point( -0.1, 1.0),
+                    new Point(  0.0, 0.0),
+                    new Point( 10.0, 0.0)
+                }
+            );
+            _diffTemperatureCurvePoints.Add
+            (
+                FuzzyDiffTemperatureTypes.LitleWarmer, new List<Point>()
+                {
+                    new Point(-10.0, 0.0),
+                    new Point(  0.0, 0.0),
+                    new Point(  0.1, 1.0),
+                    new Point(  2.0, 0.0),
+                    new Point( 10.0, 0.0)
+                }
+            );
+            _diffTemperatureCurvePoints.Add
+            (
+                FuzzyDiffTemperatureTypes.Hotter, new List<Point>()
+                {
+                    new Point(-10.0, 0.0),
+                    new Point(  0.0, 0.0),
+                    new Point(  5.0, 1.0),
+                    new Point( 10.0, 1.0)
+                }
+            );
+        }
 
         public override object[] InputValues
         {
@@ -149,60 +203,41 @@ namespace HeatFuzzy.Logic
             Defuzzification();
         }
 
-        private List<FuzzyObject<FuzzyTemperatureTypes>> _insideTemperatureObjects = new List<FuzzyObject<FuzzyTemperatureTypes>>();
+        public IList<Point> GetPoints(FuzzyDiffTemperatureTypes fuzzyDiffTemperature)
+        {
+            if (_diffTemperatureCurvePoints.ContainsKey(fuzzyDiffTemperature))
+            {
+                return _diffTemperatureCurvePoints[fuzzyDiffTemperature];
+            }
+            throw new NotImplementedException($"Unknown {nameof(FuzzyDiffTemperatureTypes)} with value {fuzzyDiffTemperature}.");
+        }
+
         private void Fuzzification()
         {
             _insideTemperatureObjects.Clear();
-            double membershipFactorInside = 0.0;
-            FuzzyTemperatureTypes memberType = FuzzyTemperatureTypes.Cold;
             foreach (FuzzyTemperatureTypes fuzzyTemperature in Enum.GetValues(typeof(FuzzyTemperatureTypes)))
             {
                 var temperaturMembershipFactor = GetFuzzyMembership(fuzzyTemperature, _insideTemperature);
                 _insideTemperatureObjects.Add(new FuzzyObject<FuzzyTemperatureTypes>(fuzzyTemperature, temperaturMembershipFactor));
-                if (membershipFactorInside < temperaturMembershipFactor)
-                {
-                    membershipFactorInside = temperaturMembershipFactor;
-                    memberType = fuzzyTemperature;
-                }
             }
-            InsideFuzzyTemperature = memberType;
 
-            double membershipFactorDesired = 0.0;
-            memberType = FuzzyTemperatureTypes.Cold;
+            _desiredTemperatureObjects.Clear();
             foreach (FuzzyTemperatureTypes fuzzyTemperature in Enum.GetValues(typeof(FuzzyTemperatureTypes)))
             {
                 var temperaturMembershipFactor = GetFuzzyMembership(fuzzyTemperature, _desiredTemperature);
-                if (membershipFactorDesired < temperaturMembershipFactor)
+                _desiredTemperatureObjects.Add(new FuzzyObject<FuzzyTemperatureTypes>(fuzzyTemperature, temperaturMembershipFactor));
+            }
+
+            double diffTemperature = InsideTemperature - DesiredTemperature;
+            _diffTemperatureObjects.Clear();
+            foreach(FuzzyDiffTemperatureTypes fuzzyDiff in Enum.GetValues(typeof(FuzzyDiffTemperatureTypes)))
+            {
+                if (FuzzyDiffTemperatureTypes.Undefined.Equals(fuzzyDiff))
                 {
-                    membershipFactorDesired = temperaturMembershipFactor;
-                    memberType = fuzzyTemperature;
+                    continue;
                 }
-            }
-            DesiredFuzzyTemperature = memberType;
-
-            double temperaturDifferenz = InsideTemperature - DesiredTemperature;
-            var colderDegree = GetTransitionAreaResult(-5.0, 0.0, temperaturDifferenz, false);
-            var hotterDegree = GetTransitionAreaResult(0.0, 5.0, temperaturDifferenz, true);
-            if (colderDegree < hotterDegree)
-            {
-                _fuzzyDiffTemperatureDegree = hotterDegree;
-                FuzzyDiffTemperature = FuzzyDiffTemperatureTypes.Hotter;
-            }
-            else
-            {
-                _fuzzyDiffTemperatureDegree = colderDegree;
-                FuzzyDiffTemperature = FuzzyDiffTemperatureTypes.Colder;
-            }
-
-            // ToDo: Handle also GettingWarmer and check this value per Second
-            _fuzzyGettingColderDegree = GetTransitionAreaResult(-1.0, 0.0, _deltaInsideTemperatureChange, false);
-            if (_deltaInsideTemperatureChange < 0.0)
-            {
-                FuzzyTemperatureChange = FuzzyTemperatureChangeTypes.GettingColder;
-            }
-            else
-            {
-                FuzzyTemperatureChange = FuzzyTemperatureChangeTypes.GettingWarmer;
+                var diffTemperatureValue = GetFuzzyMembership(fuzzyDiff, diffTemperature);
+                _diffTemperatureObjects.Add(new FuzzyObject<FuzzyDiffTemperatureTypes>(fuzzyDiff, diffTemperatureValue));
             }
         }
 
@@ -235,50 +270,40 @@ namespace HeatFuzzy.Logic
         
         private double GetFuzzyMembership(FuzzyDiffTemperatureTypes fuzzyDiffTemperature, double diffTemperature)
         {
-            switch (fuzzyDiffTemperature)
+            if(!_diffTemperatureCurvePoints.ContainsKey(fuzzyDiffTemperature))
             {
-                case FuzzyDiffTemperatureTypes.Colder: return GetTransitionAreaResult(-5.0, 0.0, diffTemperature, false);
-                case FuzzyDiffTemperatureTypes.LitleColder: return GetTriangleResult(-2.0, 0.0, 0.0, diffTemperature);
-                case FuzzyDiffTemperatureTypes.LitleWarmer: return GetTriangleResult( 0.0, 2.0, 0.0, diffTemperature);
-                case FuzzyDiffTemperatureTypes.Hotter: return GetTransitionAreaResult(0.0, 5.0, diffTemperature, true);
-                default: throw new NotImplementedException($"Unknown {nameof(FuzzyDiffTemperatureTypes)} with value {fuzzyDiffTemperature}.");
+                throw new NotImplementedException($"Unknown {nameof(FuzzyDiffTemperatureTypes)} with value {fuzzyDiffTemperature}.");
             }
-        }
 
-        public List<Point> GetPoints(FuzzyDiffTemperatureTypes fuzzyDiffTemperature)
-        {
-            List<Point> result = new List<Point>();
-            switch (fuzzyDiffTemperature)
+            List<Point> curvePoints = _diffTemperatureCurvePoints[fuzzyDiffTemperature].ToList();
+            // ToDo: List should be sorted by x values
+            Point leftPoint = new Point(double.MinValue, double.NaN);
+            foreach(Point rightPoint in curvePoints)
             {
-                case FuzzyDiffTemperatureTypes.Colder:
-                    result.Add(new Point(-10.0, 1.0));
-                    result.Add(new Point( -5.0, 1.0));
-                    result.Add(new Point(  0.0, 0.0));
-                    result.Add(new Point( 10.0, 0.0));
-                    break;
-                case FuzzyDiffTemperatureTypes.LitleColder:
-                    result.Add(new Point(-10.0, 0.0));
-                    result.Add(new Point( -2.0, 0.0));
-                    result.Add(new Point( -0.1, 1.0));
-                    result.Add(new Point(  0.0, 0.0));
-                    result.Add(new Point( 10.0, 0.0));
-                    break;
-                case FuzzyDiffTemperatureTypes.LitleWarmer:
-                    result.Add(new Point(-10.0, 0.0));
-                    result.Add(new Point(  0.0, 0.0));
-                    result.Add(new Point(  0.1, 1.0));
-                    result.Add(new Point(  2.0, 0.0));
-                    result.Add(new Point( 10.0, 0.0));
-                    break;
-                case FuzzyDiffTemperatureTypes.Hotter:
-                    result.Add(new Point(-10.0, 0.0));
-                    result.Add(new Point(  0.0, 0.0));
-                    result.Add(new Point(  5.0, 1.0));
-                    result.Add(new Point( 10.0, 1.0));
-                    break;
-                default: throw new NotImplementedException($"Unknown {nameof(FuzzyDiffTemperatureTypes)} with value {fuzzyDiffTemperature}.");
+                if (diffTemperature <= rightPoint.X)
+                {
+                    // if diffTemperature is on the left side of the curve point we have to return a value
+                    if (double.IsNaN(leftPoint.Y))
+                    {
+                        // in that case there was no left point defined (diffTemperature is left outside the curve definition)
+                        return rightPoint.Y;
+                    }
+
+                    double range = rightPoint.X - leftPoint.X;
+                    if (range == 0.0)
+                    {
+                        // in that case the left and right points are on the same x-Axis value. To protect for Zero-Devision return the avarange of both points 
+                        return (leftPoint.Y + rightPoint.Y) / 2.0;
+                    }
+                    // in that case calculate the linear percentage value between left and right point
+                    double percentage = (diffTemperature - leftPoint.X) / range;
+                    return (rightPoint.Y - leftPoint.Y) * percentage + leftPoint.Y;
+                }
+                leftPoint = rightPoint;
             }
-            return result;
+            
+            // In the last case diffTemperature is right outside the curve definition.
+            return leftPoint.Y;
         }
     }
 }

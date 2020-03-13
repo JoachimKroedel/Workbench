@@ -12,5 +12,10 @@ namespace HeatFuzzy.Logic
         public T Value {  get; set; }
 
         public double Degree { get; set; }
+
+        public override string ToString()
+        {
+            return $"[{Value}, {Degree}]";
+        }
     }
 }

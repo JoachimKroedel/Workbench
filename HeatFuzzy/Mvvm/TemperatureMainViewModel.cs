@@ -254,9 +254,20 @@ namespace HeatFuzzy.Mvvm
                 case nameof(Temperature.InsideTemperature):
                 case nameof(Temperature.DesiredTemperature):
                     var testValue = Temperature.InsideTemperature - Temperature.DesiredTemperature;
-                    ActualDiffPoints.Clear();
-                    ActualDiffPoints.Add(new DataPoint(testValue, 0.0));
-                    ActualDiffPoints.Add(new DataPoint(testValue, 1.0));
+                    try
+                    {
+                        ActualDiffPoints.Clear();
+                        ActualDiffPoints.Add(new DataPoint(testValue, 0.0));
+                        ActualDiffPoints.Add(new DataPoint(testValue, 1.0));
+                    }
+                    catch (NotSupportedException)
+                    {
+                        // ToDo: Handle Exception while simulation thread should allow to change values (invoke again, i think so)
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // ToDo: Handle Exception while simulation is running and user should change values
+                    }
                     break;
             }
         }
