@@ -4,6 +4,8 @@
     {
         Undefined,
         MoreClosed,
+        LitleMoreClosed,
+        LitleMoreOpend,
         MoreOpend
     }
 }

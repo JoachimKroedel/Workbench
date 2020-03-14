@@ -42,44 +42,44 @@ namespace HeatFuzzy.Mvvm
 
             DoubleFuzzyLogicSelected = true;
 
-            foreach(var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchColder))
+            foreach(var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchColder))
             {
                 IsMuchColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Colder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsColder))
             {
                 IsColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleColder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsLitleColder))
             {
                 IsLitleColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleWarmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsLitleWarmer))
             {
                 IsLitleWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Warmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsWarmer))
             {
                 IsWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchWarmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchWarmer))
             {
                 IsMuchWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastColder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetFastColder))
             {
                 GettingFastColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.Colder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetColder))
             {
                 GettingColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.Warmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetWarmer))
             {
                 GettingWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastWarmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetFastWarmer))
             {
                 GettingFastWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
@@ -97,6 +97,14 @@ namespace HeatFuzzy.Mvvm
             {
                 RadiatorControlChangeMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.LitleMoreClosed))
+            {
+                RadiatorControlChangeLitleMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
+            }
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.LitleMoreOpend))
+            {
+                RadiatorControlChangeLitleMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
+            }
             foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreOpend))
             {
                 RadiatorControlChangeMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
@@ -107,25 +115,25 @@ namespace HeatFuzzy.Mvvm
             SetDesignTimeData();
         }
 
-        public double IsMuchColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.MuchColder) * 100;
-        public double IsColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.Colder) * 100;
-        public double IsLitleColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.LitleColder) * 100;
-        public double IsLitleWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.LitleWarmer) * 100;
-        public double IsWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.Warmer) * 100;
-        public double IsMuchWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.MuchWarmer) * 100;
+        public double IsMuchColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsMuchColder) * 100;
+        public double IsColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsColder) * 100;
+        public double IsLitleColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsLitleColder) * 100;
+        public double IsLitleWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsLitleWarmer) * 100;
+        public double IsWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsWarmer) * 100;
+        public double IsMuchWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsMuchWarmer) * 100;
 
         public double IsFullOpendPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyRadiatorControlTypes.FullOpend) * 100;
         public double IsFullClosedPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyRadiatorControlTypes.FullClosed) * 100;
 
-        public double GetFastWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.FastWarmer) * 100;
-        public double GetWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.Warmer) * 100;
-        public double GetColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.Colder) * 100;
-        public double GetFastColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.FastColder) * 100;
+        public double GetFastWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetFastWarmer) * 100;
+        public double GetWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetWarmer) * 100;
+        public double GetColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetColder) * 100;
+        public double GetFastColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetFastColder) * 100;
 
-        public double ResultIsLitleColderAndGetFastWarmerPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.LitleColder, FuzzyTemperatureChangeTypes.FastWarmer) * 100;
-        public double ResultIsLitleWarmerAndGetFastColderPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.LitleWarmer, FuzzyTemperatureChangeTypes.FastColder) * 100;
-        public double ResultIsColderAndGetColderPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.Colder, FuzzyTemperatureChangeTypes.Colder) * 100;
-        public double ResultIsWarmerAndGetWarmerPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.Warmer, FuzzyTemperatureChangeTypes.Warmer) * 100;
+        public double ResultIsLitleColderAndGetFastWarmerPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.IsLitleColder, FuzzyTemperatureChangeTypes.GetFastWarmer) * 100;
+        public double ResultIsLitleWarmerAndGetFastColderPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.IsLitleWarmer, FuzzyTemperatureChangeTypes.GetFastColder) * 100;
+        public double ResultIsColderAndGetColderPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.IsColder, FuzzyTemperatureChangeTypes.GetColder) * 100;
+        public double ResultIsWarmerAndGetWarmerPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.IsWarmer, FuzzyTemperatureChangeTypes.GetWarmer) * 100;
 
         public TemperatureDto Temperature { get; }
 
@@ -250,6 +258,8 @@ namespace HeatFuzzy.Mvvm
         public ObservableCollection<DataPoint> ActualRadiatorControlPoints { get; private set; } = new ObservableCollection<DataPoint>();
 
         public IList<DataPoint> RadiatorControlChangeMoreClosedPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> RadiatorControlChangeLitleMoreClosedPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> RadiatorControlChangeLitleMoreOpendPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> RadiatorControlChangeMoreOpendPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualRadiatorControlChangePoints { get; private set; } = new ObservableCollection<DataPoint>();
 

@@ -3,11 +3,11 @@
     public enum FuzzyDiffTemperatureTypes
     {
         Undefined,
-        MuchColder,
-        Colder,
-        LitleColder,
-        LitleWarmer,
-        Warmer,
-        MuchWarmer
+        IsMuchColder,
+        IsColder,
+        IsLitleColder,
+        IsLitleWarmer,
+        IsWarmer,
+        IsMuchWarmer
     }
 }

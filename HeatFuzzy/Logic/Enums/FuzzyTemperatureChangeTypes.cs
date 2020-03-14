@@ -3,9 +3,9 @@
     public enum FuzzyTemperatureChangeTypes
     {
         Undefined,
-        FastWarmer,
-        Warmer,
-        Colder,
-        FastColder
+        GetFastWarmer,
+        GetWarmer,
+        GetColder,
+        GetFastColder
     }
 }
