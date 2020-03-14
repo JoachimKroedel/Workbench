@@ -32,6 +32,9 @@ namespace HeatFuzzy.Logic
         private readonly Dictionary<FuzzyDiffTemperatureTypes, IList<Point>> _diffTemperatureCurvePoints = new Dictionary<FuzzyDiffTemperatureTypes, IList<Point>>();
         private readonly Dictionary<FuzzyTemperatureChangeTypes, IList<Point>> _temperatureChangeCurvePoints = new Dictionary<FuzzyTemperatureChangeTypes, IList<Point>>();
 
+        private readonly Dictionary<FuzzyRadiatorControlTypes, IList<Point>> _radiatorControlPoints = new Dictionary<FuzzyRadiatorControlTypes, IList<Point>>();
+        private readonly Dictionary<FuzzyRadiatorControlChangeTypes, IList<Point>> _radiatorControlChangePoints = new Dictionary<FuzzyRadiatorControlChangeTypes, IList<Point>>();
+
         public DoubleFuzzyHeaterLogic()
         {
             // Set default values for curve
@@ -118,6 +121,72 @@ namespace HeatFuzzy.Logic
                     new Point(-0.20, 0.0)
                 }
             );
+
+            _radiatorControlPoints.Add
+            (
+                FuzzyRadiatorControlTypes.FullClosed, new List<Point>()
+                {
+                    new Point( 0.0, 1.0),
+                    new Point( 0.5, 0.0)
+                }
+            );
+            _radiatorControlPoints.Add
+            (
+                FuzzyRadiatorControlTypes.NearClosed, new List<Point>()
+                {
+                    new Point( 0.0, 1.0),
+                    new Point( 1.5, 0.0)
+                }
+            );
+            _radiatorControlPoints.Add
+            (
+                FuzzyRadiatorControlTypes.NearOpen, new List<Point>()
+                {
+                    new Point( 3.5, 0.0),
+                    new Point( 5.0, 1.0)
+                }
+            );
+            _radiatorControlPoints.Add
+            (
+                FuzzyRadiatorControlTypes.FullOpend, new List<Point>()
+                {
+                    new Point( 4.5, 0.0),
+                    new Point( 5.0, 1.0)
+                }
+            );
+
+            _radiatorControlChangePoints.Add
+            (
+                FuzzyRadiatorControlChangeTypes.MuchMoreClosed, new List<Point>()
+                {
+                    new Point(-1.0, 1.0),
+                    new Point( 0.0, 0.0)
+                }
+            );
+            _radiatorControlChangePoints.Add
+            (
+                FuzzyRadiatorControlChangeTypes.MoreClosed, new List<Point>()
+                {
+                    new Point(-0.1, 1.0),
+                    new Point( 0.0, 0.0)
+                }
+            );
+            _radiatorControlChangePoints.Add
+            (
+                FuzzyRadiatorControlChangeTypes.MoreOpend, new List<Point>()
+                {
+                    new Point( 0.0, 0.0),
+                    new Point( 0.1, 1.0)
+                }
+            );
+            _radiatorControlChangePoints.Add
+            (
+                FuzzyRadiatorControlChangeTypes.MuchMoreOpend, new List<Point>()
+                {
+                    new Point( 0.0, 0.0),
+                    new Point( 1.0, 1.0)
+                }
+            );
         }
 
         public override object[] InputValues
@@ -189,7 +258,6 @@ namespace HeatFuzzy.Logic
                 }
             }
         }
-
 
         public double InsideTemperatureChangePerSecond
         {
@@ -284,7 +352,25 @@ namespace HeatFuzzy.Logic
             {
                 return _temperatureChangeCurvePoints[temperatureChange];
             }
-            throw new NotImplementedException($"Unknown {nameof(FuzzyDiffTemperatureTypes)} with value {temperatureChange}.");
+            throw new NotImplementedException($"Unknown {nameof(FuzzyTemperatureChangeTypes)} with value {temperatureChange}.");
+        }
+
+        public IList<Point> GetPoints(FuzzyRadiatorControlTypes radiatorControl)
+        {
+            if (_radiatorControlPoints.ContainsKey(radiatorControl))
+            {
+                return _radiatorControlPoints[radiatorControl];
+            }
+            throw new NotImplementedException($"Unknown {nameof(FuzzyRadiatorControlTypes)} with value {radiatorControl}.");
+        }
+
+        public IList<Point> GetPoints(FuzzyRadiatorControlChangeTypes radiatorControlChange)
+        {
+            if (_radiatorControlChangePoints.ContainsKey(radiatorControlChange))
+            {
+                return _radiatorControlChangePoints[radiatorControlChange];
+            }
+            throw new NotImplementedException($"Unknown {nameof(FuzzyRadiatorControlChangeTypes)} with value {radiatorControlChange}.");
         }
 
         private void Fuzzification()

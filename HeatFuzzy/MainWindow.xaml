@@ -9,7 +9,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=mvvm:TemperatureMainViewModel, IsDesignTimeCreatable=True}"
-        Title="MainWindow" Height="400" Width="800"
+        Title="MainWindow" Height="600" Width="1200"
     >
 
     <Window.DataContext>
@@ -116,6 +116,11 @@
             </TabItem>
             <TabItem Header="Double Fuzzy" IsSelected="{Binding DoubleFuzzyLogicSelected}">
                 <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
@@ -123,7 +128,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <oxy:Plot Grid.Row="0" Title="Fuzzy Different Temperatures" Background="AliceBlue">
+                    <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Different Temperatures" Background="AliceBlue">
                         <oxy:Plot.Series>
                             <oxy:LineSeries ItemsSource="{Binding IsMuchColderPoints}" Title="Much Colder" />
                             <oxy:LineSeries ItemsSource="{Binding IsColderPoints}" Title="Colder"/>
@@ -134,13 +139,13 @@
                             <oxy:LineSeries ItemsSource="{Binding ActualDiffPoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
                         </oxy:Plot.Series>
                     </oxy:Plot>
-                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
                         <Label Content="Actual Different Value:" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding ActualDiffTemperature}"  VerticalAlignment="Center" />
                         <Label Content="°C" VerticalAlignment="Center" />
                     </StackPanel>
-                    
-                    <oxy:Plot Grid.Row="2" Title="Fuzzy Temperatures Changes" Background="AliceBlue">
+
+                    <oxy:Plot Grid.Column="1" Grid.Row="0" Title="Temperatures Changes" Background="AliceBlue">
                         <oxy:Plot.Series>
                             <oxy:LineSeries ItemsSource="{Binding GettingFastColderPoints}" Title="Fast Colder" />
                             <oxy:LineSeries ItemsSource="{Binding GettingColderPoints}" Title="Colder"/>
@@ -149,12 +154,39 @@
                             <oxy:LineSeries ItemsSource="{Binding ActualChangesPoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
                         </oxy:Plot.Series>
                     </oxy:Plot>
-                    <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
                         <Label Content="Actual changes by simulation:" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding InsideTemperatureChangePerSecond}"  VerticalAlignment="Center" />
                         <Label Content="°C/s" VerticalAlignment="Center" />
                     </StackPanel>
-                    
+
+                    <oxy:Plot Grid.Column="0" Grid.Row="2" Title="Radiator Control" Background="AliceBlue">
+                        <oxy:Plot.Series>
+                            <oxy:LineSeries ItemsSource="{Binding RadiatorControlFullClosedPoints}" Title="Full Closed" />
+                            <oxy:LineSeries ItemsSource="{Binding RadiatorControlFullOpendPoints}" Title="Full Open"/>
+                            <oxy:LineSeries ItemsSource="{Binding ActualRadiatorControlPoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
+                        </oxy:Plot.Series>
+                    </oxy:Plot>
+                    <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal">
+                        <Label Content="Radiator Control:" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding RadiatorControl}"  VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <oxy:Plot Grid.Column="1" Grid.Row="2" Title="Radiator Control Change" Background="AliceBlue">
+                        <oxy:Plot.Series>
+                            <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMuchMoreClosedPoints}" Title="Much More Closed" />
+                            <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMoreClosedPoints}" Title="More Closed"/>
+                            <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMoreOpendPoints}" Title="More Opend" />
+                            <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMuchMoreOpendPoints}" Title="Much More Opend"/>
+                            <oxy:LineSeries ItemsSource="{Binding ActualRadiatorControlChangePoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
+                        </oxy:Plot.Series>
+                    </oxy:Plot>
+                    <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal">
+                        <Label Content="Actual change by simulation:" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding RadiatorControlChange}"  VerticalAlignment="Center" />
+                        <Label Content="/s" VerticalAlignment="Center" />
+                    </StackPanel>
+
                 </Grid>
             </TabItem>
         </TabControl>

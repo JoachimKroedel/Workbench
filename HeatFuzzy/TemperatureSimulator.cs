@@ -17,6 +17,7 @@ namespace HeatFuzzy
         private DateTime _timeStamp;
         private int _simulationTimeFactor;
         private double _radiatorControl = 0;
+        private double _radiatorControlChange = 0;
         private double _lastInsideTemperature = double.NaN;
         private double _insideTemperatureChangePerSecond;
 
@@ -65,6 +66,24 @@ namespace HeatFuzzy
                 }
             }
         }
+
+        public double RadiatorControlChange
+        {
+            get
+            {
+                return _radiatorControlChange;
+            }
+            private set
+            {
+                double newValue = Math.Max(0.0, Math.Min(5.0, value));
+                if (AreValuesDifferent(_radiatorControlChange, newValue))
+                {
+                    _radiatorControlChange = newValue;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
         public double InsideTemperatureChangePerSecond
         {
@@ -160,8 +179,8 @@ namespace HeatFuzzy
                 doubleFuzzyHeaterLogic.InsideTemperatureChangePerSecond = InsideTemperatureChangePerSecond;
 
                 doubleFuzzyHeaterLogic.CalculateOutput();
-                RadiatorControl = doubleFuzzyHeaterLogic.RadiatorControl;
-                RadiatorControl += doubleFuzzyHeaterLogic.RadiatorControlChange * deltaTime;
+                RadiatorControlChange = doubleFuzzyHeaterLogic.RadiatorControlChange * deltaTime;
+                RadiatorControl = doubleFuzzyHeaterLogic.RadiatorControl + RadiatorControlChange;
             }
 
             _timeStamp = DateTime.Now;
