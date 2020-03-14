@@ -1,11 +1,9 @@
-﻿namespace HeatFuzzy.Logic
+﻿namespace HeatFuzzy.Logic.Enums
 {
     public enum FuzzyRadiatorControlChangeTypes
     {
         Undefined,
         MoreClosed,
-        MoreOpend,
-        MuchMoreOpend,
-        MuchMoreClosed
+        MoreOpend
     }
 }

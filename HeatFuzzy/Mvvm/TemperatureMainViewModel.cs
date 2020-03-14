@@ -1,14 +1,12 @@
-﻿using GalaSoft.MvvmLight.Command;
-using HeatFuzzy.Logic;
+﻿using HeatFuzzy.Logic;
+using HeatFuzzy.Logic.Enums;
 using OxyPlot;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace HeatFuzzy.Mvvm
@@ -16,18 +14,12 @@ namespace HeatFuzzy.Mvvm
     public class TemperatureMainViewModel : BaseNotifyPropertyChanged
     {
         private readonly TemperatureSimulator _temperatureSimulator;
-
         private readonly BinaryHeaterLogic _binaryHeaterLogic;
-        private readonly SimpleFuzzyHeaterLogic _simpleFuzzyHeaterLogic;
-        private readonly DoubleFuzzyHeaterLogic _doubleFuzzyHeaterLogic;
+        private readonly FuzzyHeaterLogic _fuzzyHeaterLogic;
 
         private bool _playSimulation;
         private bool _binaryLogicSelected;
-        private bool _simpleFuzzyLogicSelected;
-        private bool _doubleFuzzyLogicSelected;
-        private double _binaryLogicDesiredTemperature;
-        private readonly RelayCommand _setBinaryLogicDesiredTemperatureCommand;
-        private double _actualDiffTemperature;
+        private bool _fuzzyLogicSelected;
 
         public TemperatureMainViewModel()
         {
@@ -35,8 +27,7 @@ namespace HeatFuzzy.Mvvm
             Temperature = new TemperatureDto();
             _temperatureSimulator = new TemperatureSimulator(Temperature);
             _binaryHeaterLogic = new BinaryHeaterLogic();
-            _simpleFuzzyHeaterLogic = new SimpleFuzzyHeaterLogic();
-            _doubleFuzzyHeaterLogic = new DoubleFuzzyHeaterLogic();
+            _fuzzyHeaterLogic = new FuzzyHeaterLogic();
 
             _temperatureSimulator.SimulationTimeFactor = SimulationFactors.First();
 
@@ -44,7 +35,6 @@ namespace HeatFuzzy.Mvvm
             Temperature.PropertyChanged += Temperature_PropertyChanged;
 
             BinaryLogicSelected = false;
-            BinaryLogicDesiredTemperature = 27.5;
 
             Temperature.OutsideTemperature = 10;
             Temperature.InsideTemperature = 20;
@@ -52,95 +42,68 @@ namespace HeatFuzzy.Mvvm
 
             DoubleFuzzyLogicSelected = true;
 
-            _setBinaryLogicDesiredTemperatureCommand = new RelayCommand(SetBinaryLogicDesiredTemperatureCommand_Execute, SetBinaryLogicDesiredTemperatureCommand_CanExecute);
-
-            foreach(var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchColder))
+            foreach(var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchColder))
             {
                 IsMuchColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Colder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Colder))
             {
                 IsColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleColder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleColder))
             {
                 IsLitleColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleWarmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.LitleWarmer))
             {
                 IsLitleWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Warmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.Warmer))
             {
                 IsWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchWarmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.MuchWarmer))
             {
                 IsMuchWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastColder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastColder))
             {
                 GettingFastColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.Colder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.Colder))
             {
                 GettingColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.Warmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.Warmer))
             {
                 GettingWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastWarmer))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.FastWarmer))
             {
                 GettingFastWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlTypes.FullClosed))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlTypes.FullClosed))
             {
                 RadiatorControlFullClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlTypes.FullOpend))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlTypes.FullOpend))
             {
                 RadiatorControlFullOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
 
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MuchMoreClosed))
-            {
-                RadiatorControlChangeMuchMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
-            }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreClosed))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreClosed))
             {
                 RadiatorControlChangeMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreOpend))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreOpend))
             {
                 RadiatorControlChangeMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
-            }
-            foreach (var point in _doubleFuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MuchMoreOpend))
-            {
-                RadiatorControlChangeMuchMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
 
             SetDesignTimeData();
         }
-
-        public ICommand SetBinaryLogicDesiredTemperatureCommand
-        {
-            get { return _setBinaryLogicDesiredTemperatureCommand; }
-        }
-
-        private void SetBinaryLogicDesiredTemperatureCommand_Execute()
-        {
-            Temperature.DesiredTemperature = BinaryLogicDesiredTemperature;
-        }
-
-        private bool SetBinaryLogicDesiredTemperatureCommand_CanExecute()
-        {
-            return PlaySimulation;
-        }
-
-        public SimpleFuzzyHeaterLogic SimpleFuzzyHeaterLogic {  get { return _simpleFuzzyHeaterLogic; } }
 
         public TemperatureDto Temperature { get; }
 
@@ -161,19 +124,6 @@ namespace HeatFuzzy.Mvvm
         public double RadiatorControlChange
         {
             get { return _temperatureSimulator.RadiatorControlChange; }
-        }
-
-        public double ActualDiffTemperature
-        {
-            get { return _actualDiffTemperature; }
-            set
-            {
-                if (AreValuesDifferent(value, _actualDiffTemperature))
-                {
-                    _actualDiffTemperature = value;
-                    NotifyPropertyChanged();
-                }
-            }
         }
 
         public double InsideTemperatureChangePerSecond
@@ -204,42 +154,20 @@ namespace HeatFuzzy.Mvvm
             }
         }
 
-        public bool SimpleFuzzyLogicSelected
-        {
-            get { return _simpleFuzzyLogicSelected; }
-            set
-            {
-                if (AreValuesDifferent(value, _simpleFuzzyLogicSelected))
-                {
-                    _simpleFuzzyLogicSelected = value;
-                    NotifyPropertyChanged();
-                    if (_simpleFuzzyLogicSelected && _temperatureSimulator.HeaterLogic != _simpleFuzzyHeaterLogic)
-                    {
-                        _temperatureSimulator.HeaterLogic = _simpleFuzzyHeaterLogic;
-                    }
-                    else if (!_simpleFuzzyLogicSelected && _temperatureSimulator.HeaterLogic == _simpleFuzzyHeaterLogic)
-                    {
-                        _temperatureSimulator.HeaterLogic = null;
-                    }
-                }
-            }
-        }
-
-        
         public bool DoubleFuzzyLogicSelected
         {
-            get { return _doubleFuzzyLogicSelected; }
+            get { return _fuzzyLogicSelected; }
             set
             {
-                if (AreValuesDifferent(value, _doubleFuzzyLogicSelected))
+                if (AreValuesDifferent(value, _fuzzyLogicSelected))
                 {
-                    _doubleFuzzyLogicSelected = value;
+                    _fuzzyLogicSelected = value;
                     NotifyPropertyChanged();
-                    if (_doubleFuzzyLogicSelected && _temperatureSimulator.HeaterLogic != _doubleFuzzyHeaterLogic)
+                    if (_fuzzyLogicSelected && _temperatureSimulator.HeaterLogic != _fuzzyHeaterLogic)
                     {
-                        _temperatureSimulator.HeaterLogic = _doubleFuzzyHeaterLogic;
+                        _temperatureSimulator.HeaterLogic = _fuzzyHeaterLogic;
                     }
-                    else if (!_doubleFuzzyLogicSelected && _temperatureSimulator.HeaterLogic == _doubleFuzzyHeaterLogic)
+                    else if (!_fuzzyLogicSelected && _temperatureSimulator.HeaterLogic == _fuzzyHeaterLogic)
                     {
                         _temperatureSimulator.HeaterLogic = null;
                     }
@@ -277,19 +205,6 @@ namespace HeatFuzzy.Mvvm
             }
         }
 
-        public double BinaryLogicDesiredTemperature
-        {
-            get { return _binaryLogicDesiredTemperature; }
-            set
-            {
-                if (AreValuesDifferent(value, _binaryLogicDesiredTemperature))
-                {
-                    _binaryLogicDesiredTemperature = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public DateTime SimulationTime
         {
             get { return _temperatureSimulator.SimulationTime; }
@@ -313,21 +228,9 @@ namespace HeatFuzzy.Mvvm
         public IList<DataPoint> RadiatorControlFullOpendPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualRadiatorControlPoints { get; private set; } = new ObservableCollection<DataPoint>();
 
-        public IList<DataPoint> RadiatorControlChangeMuchMoreClosedPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> RadiatorControlChangeMoreClosedPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> RadiatorControlChangeMoreOpendPoints { get; } = new List<DataPoint>();
-        public IList<DataPoint> RadiatorControlChangeMuchMoreOpendPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualRadiatorControlChangePoints { get; private set; } = new ObservableCollection<DataPoint>();
-
-        
-        protected override void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            base.NotifyPropertyChanged(propertyName);
-            if (propertyName.Equals(nameof(PlaySimulation)))
-            {
-                _setBinaryLogicDesiredTemperatureCommand.RaiseCanExecuteChanged();
-            }
-        }
 
         private void TemperatureSimulator_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -364,10 +267,9 @@ namespace HeatFuzzy.Mvvm
 
         private void SetActualDiffPoints()
         {
-            ActualDiffTemperature = Temperature.InsideTemperature - Temperature.DesiredTemperature;
             ActualDiffPoints.Clear();
-            ActualDiffPoints.Add(new DataPoint(ActualDiffTemperature, 0.0));
-            ActualDiffPoints.Add(new DataPoint(ActualDiffTemperature, 1.0));
+            ActualDiffPoints.Add(new DataPoint(Temperature.DiffTemperatureBetweenInsideAndDesired, 0.0));
+            ActualDiffPoints.Add(new DataPoint(Temperature.DiffTemperatureBetweenInsideAndDesired, 1.0));
         }
 
         private void SetActualChangesPoints()

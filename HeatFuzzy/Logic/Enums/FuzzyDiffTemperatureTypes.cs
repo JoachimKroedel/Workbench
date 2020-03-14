@@ -1,4 +1,4 @@
-﻿namespace HeatFuzzy.Logic
+﻿namespace HeatFuzzy.Logic.Enums
 {
     public enum FuzzyDiffTemperatureTypes
     {

@@ -58,23 +58,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BaseNotifyPropertyChanged.cs" />
-    <Compile Include="Logic\AbstractFuzzyLogic.cs" />
     <Compile Include="Logic\BinaryHeaterLogic.cs" />
     <Compile Include="Converters\DoubleToStringConverter.cs" />
     <Compile Include="Converters\EnumToStringConverter.cs" />
     <Compile Include="Converters\TimeToStringConverter.cs" />
     <Compile Include="Converters\IntToStringConverter.cs" />
-    <Compile Include="Logic\DoubleFuzzyHeaterLogic.cs" />
-    <Compile Include="Logic\FuzzyControlerChangeTypes.cs" />
-    <Compile Include="Logic\FuzzyDiffTemperatureTypes.cs" />
+    <Compile Include="Logic\FuzzyHeaterLogic.cs" />
+    <Compile Include="Logic\Enums\FuzzyDiffTemperatureTypes.cs" />
     <Compile Include="Logic\FuzzyObject.cs" />
-    <Compile Include="Logic\FuzzyRadiatorControlChangeTypes.cs" />
-    <Compile Include="Logic\FuzzyRadiatorControlTypes.cs" />
-    <Compile Include="Logic\FuzzyTemperatureChangeTypes.cs" />
-    <Compile Include="Logic\FuzzyTemperatureTypes.cs" />
-    <Compile Include="Logic\IFuzzyLogic.cs" />
-    <Compile Include="Logic\Old_SimpleFuzzyHeaterLogic.cs" />
-    <Compile Include="Logic\SimpleFuzzyHeaterLogic.cs" />
+    <Compile Include="Logic\Enums\FuzzyRadiatorControlChangeTypes.cs" />
+    <Compile Include="Logic\Enums\FuzzyRadiatorControlTypes.cs" />
+    <Compile Include="Logic\Enums\FuzzyTemperatureChangeTypes.cs" />
+    <Compile Include="Logic\ILogic.cs" />
     <Compile Include="TemperatureSimulator.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

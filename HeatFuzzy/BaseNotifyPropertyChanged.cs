@@ -15,9 +15,9 @@ namespace HeatFuzzy
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool AreValuesDifferent(Enum a, Enum b)
+        protected bool AreValuesDifferent(DateTime a, DateTime b)
         {
-            return a.GetType() != b.GetType() || !a.Equals(b);
+            return !a.Equals(b);
         }
 
         protected bool AreValuesDifferent(bool a, bool b)

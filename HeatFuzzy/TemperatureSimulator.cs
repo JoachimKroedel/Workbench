@@ -13,13 +13,16 @@ namespace HeatFuzzy
         private static double _percentageRadiatorToIndoorInfluence = 0.5;
 
         private readonly Timer _simulationTimer = new Timer();
+        private TemperatureDto _temperature;
         private bool _isSimulationActive;
         private DateTime _timeStamp;
         private int _simulationTimeFactor;
+
         private double _radiatorControl = 0;
         private double _radiatorControlChange = 0;
         private double _lastInsideTemperature = double.NaN;
         private double _insideTemperatureChangePerSecond;
+        private DateTime _simulationTime = new DateTime();
 
         public TemperatureSimulator(TemperatureDto temperature)
         {
@@ -29,7 +32,7 @@ namespace HeatFuzzy
             _simulationTimer.Interval = 50;
         }
 
-        public IFuzzyLogic HeaterLogic { get; set; }
+        public ILogic HeaterLogic { get; set; }
 
         public int SimulationTimeFactor
         {
@@ -48,7 +51,18 @@ namespace HeatFuzzy
             }
         }
 
-        public TemperatureDto Temperature { get; }
+        public TemperatureDto Temperature
+        {
+            get
+            {
+                return _temperature;
+            }
+            set
+            {
+                _temperature = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public double RadiatorControl
         {
@@ -84,7 +98,6 @@ namespace HeatFuzzy
             }
         }
 
-
         public double InsideTemperatureChangePerSecond
         {
             get { return _insideTemperatureChangePerSecond; }
@@ -98,7 +111,18 @@ namespace HeatFuzzy
             }
         }
 
-        public DateTime SimulationTime { get; private set; } = new DateTime();
+        public DateTime SimulationTime 
+        { 
+            get { return _simulationTime; }
+            private set
+            {
+                if (AreValuesDifferent(_simulationTime, value))
+                {
+                    _simulationTime = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public void PlaySimulation(bool activate)
         {
@@ -155,32 +179,19 @@ namespace HeatFuzzy
             {
                 binaryHeaterLogic.InsideTemperature = Temperature.InsideTemperature;
                 binaryHeaterLogic.DesiredTemperature = Temperature.DesiredTemperature;
+                binaryHeaterLogic.CalculateOutput();
                 RadiatorControl = binaryHeaterLogic.SwitchHeaterOn ? 5.0 : 0.0;
             }
-            else if (HeaterLogic is Old_SimpleFuzzyHeaterLogic old_simpleFuzzyHeaterLogic)
+            else if (HeaterLogic is FuzzyHeaterLogic fuzzyHeaterLogic)
             {
-                old_simpleFuzzyHeaterLogic.InsideTemperature = Temperature.InsideTemperature;
-                old_simpleFuzzyHeaterLogic.DesiredTemperature = Temperature.DesiredTemperature;
-                RadiatorControl = old_simpleFuzzyHeaterLogic.RadiatorControl;
-            }
-            else if (HeaterLogic is SimpleFuzzyHeaterLogic simpleFuzzyHeaterLogic)
-            {
-                simpleFuzzyHeaterLogic.InsideTemperature = Temperature.InsideTemperature;
-                simpleFuzzyHeaterLogic.DesiredTemperature = Temperature.DesiredTemperature;
-                simpleFuzzyHeaterLogic.RadiatorControl = RadiatorControl;
-                simpleFuzzyHeaterLogic.CalculateOutput(deltaTime);
-                RadiatorControl = simpleFuzzyHeaterLogic.RadiatorControl;
-            }
-            else if (HeaterLogic is DoubleFuzzyHeaterLogic doubleFuzzyHeaterLogic)
-            {
-                doubleFuzzyHeaterLogic.InsideTemperature = Temperature.InsideTemperature;
-                doubleFuzzyHeaterLogic.DesiredTemperature = Temperature.DesiredTemperature;
-                doubleFuzzyHeaterLogic.RadiatorControl = RadiatorControl;
-                doubleFuzzyHeaterLogic.InsideTemperatureChangePerSecond = InsideTemperatureChangePerSecond;
+                fuzzyHeaterLogic.InsideTemperature = Temperature.InsideTemperature;
+                fuzzyHeaterLogic.DesiredTemperature = Temperature.DesiredTemperature;
+                fuzzyHeaterLogic.RadiatorControl = RadiatorControl;
+                fuzzyHeaterLogic.InsideTemperatureChangePerSecond = InsideTemperatureChangePerSecond;
 
-                doubleFuzzyHeaterLogic.CalculateOutput();
-                RadiatorControlChange = doubleFuzzyHeaterLogic.RadiatorControlChange * deltaTime;
-                RadiatorControl = doubleFuzzyHeaterLogic.RadiatorControl + RadiatorControlChange;
+                fuzzyHeaterLogic.CalculateOutput();
+                RadiatorControlChange = fuzzyHeaterLogic.RadiatorControlChange * deltaTime;
+                RadiatorControl = fuzzyHeaterLogic.RadiatorControl + RadiatorControlChange;
             }
 
             _timeStamp = DateTime.Now;

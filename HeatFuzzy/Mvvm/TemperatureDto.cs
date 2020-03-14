@@ -33,14 +33,11 @@ namespace HeatFuzzy.Mvvm
             }
             set
             {
-                if (value > 100.0 || value < -100)
-                {
-                    return;
-                }
                 if (AreValuesDifferent(_insideTemperature, value))
                 {
                     _insideTemperature = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(DiffTemperatureBetweenInsideAndDesired));
                 }
             }
         }
@@ -71,8 +68,14 @@ namespace HeatFuzzy.Mvvm
                 {
                     _desiredTemperature = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(DiffTemperatureBetweenInsideAndDesired));
                 }
             }
+        }
+
+        public double DiffTemperatureBetweenInsideAndDesired
+        {
+            get { return InsideTemperature - DesiredTemperature; }
         }
     }
 }

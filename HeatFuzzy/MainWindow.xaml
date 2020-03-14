@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HeatFuzzy"
         xmlns:mvvm="clr-namespace:HeatFuzzy.Mvvm"
         xmlns:converters="clr-namespace:HeatFuzzy.Converters"
         xmlns:oxy="http://oxyplot.org/wpf"
@@ -18,10 +17,9 @@
     <Window.Resources>
         <converters:DoubleToIntConverter x:Key="DoubleToIntConverterKey"></converters:DoubleToIntConverter>
         <converters:DoubleToStringConverter x:Key="DoubleToStringConverterKey"></converters:DoubleToStringConverter>
+        <converters:EnumToStringConverter x:Key="EnumToStringConverterKey"></converters:EnumToStringConverter>
         <converters:IntToStringConverter x:Key="IntToStringConverterKey"></converters:IntToStringConverter>
         <converters:TimeToStringConverter x:Key="TimeToStringConverterKey"></converters:TimeToStringConverter>
-        <converters:EnumToStringConverter x:Key="EnumToStringConverterKey"></converters:EnumToStringConverter>
-
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -71,8 +69,8 @@
             <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding SimulationTime, Converter={StaticResource TimeToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="10,3,-10,4"/>
         </Grid>
         <TabControl Grid.Column="1">
-            <TabItem Header="No" />
-            <TabItem Header="Binary" IsSelected="{Binding BinaryLogicSelected}" >
+            <TabItem Header="No Logic" />
+            <TabItem Header="Binary Logic" IsSelected="{Binding BinaryLogicSelected}" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -83,35 +81,6 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-
-                    <Label Grid.Column="0" Grid.Row="0" Content="Desired temperature:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
-                    <TextBox Grid.Column="1" Grid.Row="0" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding BinaryLogicDesiredTemperature, Converter={StaticResource DoubleToStringConverterKey}}" Margin="5" />
-                    <Button Grid.Column="2" Grid.Row="0" Content="Set" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding SetBinaryLogicDesiredTemperatureCommand}" Margin="5" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="Simple Fuzzy"  IsSelected="{Binding SimpleFuzzyLogicSelected}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Label Grid.Column="0" Grid.Row="0" Content="Inside Fuzzy Temperature:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
-                    <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding SimpleFuzzyHeaterLogic.InsideFuzzyTemperature, Converter={StaticResource EnumToStringConverterKey}}" Width="90"/>
-
-                    <Label Grid.Column="0" Grid.Row="1" Content="Desired Fuzzy Temperature:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
-                    <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding SimpleFuzzyHeaterLogic.DesiredFuzzyTemperature, Converter={StaticResource EnumToStringConverterKey}}" Width="90"/>
-
-                    <Label Grid.Column="0" Grid.Row="2" Content="Fuzzy Diff Temperature:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" />
-                    <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding SimpleFuzzyHeaterLogic.FuzzyDiffTemperature, Converter={StaticResource EnumToStringConverterKey}}" Width="90"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Double Fuzzy" IsSelected="{Binding DoubleFuzzyLogicSelected}">
@@ -141,7 +110,7 @@
                     </oxy:Plot>
                     <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
                         <Label Content="Actual Different Value:" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding ActualDiffTemperature}"  VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Temperature.DiffTemperatureBetweenInsideAndDesired}"  VerticalAlignment="Center" />
                         <Label Content="°C" VerticalAlignment="Center" />
                     </StackPanel>
 
@@ -174,10 +143,8 @@
 
                     <oxy:Plot Grid.Column="1" Grid.Row="2" Title="Radiator Control Change" Background="AliceBlue">
                         <oxy:Plot.Series>
-                            <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMuchMoreClosedPoints}" Title="Much More Closed" />
                             <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMoreClosedPoints}" Title="More Closed"/>
                             <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMoreOpendPoints}" Title="More Opend" />
-                            <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMuchMoreOpendPoints}" Title="Much More Opend"/>
                             <oxy:LineSeries ItemsSource="{Binding ActualRadiatorControlChangePoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
                         </oxy:Plot.Series>
                     </oxy:Plot>

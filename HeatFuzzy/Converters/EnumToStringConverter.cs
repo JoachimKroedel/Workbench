@@ -1,4 +1,4 @@
-﻿using HeatFuzzy.Logic;
+﻿using HeatFuzzy.Logic.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,7 +10,7 @@ namespace HeatFuzzy.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is IEnumerable<FuzzyTemperatureTypes> enumValues)
+            if (value is IEnumerable<FuzzyRadiatorControlTypes> enumValues)
             {
                 IList<string> resultList = new List<string>();
                 foreach (var enumValue in enumValues)
