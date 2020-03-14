@@ -91,7 +91,7 @@ namespace HeatFuzzy.Logic
             (
                 FuzzyTemperatureChangeTypes.FastWarmer, new List<Point>()
                 {
-                    new Point( 0.10, 0.0),
+                    new Point( 0.00, 0.0),
                     new Point( 0.50, 1.0)
                 }
             );
@@ -116,7 +116,7 @@ namespace HeatFuzzy.Logic
                 FuzzyTemperatureChangeTypes.FastColder, new List<Point>()
                 {
                     new Point(-0.50, 1.0),
-                    new Point(-0.10, 0.0)
+                    new Point(-0.00, 0.0)
                 }
             );
 
@@ -157,32 +157,32 @@ namespace HeatFuzzy.Logic
             (
                 FuzzyRadiatorControlChangeTypes.MuchMoreClosed, new List<Point>()
                 {
-                    new Point(-0.10, 1.0),
-                    new Point( 0.00, 0.0)
+                    new Point(-0.5, 1.0),
+                    new Point( 0.0, 0.0)
                 }
             );
             _radiatorControlChangePoints.Add
             (
                 FuzzyRadiatorControlChangeTypes.MoreClosed, new List<Point>()
                 {
-                    new Point(-0.01, 1.0),
-                    new Point( 0.00, 0.0)
+                    new Point(-0.1, 1.0),
+                    new Point( 0.0, 0.0)
                 }
             );
             _radiatorControlChangePoints.Add
             (
                 FuzzyRadiatorControlChangeTypes.MoreOpend, new List<Point>()
                 {
-                    new Point( 0.00, 0.0),
-                    new Point( 0.01, 1.0)
+                    new Point( 0.0, 0.0),
+                    new Point( 0.1, 1.0)
                 }
             );
             _radiatorControlChangePoints.Add
             (
                 FuzzyRadiatorControlChangeTypes.MuchMoreOpend, new List<Point>()
                 {
-                    new Point( 0.00, 0.0),
-                    new Point( 0.10, 1.0)
+                    new Point( 0.0, 0.0),
+                    new Point( 0.5, 1.0)
                 }
             );
         }
@@ -472,24 +472,6 @@ namespace HeatFuzzy.Logic
             if (warmerAndGetWarmerDegree > 0.0)
             {
                 _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreClosed, warmerAndGetWarmerDegree));
-                Console.WriteLine(_radiatorControlChangeObjects.Last());
-            }
-
-            // IF it's colder AND the temperature getting NOT warmer THEN the radiator has to be more opend
-            double getNotWarmerDegree = 1.0 - _temperatureChangeObjects.FirstOrDefault(x => x.Value == FuzzyTemperatureChangeTypes.Warmer).Degree;
-            var colderAndGetNotWarmerDegree = Math.Min(colderDegree, getNotWarmerDegree);
-            if (colderAndGetNotWarmerDegree > 0.0)
-            {
-                _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MuchMoreOpend, colderAndGetNotWarmerDegree));
-                Console.WriteLine(_radiatorControlChangeObjects.Last());
-            }
-
-            // IF it's warmer AND the temperature getting NOT colder THEN the radiator has to be more closed
-            double getNotColderDegree = 1.0 - _temperatureChangeObjects.FirstOrDefault(x => x.Value == FuzzyTemperatureChangeTypes.Colder).Degree;
-            var warmerAndGetNotColderDegree = Math.Min(warmerDegree, getNotColderDegree);
-            if (warmerAndGetNotColderDegree > 0.0)
-            {
-                _radiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MuchMoreClosed, warmerAndGetNotColderDegree));
                 Console.WriteLine(_radiatorControlChangeObjects.Last());
             }
         }
