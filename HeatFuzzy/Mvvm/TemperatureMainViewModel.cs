@@ -102,8 +102,30 @@ namespace HeatFuzzy.Mvvm
                 RadiatorControlChangeMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
 
+            _fuzzyHeaterLogic.FuzzyOutputChanged += FuzzyHeaterLogic_FuzzyOutputChanged;
+
             SetDesignTimeData();
         }
+
+        public double IsMuchColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.MuchColder) * 100;
+        public double IsColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.Colder) * 100;
+        public double IsLitleColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.LitleColder) * 100;
+        public double IsLitleWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.LitleWarmer) * 100;
+        public double IsWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.Warmer) * 100;
+        public double IsMuchWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.MuchWarmer) * 100;
+
+        public double IsFullOpendPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyRadiatorControlTypes.FullOpend) * 100;
+        public double IsFullClosedPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyRadiatorControlTypes.FullClosed) * 100;
+
+        public double GetFastWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.FastWarmer) * 100;
+        public double GetWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.Warmer) * 100;
+        public double GetColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.Colder) * 100;
+        public double GetFastColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.FastColder) * 100;
+
+        public double ResultIsLitleColderAndGetFastWarmerPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.LitleColder, FuzzyTemperatureChangeTypes.FastWarmer) * 100;
+        public double ResultIsLitleWarmerAndGetFastColderPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.LitleWarmer, FuzzyTemperatureChangeTypes.FastColder) * 100;
+        public double ResultIsColderAndGetColderPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.Colder, FuzzyTemperatureChangeTypes.Colder) * 100;
+        public double ResultIsWarmerAndGetWarmerPercentage => _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.Warmer, FuzzyTemperatureChangeTypes.Warmer) * 100;
 
         public TemperatureDto Temperature { get; }
 
@@ -120,7 +142,6 @@ namespace HeatFuzzy.Mvvm
             }
         }
 
-        
         public double RadiatorControlChange
         {
             get { return _temperatureSimulator.RadiatorControlChange; }
@@ -232,6 +253,29 @@ namespace HeatFuzzy.Mvvm
         public IList<DataPoint> RadiatorControlChangeMoreOpendPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualRadiatorControlChangePoints { get; private set; } = new ObservableCollection<DataPoint>();
 
+        private void FuzzyHeaterLogic_FuzzyOutputChanged(object sender, EventArgs e)
+        {
+            NotifyPropertyChanged(nameof(IsMuchColderPercentage));
+            NotifyPropertyChanged(nameof(IsColderPercentage));
+            NotifyPropertyChanged(nameof(IsLitleColderPercentage));
+            NotifyPropertyChanged(nameof(IsLitleWarmerPercentage));
+            NotifyPropertyChanged(nameof(IsWarmerPercentage));
+            NotifyPropertyChanged(nameof(IsMuchWarmerPercentage));
+
+            NotifyPropertyChanged(nameof(IsFullOpendPercentage));
+            NotifyPropertyChanged(nameof(IsFullClosedPercentage));
+
+            NotifyPropertyChanged(nameof(GetFastWarmerPercentage));
+            NotifyPropertyChanged(nameof(GetWarmerPercentage));
+            NotifyPropertyChanged(nameof(GetColderPercentage));
+            NotifyPropertyChanged(nameof(GetFastColderPercentage));
+
+            NotifyPropertyChanged(nameof(ResultIsLitleColderAndGetFastWarmerPercentage));
+            NotifyPropertyChanged(nameof(ResultIsLitleWarmerAndGetFastColderPercentage));
+            NotifyPropertyChanged(nameof(ResultIsColderAndGetColderPercentage));
+            NotifyPropertyChanged(nameof(ResultIsWarmerAndGetWarmerPercentage));
+        }
+
         private void TemperatureSimulator_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -278,7 +322,6 @@ namespace HeatFuzzy.Mvvm
             ActualChangesPoints.Add(new DataPoint(InsideTemperatureChangePerSecond, 0.0));
             ActualChangesPoints.Add(new DataPoint(InsideTemperatureChangePerSecond, 1.0));
         }
-
         
         private void SetActualRadiatorControlPoints()
         {
