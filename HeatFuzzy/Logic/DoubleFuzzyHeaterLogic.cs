@@ -507,11 +507,7 @@ namespace HeatFuzzy.Logic
                 sumOfRadiatorControlChange += radiatorControlChange;
                 valuesCount++;
             }
-            if (valuesCount > 0)
-            {
-                RadiatorControlChange = sumOfRadiatorControlChange / valuesCount;
-            }
-
+            RadiatorControlChange = (valuesCount > 0) ? sumOfRadiatorControlChange / valuesCount : 0.0;
         }
 
         private double GetValueByDegree(FuzzyRadiatorControlTypes fuzzyRadiatorControlType, double degree)
