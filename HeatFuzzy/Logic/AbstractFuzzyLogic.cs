@@ -143,5 +143,47 @@ namespace HeatFuzzy.Logic
             // In the last case diffTemperature is right outside the curve definition.
             return leftPoint.Y;
         }
+
+        protected double GetValueByDegree(IList<Point> curvePoints, double degree)
+        {
+            if (degree <= 0.0)
+            {
+                return double.NaN;
+            }
+            double result = 0.0;
+            int hitCount = 0;
+            Point leftPoint = new Point(double.MinValue, double.NaN);
+            foreach (Point rightPoint in curvePoints)
+            {
+                if (!double.IsNaN(leftPoint.Y))
+                {
+                    double rangeValue = rightPoint.X - leftPoint.X;
+                    if (leftPoint.Y < rightPoint.Y)
+                    {
+                        if (degree >= leftPoint.Y && degree <= rightPoint.Y)
+                        {
+                            double rangeDegree = rightPoint.Y - leftPoint.Y;
+                            double percentage = (degree - leftPoint.Y) / rangeDegree;
+                            result += rangeValue * percentage + leftPoint.X;
+                            hitCount++;
+                        }
+                    }
+                    else if (leftPoint.Y > rightPoint.Y)
+                    {
+                        if (degree <= leftPoint.Y && degree >= rightPoint.Y)
+                        {
+                            double rangeDegree = leftPoint.Y - rightPoint.Y;
+                            double percentage = (degree - rightPoint.Y) / rangeDegree;
+                            result += rightPoint.X - rangeValue * percentage;
+                            hitCount++;
+                        }
+                    }
+                }
+                leftPoint = rightPoint;
+            }
+
+            return (hitCount > 0) ? (result / hitCount) : double.NaN;
+        }
+
     }
 }

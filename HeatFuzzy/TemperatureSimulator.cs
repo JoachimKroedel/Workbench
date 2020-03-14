@@ -8,7 +8,7 @@ namespace HeatFuzzy
     public class TemperatureSimulator : BaseNotifyPropertyChanged
     {
         private static double _percentageClosedWindowInfluence = 0.5;
-        private static double _percentageRadiatorControlInfluence = 0.5;
+        private static double _percentageRadiatorControlInfluence = 5.0;
         private static double _percentageIndoorToRadiatorInfluence = 2.0;
         private static double _percentageRadiatorToIndoorInfluence = 0.5;
 
@@ -75,7 +75,7 @@ namespace HeatFuzzy
             }
             private set
             {
-                double newValue = Math.Max(0.0, Math.Min(5.0, value));
+                double newValue = Math.Max(-5.0, Math.Min(5.0, value));
                 if (AreValuesDifferent(_radiatorControlChange, newValue))
                 {
                     _radiatorControlChange = newValue;
