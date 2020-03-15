@@ -33,6 +33,7 @@ namespace HeatFuzzy.Mvvm
 
             _temperatureSimulator.PropertyChanged += TemperatureSimulator_PropertyChanged;
             Temperature.PropertyChanged += Temperature_PropertyChanged;
+            _fuzzyHeaterLogic.FuzzyOutputChanged += FuzzyHeaterLogic_FuzzyOutputChanged;
 
             BinaryLogicSelected = false;
 
@@ -40,7 +41,7 @@ namespace HeatFuzzy.Mvvm
             Temperature.InsideTemperature = 20;
             Temperature.DesiredTemperature = 25;
 
-            DoubleFuzzyLogicSelected = true;
+            FuzzyLogicSelected = true;
 
             foreach(var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchColder))
             {
@@ -100,8 +101,6 @@ namespace HeatFuzzy.Mvvm
             {
                 RadiatorControlChangeMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
-
-            _fuzzyHeaterLogic.FuzzyOutputChanged += FuzzyHeaterLogic_FuzzyOutputChanged;
 
             SetDesignTimeData();
         }
@@ -171,7 +170,7 @@ namespace HeatFuzzy.Mvvm
             }
         }
 
-        public bool DoubleFuzzyLogicSelected
+        public bool FuzzyLogicSelected
         {
             get { return _fuzzyLogicSelected; }
             set

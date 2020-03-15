@@ -233,9 +233,6 @@ namespace HeatFuzzy.Logic
                     Console.WriteLine(_fuzzyRadiatorControlChangeObjects.Last());
                 }
             }
-
-            // ToDo: Check if Temperatur does not change but the different is given (NotColder AND NotWarmer)
-
             FuzzyOutputChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -286,11 +283,6 @@ namespace HeatFuzzy.Logic
                 }
             }
             return 0.0;
-        }
-
-        public double GetNotDegree(Enum enumType)
-        {
-            return 1.0 - GetDegree(enumType);
         }
 
         public double GetAndDegree(Enum enumTypeA, Enum enumTypeB)
