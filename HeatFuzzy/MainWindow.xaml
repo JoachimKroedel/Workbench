@@ -134,12 +134,14 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="10" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -147,65 +149,65 @@
 
                         <!--If it's only litle colder AND the temperature get fast warmer THEN the radiator has to be more closed-->
                         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
-                            <Label Content="IF temperature litle colder:" />
+                            <Label Content="If temperature litle colder" />
                             <ProgressBar Value="{Binding IsLitleColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" />
-                            <Label Content="AND temperature get fast warmer:" />
+                            <Label Content="and temperature get fast warmer" />
                             <ProgressBar Value="{Binding GetFastWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
-                            <Label Content="THAN radiator control more closed:" />
+                            <Label Content="then radiator control more closed" />
                             <ProgressBar Value="{Binding ResultIsLitleColderAndGetFastWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" />
                         </StackPanel>
                         <!--IF it's warmer AND the temperature get warmer THEN the radiator has to be more closed-->
                         <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
-                            <Label Content="IF temperature warmer:" />
+                            <Label Content="If temperature warmer" />
                             <ProgressBar Value="{Binding IsWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" />
-                            <Label Content="AND temperature get warmer:" />
+                            <Label Content="and temperature get warmer" />
                             <ProgressBar Value="{Binding GetWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
-                            <Label Content="THAN radiator control more closed:" />
+                            <Label Content="then radiator control more closed" />
                             <ProgressBar Value="{Binding ResultIsWarmerAndGetWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" />
                         </StackPanel>
                         <!--If it's much warmer than radiator control litle more closed-->
                         <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal">
-                            <Label Content="IF temperature much warmer:" />
+                            <Label Content="If temperature much warmer" />
                             <ProgressBar Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="DarkRed" Width="64" Height="16"  />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
-                            <Label Content="THAN radiator control litle more closed:" />
+                            <Label Content="then radiator control litle more closed" />
                             <ProgressBar Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" />
                         </StackPanel>
 
                         <!--If it's much colder than radiator control litle more opend -->
-                        <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal">
-                            <Label Content="IF temperature much colder:" />
+                        <StackPanel Grid.Column="0" Grid.Row="4" Orientation="Horizontal">
+                            <Label Content="If temperature much colder" />
                             <ProgressBar Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="DarkBlue" Width="64" Height="16" />
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal">
-                            <Label Content="THAN radiator control litle more opend:" />
+                        <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal">
+                            <Label Content="then radiator control litle more opend" />
                             <ProgressBar Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" />
                         </StackPanel>
                         <!--IF it's colder AND the temperature get colder THEN the radiator has to be more opend-->
-                        <StackPanel Grid.Column="0" Grid.Row="4" Orientation="Horizontal">
-                            <Label Content="IF temperature colder:" />
+                        <StackPanel Grid.Column="0" Grid.Row="5" Orientation="Horizontal">
+                            <Label Content="If temperature colder" />
                             <ProgressBar Value="{Binding IsColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" />
-                            <Label Content="AND temperature get colder:" />
+                            <Label Content="and temperature get colder" />
                             <ProgressBar Value="{Binding GetColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" />
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal">
-                            <Label Content="THAN radiator control more opend:" />
+                        <StackPanel Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
+                            <Label Content="then radiator control more opend" />
                             <ProgressBar Value="{Binding ResultIsColderAndGetColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" />
                         </StackPanel>
                         <!--If it's only litle warmer AND the temperature get fast colder THEN the radiator has to be more opend-->
-                        <StackPanel Grid.Column="0" Grid.Row="5" Orientation="Horizontal">
-                            <Label Content="IF temperature litle warmer:" />
+                        <StackPanel Grid.Column="0" Grid.Row="6" Orientation="Horizontal">
+                            <Label Content="If temperature litle warmer" />
                             <ProgressBar Value="{Binding IsLitleWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" />
-                            <Label Content="AND temperature get fast colder:" />
+                            <Label Content="and temperature get fast colder" />
                             <ProgressBar Value="{Binding GetFastColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" />
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
-                            <Label Content="THAN radiator control more opend:" />
+                        <StackPanel Grid.Column="1" Grid.Row="6" Orientation="Horizontal">
+                            <Label Content="then radiator control more opend" />
                             <ProgressBar Value="{Binding ResultIsLitleWarmerAndGetFastColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" />
                         </StackPanel>
                     </Grid>
@@ -219,12 +221,6 @@
                             <oxy:LineSeries ItemsSource="{Binding ActualRadiatorControlChangePoints}" LineStyle="Dash" StrokeThickness="1" Color="Black"  />
                         </oxy:Plot.Series>
                     </oxy:Plot>
-                    <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal">
-                        <Label Content="Actual change by simulation:" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding RadiatorControlChange}"  VerticalAlignment="Center" />
-                        <Label Content="/s" VerticalAlignment="Center" />
-                    </StackPanel>
-
                 </Grid>
             </TabItem>
         </TabControl>
