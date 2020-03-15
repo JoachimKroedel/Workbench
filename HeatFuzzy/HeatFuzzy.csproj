@@ -67,7 +67,6 @@
     <Compile Include="Logic\Enums\FuzzyDiffTemperatureTypes.cs" />
     <Compile Include="Logic\FuzzyObject.cs" />
     <Compile Include="Logic\Enums\FuzzyRadiatorControlChangeTypes.cs" />
-    <Compile Include="Logic\Enums\FuzzyRadiatorControlTypes.cs" />
     <Compile Include="Logic\Enums\FuzzyTemperatureChangeTypes.cs" />
     <Compile Include="Logic\ILogic.cs" />
     <Compile Include="TemperatureSimulator.cs" />

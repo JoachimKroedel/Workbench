@@ -113,9 +113,6 @@ namespace HeatFuzzy.Mvvm
         public double IsWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsWarmer) * 100;
         public double IsMuchWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsMuchWarmer) * 100;
 
-        public double IsFullOpendPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyRadiatorControlTypes.FullOpend) * 100;
-        public double IsFullClosedPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyRadiatorControlTypes.FullClosed) * 100;
-
         public double GetFastWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetFastWarmer) * 100;
         public double GetWarmerPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetWarmer) * 100;
         public double GetColderPercentage => _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetColder) * 100;
@@ -258,9 +255,6 @@ namespace HeatFuzzy.Mvvm
             NotifyPropertyChanged(nameof(IsLitleWarmerPercentage));
             NotifyPropertyChanged(nameof(IsWarmerPercentage));
             NotifyPropertyChanged(nameof(IsMuchWarmerPercentage));
-
-            NotifyPropertyChanged(nameof(IsFullOpendPercentage));
-            NotifyPropertyChanged(nameof(IsFullClosedPercentage));
 
             NotifyPropertyChanged(nameof(GetFastWarmerPercentage));
             NotifyPropertyChanged(nameof(GetWarmerPercentage));

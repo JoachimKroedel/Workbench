@@ -17,12 +17,10 @@ namespace HeatFuzzy.Logic
 
         private readonly List<FuzzyObject<FuzzyDiffTemperatureTypes>> _fuzzyDiffTemperatureObjects = new List<FuzzyObject<FuzzyDiffTemperatureTypes>>();
         private readonly List<FuzzyObject<FuzzyTemperatureChangeTypes>> _fuzzyTemperatureChangeObjects = new List<FuzzyObject<FuzzyTemperatureChangeTypes>>();
-        private readonly IList<FuzzyObject<FuzzyRadiatorControlTypes>> _fuzzyRadiatorControlObjects = new List<FuzzyObject<FuzzyRadiatorControlTypes>>();
         private readonly IList<FuzzyObject<FuzzyRadiatorControlChangeTypes>> _fuzzyRadiatorControlChangeObjects = new List<FuzzyObject<FuzzyRadiatorControlChangeTypes>>();
 
         private readonly Dictionary<FuzzyDiffTemperatureTypes, IList<Point>> _fuzzyDiffTemperatureCurvePoints = new Dictionary<FuzzyDiffTemperatureTypes, IList<Point>>();
         private readonly Dictionary<FuzzyTemperatureChangeTypes, IList<Point>> _fuzzyTemperatureChangeCurvePoints = new Dictionary<FuzzyTemperatureChangeTypes, IList<Point>>();
-        private readonly Dictionary<FuzzyRadiatorControlTypes, IList<Point>> _fuzzyRadiatorControlCurvePoints = new Dictionary<FuzzyRadiatorControlTypes, IList<Point>>();
         private readonly Dictionary<FuzzyRadiatorControlChangeTypes, IList<Point>> _fuzzyRadiatorControlChangeCurvePoints = new Dictionary<FuzzyRadiatorControlChangeTypes, IList<Point>>();
 
         public event EventHandler<EventArgs> FuzzyOutputChanged;
@@ -42,12 +40,9 @@ namespace HeatFuzzy.Logic
             _fuzzyTemperatureChangeCurvePoints.Add(FuzzyTemperatureChangeTypes.GetColder    , new List<Point>(){new Point(-0.02, 1.0), new Point( 0.00, 0.0)});
             _fuzzyTemperatureChangeCurvePoints.Add(FuzzyTemperatureChangeTypes.GetFastColder, new List<Point>(){new Point(-0.50, 1.0), new Point(-0.00, 0.0)});
 
-            _fuzzyRadiatorControlCurvePoints.Add(FuzzyRadiatorControlTypes.FullClosed, new List<Point>(){new Point( 0.0, 1.0), new Point( 0.1, 0.0)});
-            _fuzzyRadiatorControlCurvePoints.Add(FuzzyRadiatorControlTypes.FullOpend , new List<Point>(){new Point( 4.9, 0.0), new Point( 5.0, 1.0)});
-
             _fuzzyRadiatorControlChangeCurvePoints.Add(FuzzyRadiatorControlChangeTypes.MoreClosed     , new List<Point>(){new Point(-0.10, 1.0), new Point( 0.00, 0.0)});
-            _fuzzyRadiatorControlChangeCurvePoints.Add(FuzzyRadiatorControlChangeTypes.LitleMoreClosed, new List<Point>(){new Point(-0.01, 1.0), new Point( 0.00, 0.0) });
-            _fuzzyRadiatorControlChangeCurvePoints.Add(FuzzyRadiatorControlChangeTypes.LitleMoreOpend , new List<Point>(){new Point( 0.00, 0.0), new Point( 0.01, 1.0) });
+            _fuzzyRadiatorControlChangeCurvePoints.Add(FuzzyRadiatorControlChangeTypes.LitleMoreClosed, new List<Point>(){new Point(-0.03, 1.0), new Point( 0.00, 0.0) });
+            _fuzzyRadiatorControlChangeCurvePoints.Add(FuzzyRadiatorControlChangeTypes.LitleMoreOpend , new List<Point>(){new Point( 0.00, 0.0), new Point( 0.03, 1.0) });
             _fuzzyRadiatorControlChangeCurvePoints.Add(FuzzyRadiatorControlChangeTypes.MoreOpend      , new List<Point>(){new Point( 0.00, 0.0), new Point( 0.10, 1.0)});
         }
 
@@ -142,15 +137,6 @@ namespace HeatFuzzy.Logic
                 return _fuzzyTemperatureChangeCurvePoints[temperatureChange];
             }
             throw new NotImplementedException($"Unknown {nameof(FuzzyTemperatureChangeTypes)} with value {temperatureChange}.");
-        }
-
-        public IList<Point> GetPoints(FuzzyRadiatorControlTypes radiatorControl)
-        {
-            if (_fuzzyRadiatorControlCurvePoints.ContainsKey(radiatorControl))
-            {
-                return _fuzzyRadiatorControlCurvePoints[radiatorControl];
-            }
-            throw new NotImplementedException($"Unknown {nameof(FuzzyRadiatorControlTypes)} with value {radiatorControl}.");
         }
 
         public IList<Point> GetPoints(FuzzyRadiatorControlChangeTypes radiatorControlChange)
@@ -255,24 +241,6 @@ namespace HeatFuzzy.Logic
 
         private void Defuzzification()
         {
-            double maxRadiatorControl = double.NaN;
-            foreach (FuzzyObject<FuzzyRadiatorControlTypes> fuzzyRadiatorControl in _fuzzyRadiatorControlObjects)
-            {
-                var radiatorControl = GetValueByFuzzyDegree(fuzzyRadiatorControl.Value, fuzzyRadiatorControl.Degree);
-                if (double.IsNaN(radiatorControl))
-                {
-                    continue;
-                }
-                if (double.IsNaN(maxRadiatorControl) || maxRadiatorControl < radiatorControl)
-                {
-                    maxRadiatorControl = radiatorControl;
-                }
-            }
-            if (!double.IsNaN(maxRadiatorControl))
-            {
-                RadiatorControl = maxRadiatorControl;
-            }
-
             double maxRadiatorControlChange = 0.0;
             double minRadiatorControlChange = 0.0;
             foreach (FuzzyObject<FuzzyRadiatorControlChangeTypes> fuzzyRadiatorControlChange in _fuzzyRadiatorControlChangeObjects)
@@ -310,13 +278,6 @@ namespace HeatFuzzy.Logic
                     return _fuzzyTemperatureChangeObjects.FirstOrDefault(x => x.Value == fuzzyTemperatureChangeType)?.Degree ?? 0.0;
                 }
             }
-            else if (enumType is FuzzyRadiatorControlTypes fuzzyRadiatorControlType)
-            {
-                lock (_fuzzyRadiatorControlObjects)
-                {
-                    return _fuzzyRadiatorControlObjects.FirstOrDefault(x => x.Value == fuzzyRadiatorControlType)?.Degree ?? 0.0;
-                }
-            }
             else if (enumType is FuzzyRadiatorControlChangeTypes fuzzyRadiatorControlChangeType)
             {
                 lock (_fuzzyRadiatorControlChangeObjects)
@@ -340,11 +301,6 @@ namespace HeatFuzzy.Logic
         public double GetAndDegree(double a, double b)
         {
             return Math.Min(a, b);
-        }
-
-        private double GetValueByFuzzyDegree(FuzzyRadiatorControlTypes fuzzyRadiatorControlType, double degree)
-        {
-            return GetValueByFuzzyDegree(_fuzzyRadiatorControlCurvePoints[fuzzyRadiatorControlType], degree);
         }
 
         private double GetValueByFuzzyDegree(FuzzyRadiatorControlChangeTypes fuzzyRadiatorControlChangeType, double degree)

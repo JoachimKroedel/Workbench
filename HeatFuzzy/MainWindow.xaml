@@ -98,7 +98,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Different between temperatures" Background="WhiteSmoke">
+                    <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Different between temperatures" Background="WhiteSmoke" LegendPosition="RightBottom">
                         <oxy:Plot.Series>
                             <oxy:LineSeries ItemsSource="{Binding IsMuchColderPoints}"  Title="Much colder"     Color="DarkBlue" />
                             <oxy:LineSeries ItemsSource="{Binding IsColderPoints}"      Title="Colder"          Color="Blue" />
@@ -115,7 +115,7 @@
                         <Label Content="°C" VerticalAlignment="Center" />
                     </StackPanel>
 
-                    <oxy:Plot Grid.Column="1" Grid.Row="0" Title="Temperatures changes" Background="WhiteSmoke">
+                    <oxy:Plot Grid.Column="1" Grid.Row="0" Title="Temperatures changes" Background="WhiteSmoke" LegendPosition="RightBottom">
                         <oxy:Plot.Series>
                             <oxy:LineSeries ItemsSource="{Binding GettingFastColderPoints}" Title="Fast colder" Color="Blue" />
                             <oxy:LineSeries ItemsSource="{Binding GettingColderPoints}"     Title="Colder"      Color="LightBlue"/>
@@ -212,7 +212,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <oxy:Plot Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Title="Radiator control change" Background="WhiteSmoke">
+                    <oxy:Plot Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Title="Radiator control change" Background="WhiteSmoke" LegendPosition="RightBottom">
                         <oxy:Plot.Series>
                             <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMoreClosedPoints}"       Title="More closed"         Color="Blue"/>
                             <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeLitleMoreClosedPoints}"  Title="Litle more closed"   Color="LightBlue"/>

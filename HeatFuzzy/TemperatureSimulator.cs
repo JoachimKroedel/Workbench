@@ -190,8 +190,8 @@ namespace HeatFuzzy
                 fuzzyHeaterLogic.InsideTemperatureChangePerSecond = InsideTemperatureChangePerSecond;
 
                 fuzzyHeaterLogic.CalculateOutput();
-                RadiatorControlChange = fuzzyHeaterLogic.RadiatorControlChange * deltaTime;
-                RadiatorControl = fuzzyHeaterLogic.RadiatorControl + RadiatorControlChange;
+                RadiatorControlChange = fuzzyHeaterLogic.RadiatorControlChange;
+                RadiatorControl = fuzzyHeaterLogic.RadiatorControl + fuzzyHeaterLogic.RadiatorControlChange * deltaTime;
             }
 
             _timeStamp = DateTime.Now;
