@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace HeatFuzzy.Converters
+namespace HeatFuzzy.Mvvm.Converters
 {
     public class DoubleToIntConverter : IValueConverter
     {

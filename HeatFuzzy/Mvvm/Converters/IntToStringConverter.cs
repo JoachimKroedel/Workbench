@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace HeatFuzzy.Converters
+namespace HeatFuzzy.Mvvm.Converters
 {
     public class IntToStringConverter : IValueConverter
     {
@@ -12,7 +12,7 @@ namespace HeatFuzzy.Converters
             if (value is IEnumerable<int> intValues)
             {
                 IList<string> resultList = new List<string>();
-                foreach(var intValue in intValues)
+                foreach (var intValue in intValues)
                 {
                     resultList.Add(Convert(intValue, targetType, parameter, culture) as string);
                 }

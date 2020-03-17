@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace HeatFuzzy.Converters
+namespace HeatFuzzy.Mvvm.Converters
 {
     public class EnumToStringConverter : IValueConverter
     {

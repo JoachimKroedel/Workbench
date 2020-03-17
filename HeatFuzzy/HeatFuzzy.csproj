@@ -59,17 +59,17 @@
     </ApplicationDefinition>
     <Compile Include="BaseNotifyPropertyChanged.cs" />
     <Compile Include="Logic\BinaryHeaterLogic.cs" />
-    <Compile Include="Converters\DoubleToStringConverter.cs" />
-    <Compile Include="Converters\EnumToStringConverter.cs" />
-    <Compile Include="Converters\TimeToStringConverter.cs" />
-    <Compile Include="Converters\IntToStringConverter.cs" />
+    <Compile Include="Mvvm\Converters\DoubleToStringConverter.cs" />
+    <Compile Include="Mvvm\Converters\EnumToStringConverter.cs" />
+    <Compile Include="Mvvm\Converters\TimeToStringConverter.cs" />
+    <Compile Include="Mvvm\Converters\IntToStringConverter.cs" />
     <Compile Include="Logic\FuzzyHeaterLogic.cs" />
     <Compile Include="Logic\Enums\FuzzyDiffTemperatureTypes.cs" />
     <Compile Include="Logic\FuzzyObject.cs" />
     <Compile Include="Logic\Enums\FuzzyRadiatorControlChangeTypes.cs" />
     <Compile Include="Logic\Enums\FuzzyTemperatureChangeTypes.cs" />
     <Compile Include="Logic\ILogic.cs" />
-    <Compile Include="TemperatureSimulator.cs" />
+    <Compile Include="Logic\SimulatorOfTemperatures.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -78,7 +78,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Converters\DoubleToIntConverter.cs" />
+    <Compile Include="Mvvm\Converters\DoubleToIntConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -104,6 +104,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Doc\DescriptionOfFuzzyLogicExample.doc" />
+    <None Include="Doc\oxyplot-readthedocs-io-en-latest.pdf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

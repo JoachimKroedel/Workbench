@@ -3,9 +3,9 @@
     public enum FuzzyRadiatorControlChangeTypes
     {
         Undefined,
-        MoreClosed,
-        LitleMoreClosed,
-        LitleMoreOpend,
-        MoreOpend
+        MoreClose,
+        Close,
+        Open,
+        MoreOpen
     }
 }

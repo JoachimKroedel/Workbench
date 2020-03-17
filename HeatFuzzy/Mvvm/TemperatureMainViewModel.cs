@@ -13,7 +13,7 @@ namespace HeatFuzzy.Mvvm
 {
     public class TemperatureMainViewModel : BaseNotifyPropertyChanged
     {
-        private readonly TemperatureSimulator _temperatureSimulator;
+        private readonly SimulatorOfTemperatures _temperatureSimulator;
         private readonly BinaryHeaterLogic _binaryHeaterLogic;
         private readonly FuzzyHeaterLogic _fuzzyHeaterLogic;
 
@@ -25,7 +25,7 @@ namespace HeatFuzzy.Mvvm
         {
             SimulationFactors = new List<int>() { 1, 2, 5, 10, 20, 50, 100 };
             Temperature = new TemperatureDto();
-            _temperatureSimulator = new TemperatureSimulator(Temperature);
+            _temperatureSimulator = new SimulatorOfTemperatures(Temperature);
             _binaryHeaterLogic = new BinaryHeaterLogic();
             _fuzzyHeaterLogic = new FuzzyHeaterLogic();
 
@@ -85,19 +85,19 @@ namespace HeatFuzzy.Mvvm
                 GettingFastWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreClosed))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreClose))
             {
                 RadiatorControlChangeMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.LitleMoreClosed))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.Close))
             {
                 RadiatorControlChangeLitleMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.LitleMoreOpend))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.Open))
             {
                 RadiatorControlChangeLitleMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreOpend))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreOpen))
             {
                 RadiatorControlChangeMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }

@@ -1,11 +1,10 @@
-﻿using HeatFuzzy.Logic;
-using HeatFuzzy.Mvvm;
+﻿using HeatFuzzy.Mvvm;
 using System;
 using System.Timers;
 
-namespace HeatFuzzy
+namespace HeatFuzzy.Logic
 {
-    public class TemperatureSimulator : BaseNotifyPropertyChanged
+    public class SimulatorOfTemperatures : BaseNotifyPropertyChanged
     {
         private static double _percentageClosedWindowInfluence = 0.5;
         private static double _percentageRadiatorControlInfluence = 5.0;
@@ -24,7 +23,7 @@ namespace HeatFuzzy
         private double _insideTemperatureChangePerSecond;
         private DateTime _simulationTime = new DateTime();
 
-        public TemperatureSimulator(TemperatureDto temperature)
+        public SimulatorOfTemperatures(TemperatureDto temperature)
         {
             Temperature = temperature;
 
@@ -111,8 +110,8 @@ namespace HeatFuzzy
             }
         }
 
-        public DateTime SimulationTime 
-        { 
+        public DateTime SimulationTime
+        {
             get { return _simulationTime; }
             private set
             {
@@ -139,7 +138,7 @@ namespace HeatFuzzy
         {
             double result = sourceTemperature;
             double diff = destinationTemperature - sourceTemperature;
-            result += (diff * deltaTimeInSeconds * percentagePerSecond / 100);
+            result += diff * deltaTimeInSeconds * percentagePerSecond / 100;
             return result;
         }
 
@@ -151,18 +150,18 @@ namespace HeatFuzzy
             SimulationTime = SimulationTime.AddSeconds(deltaTime);
             NotifyPropertyChanged(nameof(SimulationTime));
 
-            // Die Raumluft wird durch die Aussentemperatur beeinflusst
+            // The temperature inside will be influents  by outside temperature
             double newInsideTemperature = ApproachTemperature(Temperature.InsideTemperature, Temperature.OutsideTemperature, _percentageClosedWindowInfluence, deltaTime);
 
-            // Zuerst ermitteln wie heiß das Wasser im Heizkörper sein soll (minimal 0 maximal 100, aber nicht kühler als Heizkörper) ... 
+            // First get the temperature of the heating warter inside the radiator (minimum 0, maximum 100 but not colder than radiator itself)
             double temperaturInsideRadiator = Math.Max(_radiatorControl / 5.0 * 100.0, Temperature.RadiatorTemperature);
-            // ... dann festlegen wie schnell sich der Heizkörper erwärmen soll (0% bis 50% je nach Reglerwert) ...
+            // ... then get the degree of how fast the radiator should be warmer
             double percentageApprochToHeatRadiator = _radiatorControl * _percentageRadiatorControlInfluence;
             double newRadiatorTemperature = ApproachTemperature(Temperature.RadiatorTemperature, temperaturInsideRadiator, percentageApprochToHeatRadiator, deltaTime);
-            // ... dann wieder durch Innentemperatur etwas abkühlen (schließlich gibt er ja Wärme ab) ...
+            // ... and then let the radiator influents by the inside temperature (so he gives his own temperature away)
             newRadiatorTemperature = ApproachTemperature(newRadiatorTemperature, newInsideTemperature, _percentageIndoorToRadiatorInfluence, deltaTime);
 
-            // ... und zum Schluss nicht vergessen die Raumtemperatur entsprechend anzupassen
+            // ... and at least do not forget to influents the inside temperature again (this time by the radiator)
             newInsideTemperature = ApproachTemperature(newInsideTemperature, newRadiatorTemperature, _percentageRadiatorToIndoorInfluence, deltaTime);
 
             Temperature.InsideTemperature = newInsideTemperature;
