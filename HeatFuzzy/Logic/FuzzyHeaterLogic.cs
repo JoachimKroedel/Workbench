@@ -8,6 +8,12 @@ namespace HeatFuzzy.Logic
 {
     public class FuzzyHeaterLogic : BaseNotifyPropertyChanged, ILogic
     {
+        public FuzzyObject<Enum> If(Enum value)
+        {
+            double degree = GetDegree(value);
+            return new FuzzyObject<Enum>(value, degree, this);
+        }
+
         private double _insideTemperature;
         private double _desiredTemperature;
         private double _diffTemperature;
@@ -160,7 +166,7 @@ namespace HeatFuzzy.Logic
                         continue;
                     }
                     var diffTemperatureValue = GetFuzzyDegreeByValue(fuzzyDiff, _diffTemperature);
-                    _fuzzyDiffTemperatureObjects.Add(new FuzzyObject<FuzzyDiffTemperatureTypes>(fuzzyDiff, diffTemperatureValue));
+                    _fuzzyDiffTemperatureObjects.Add(new FuzzyObject<FuzzyDiffTemperatureTypes>(fuzzyDiff, diffTemperatureValue, this));
                 }
             }
 
@@ -174,56 +180,47 @@ namespace HeatFuzzy.Logic
                         continue;
                     }
                     var diffTemperatureValue = GetFuzzyDegreeByValue(fuzzyTemperatureChangeType, InsideTemperatureChangePerSecond);
-                    _fuzzyTemperatureChangeObjects.Add(new FuzzyObject<FuzzyTemperatureChangeTypes>(fuzzyTemperatureChangeType, diffTemperatureValue));
+                    _fuzzyTemperatureChangeObjects.Add(new FuzzyObject<FuzzyTemperatureChangeTypes>(fuzzyTemperatureChangeType, diffTemperatureValue, this));
                 }
             }
         }
 
         private void Implication()
         {
-            // ToDo: Think about to make that more fluent ...
+            var conditionResults = new List<FuzzyObject<FuzzyRadiatorControlChangeTypes>>()
+            {
+                If(FuzzyDiffTemperatureTypes.IsMuchColder)
+                .Then(FuzzyRadiatorControlChangeTypes.Open),
 
+                If(FuzzyDiffTemperatureTypes.IsMuchWarmer)
+                .Then(FuzzyRadiatorControlChangeTypes.Close),
+
+                If(FuzzyDiffTemperatureTypes.IsLitleColder)
+                .And(FuzzyTemperatureChangeTypes.GetFastWarmer)
+                .Then(FuzzyRadiatorControlChangeTypes.MoreClose),
+
+                If(FuzzyDiffTemperatureTypes.IsLitleWarmer)
+                .And(FuzzyTemperatureChangeTypes.GetFastColder)
+                .Then(FuzzyRadiatorControlChangeTypes.MoreOpen),
+
+                If(FuzzyDiffTemperatureTypes.IsColder)
+                .And(FuzzyTemperatureChangeTypes.GetColder)
+                .Then(FuzzyRadiatorControlChangeTypes.MoreOpen),
+
+                If(FuzzyDiffTemperatureTypes.IsWarmer)
+                .And(FuzzyTemperatureChangeTypes.GetWarmer)
+                .Then(FuzzyRadiatorControlChangeTypes.MoreClose)
+            };
+    
             lock (_fuzzyRadiatorControlChangeObjects)
             {
                 _fuzzyRadiatorControlChangeObjects.Clear();
-                // If it's much colder the radiator control has to open
-                double muchColderDegree = GetDegree(FuzzyDiffTemperatureTypes.IsMuchColder);
-                if (muchColderDegree > 0.0)
+                foreach(var conditionResult in conditionResults)
                 {
-                    _fuzzyRadiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.Open, muchColderDegree));
-                }
-                // If it's much warmer the radiator control has to close
-                double muchWarmerDegree = GetDegree(FuzzyDiffTemperatureTypes.IsMuchWarmer);
-                if (muchWarmerDegree > 0.0)
-                {
-                    _fuzzyRadiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.Close, muchWarmerDegree));
-                }
-                // If it's only litle colder AND the temperature get fast warmer THEN the radiator has to more close
-                var litleColderAndFastWarmerDegree = GetAndDegree(FuzzyDiffTemperatureTypes.IsLitleColder, FuzzyTemperatureChangeTypes.GetFastWarmer);
-                if (litleColderAndFastWarmerDegree > 0.0)
-                {
-                    _fuzzyRadiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreClose, litleColderAndFastWarmerDegree));
-                }
-
-                // If it's only litle warmer AND the temperature get fast colder THEN the radiator has to more open
-                var litleWarmerAndFastColderDegree = GetAndDegree(FuzzyDiffTemperatureTypes.IsLitleWarmer, FuzzyTemperatureChangeTypes.GetFastColder);
-                if (litleWarmerAndFastColderDegree > 0.0)
-                {
-                    _fuzzyRadiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreOpen, litleWarmerAndFastColderDegree));
-                }
-
-                // IF it's colder AND the temperature get colder THEN the radiator has to more open
-                var colderAndgetColderDegree = GetAndDegree(FuzzyDiffTemperatureTypes.IsColder, FuzzyTemperatureChangeTypes.GetColder);
-                if (colderAndgetColderDegree > 0.0)
-                {
-                    _fuzzyRadiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreOpen, colderAndgetColderDegree));
-                }
-
-                // IF it's warmer AND the temperature get warmer THEN the radiator has to more close
-                var warmerAndGetWarmerDegree = GetAndDegree(FuzzyDiffTemperatureTypes.IsWarmer, FuzzyTemperatureChangeTypes.GetWarmer);
-                if (warmerAndGetWarmerDegree > 0.0)
-                {
-                    _fuzzyRadiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreClose, warmerAndGetWarmerDegree));
+                    if (conditionResult.Degree > 0)
+                    {
+                        _fuzzyRadiatorControlChangeObjects.Add(conditionResult);
+                    }
                 }
             }
             OutputChanged?.Invoke(this, EventArgs.Empty);
