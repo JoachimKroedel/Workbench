@@ -1,10 +1,14 @@
-﻿namespace HeatFuzzy.Logic
+﻿using System;
+
+namespace HeatFuzzy.Logic
 {
     public class BinaryHeaterLogic : BaseNotifyPropertyChanged, ILogic
     {
         private bool _switchHeaterOn;
         private double _insideTemperature;
         private double _desiredTemperature;
+
+        public event EventHandler<EventArgs> OutputChanged;
 
         public double DesiredTemperature
         {
@@ -48,9 +52,15 @@
             }
         }
 
+        public bool IsColder
+        {
+            get { return DesiredTemperature > InsideTemperature; }
+        }
+
         public void CalculateOutput()
         {
-            SwitchHeaterOn = DesiredTemperature > InsideTemperature;
+            SwitchHeaterOn = IsColder;
+            OutputChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

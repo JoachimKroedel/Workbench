@@ -23,7 +23,7 @@ namespace HeatFuzzy.Logic
         private readonly Dictionary<FuzzyTemperatureChangeTypes, IList<Point>> _fuzzyTemperatureChangeCurvePoints = new Dictionary<FuzzyTemperatureChangeTypes, IList<Point>>();
         private readonly Dictionary<FuzzyRadiatorControlChangeTypes, IList<Point>> _fuzzyRadiatorControlChangeCurvePoints = new Dictionary<FuzzyRadiatorControlChangeTypes, IList<Point>>();
 
-        public event EventHandler<EventArgs> FuzzyOutputChanged;
+        public event EventHandler<EventArgs> OutputChanged;
 
         public FuzzyHeaterLogic()
         {
@@ -226,7 +226,7 @@ namespace HeatFuzzy.Logic
                     _fuzzyRadiatorControlChangeObjects.Add(new FuzzyObject<FuzzyRadiatorControlChangeTypes>(FuzzyRadiatorControlChangeTypes.MoreClose, warmerAndGetWarmerDegree));
                 }
             }
-            FuzzyOutputChanged?.Invoke(this, EventArgs.Empty);
+            OutputChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Defuzzification()

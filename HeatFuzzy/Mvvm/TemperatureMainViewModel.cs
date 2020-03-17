@@ -13,37 +13,41 @@ namespace HeatFuzzy.Mvvm
 {
     public class TemperatureMainViewModel : BaseNotifyPropertyChanged
     {
-        private readonly SimulatorOfTemperatures _temperatureSimulator;
+        private readonly double _maximumRangeForTimeAxis = 300;
+        private readonly SimulatorOfTemperatures _simulator;
         private readonly BinaryHeaterLogic _binaryHeaterLogic;
         private readonly FuzzyHeaterLogic _fuzzyHeaterLogic;
 
         private bool _playSimulation;
         private bool _binaryLogicSelected;
         private bool _fuzzyLogicSelected;
+        private double _minimumTimeOnAxis = 0;
+        private double _maximumTimeOnAxis = 100;
 
         public TemperatureMainViewModel()
         {
             SimulationFactors = new List<int>() { 1, 2, 5, 10, 20, 50, 100 };
             Temperature = new TemperatureDto();
-            _temperatureSimulator = new SimulatorOfTemperatures(Temperature);
+            _simulator = new SimulatorOfTemperatures(Temperature);
             _binaryHeaterLogic = new BinaryHeaterLogic();
             _fuzzyHeaterLogic = new FuzzyHeaterLogic();
 
-            _temperatureSimulator.SimulationTimeFactor = SimulationFactors.First();
+            _simulator.SimulationTimeFactor = SimulationFactors.First();
 
-            _temperatureSimulator.PropertyChanged += TemperatureSimulator_PropertyChanged;
+            _simulator.PropertyChanged += Simulator_PropertyChanged;
             Temperature.PropertyChanged += Temperature_PropertyChanged;
-            _fuzzyHeaterLogic.FuzzyOutputChanged += FuzzyHeaterLogic_FuzzyOutputChanged;
+            _binaryHeaterLogic.OutputChanged += BinaryHeaterLogic_OutputChanged;
+            _fuzzyHeaterLogic.OutputChanged += FuzzyHeaterLogic_OutputChanged;
 
-            BinaryLogicSelected = false;
+            BinaryLogicSelected = true;
 
             Temperature.OutsideTemperature = 10;
             Temperature.InsideTemperature = 20;
             Temperature.DesiredTemperature = 25;
 
-            FuzzyLogicSelected = true;
+            FuzzyLogicSelected = false;
 
-            foreach(var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchColder))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchColder))
             {
                 IsMuchColderPoints.Add(new DataPoint(point.X, point.Y));
             }
@@ -126,12 +130,12 @@ namespace HeatFuzzy.Mvvm
 
         public double RadiatorControl
         {
-            get { return _temperatureSimulator.RadiatorControl; }
+            get { return _simulator.RadiatorControl; }
             set
             {
-                if (AreValuesDifferent(value, _temperatureSimulator.RadiatorControl))
+                if (AreValuesDifferent(value, _simulator.RadiatorControl))
                 {
-                    _temperatureSimulator.RadiatorControl = value;
+                    _simulator.RadiatorControl = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -139,12 +143,12 @@ namespace HeatFuzzy.Mvvm
 
         public double RadiatorControlChange
         {
-            get { return _temperatureSimulator.RadiatorControlChange; }
+            get { return _simulator.RadiatorControlChange; }
         }
 
         public double InsideTemperatureChangePerSecond
         {
-            get { return _temperatureSimulator.InsideTemperatureChangePerSecond; }
+            get { return _simulator.InsideTemperatureChangePerSecond; }
         }
 
         public List<int> SimulationFactors { get; }
@@ -158,13 +162,13 @@ namespace HeatFuzzy.Mvvm
                 {
                     _binaryLogicSelected = value;
                     NotifyPropertyChanged();
-                    if (_binaryLogicSelected && _temperatureSimulator.HeaterLogic != _binaryHeaterLogic)
+                    if (_binaryLogicSelected && _simulator.HeaterLogic != _binaryHeaterLogic)
                     {
-                        _temperatureSimulator.HeaterLogic = _binaryHeaterLogic;
+                        _simulator.HeaterLogic = _binaryHeaterLogic;
                     }
-                    else if (!_binaryLogicSelected && _temperatureSimulator.HeaterLogic == _binaryHeaterLogic)
+                    else if (!_binaryLogicSelected && _simulator.HeaterLogic == _binaryHeaterLogic)
                     {
-                        _temperatureSimulator.HeaterLogic = null;
+                        _simulator.HeaterLogic = null;
                     }
                 }
             }
@@ -179,13 +183,13 @@ namespace HeatFuzzy.Mvvm
                 {
                     _fuzzyLogicSelected = value;
                     NotifyPropertyChanged();
-                    if (_fuzzyLogicSelected && _temperatureSimulator.HeaterLogic != _fuzzyHeaterLogic)
+                    if (_fuzzyLogicSelected && _simulator.HeaterLogic != _fuzzyHeaterLogic)
                     {
-                        _temperatureSimulator.HeaterLogic = _fuzzyHeaterLogic;
+                        _simulator.HeaterLogic = _fuzzyHeaterLogic;
                     }
-                    else if (!_fuzzyLogicSelected && _temperatureSimulator.HeaterLogic == _fuzzyHeaterLogic)
+                    else if (!_fuzzyLogicSelected && _simulator.HeaterLogic == _fuzzyHeaterLogic)
                     {
-                        _temperatureSimulator.HeaterLogic = null;
+                        _simulator.HeaterLogic = null;
                     }
                 }
             }
@@ -193,12 +197,12 @@ namespace HeatFuzzy.Mvvm
 
         public int SelectedSimulationFactor
         {
-            get { return _temperatureSimulator.SimulationTimeFactor; }
+            get { return _simulator.SimulationTimeFactor; }
             set
             {
-                if (SimulationFactors.Contains(value) && _temperatureSimulator.SimulationTimeFactor != value)
+                if (SimulationFactors.Contains(value) && _simulator.SimulationTimeFactor != value)
                 {
-                    _temperatureSimulator.SimulationTimeFactor = value;
+                    _simulator.SimulationTimeFactor = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -215,7 +219,7 @@ namespace HeatFuzzy.Mvvm
                 if (value != _playSimulation)
                 {
                     _playSimulation = value;
-                    _temperatureSimulator.PlaySimulation(_playSimulation);
+                    _simulator.PlaySimulation(_playSimulation);
                     NotifyPropertyChanged();
                 }
             }
@@ -223,7 +227,7 @@ namespace HeatFuzzy.Mvvm
 
         public DateTime SimulationTime
         {
-            get { return _temperatureSimulator.SimulationTime; }
+            get { return _simulator.SimulationTime; }
         }
 
         public IList<DataPoint> IsMuchColderPoints { get; } = new List<DataPoint>();
@@ -233,20 +237,90 @@ namespace HeatFuzzy.Mvvm
         public IList<DataPoint> IsWarmerPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> IsMuchWarmerPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualDiffPoints { get; private set; } = new ObservableCollection<DataPoint>();
-        
+
         public IList<DataPoint> GettingFastColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> GettingColderPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> GettingWarmerPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> GettingFastWarmerPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualChangesPoints { get; private set; } = new ObservableCollection<DataPoint>();
-        
+
         public IList<DataPoint> RadiatorControlChangeMoreClosedPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> RadiatorControlChangeLitleMoreClosedPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> RadiatorControlChangeLitleMoreOpendPoints { get; } = new List<DataPoint>();
         public IList<DataPoint> RadiatorControlChangeMoreOpendPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualRadiatorControlChangePoints { get; private set; } = new ObservableCollection<DataPoint>();
 
-        private void FuzzyHeaterLogic_FuzzyOutputChanged(object sender, EventArgs e)
+        public ObservableCollection<DataPoint> OutsideTemperatureTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
+        public ObservableCollection<DataPoint> InsideTemperatureTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
+        public ObservableCollection<DataPoint> DesiredTemperatureTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
+        public ObservableCollection<DataPoint> RadiatorTemperatureTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
+        public ObservableCollection<DataPoint> RadiatorControlTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
+
+        public double MinimumTimeOnAxis
+        {
+            get
+            {
+                return _minimumTimeOnAxis;
+            }
+            set
+            {
+                if (AreValuesDifferent(_minimumTimeOnAxis, value))
+                {
+                    _minimumTimeOnAxis = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double MaximumTimeOnAxis
+        {
+            get
+            {
+                return _maximumTimeOnAxis;
+            }
+            set
+            {
+                if (AreValuesDifferent(_maximumTimeOnAxis, value))
+                {
+                    _maximumTimeOnAxis = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double IsColder
+        {
+            get
+            {
+                return _binaryHeaterLogic.IsColder ? 100.0 : 0.0;
+            }
+        }
+
+        public double IsWarmer
+        {
+            get
+            {
+                return _binaryHeaterLogic.IsColder ? 0.0 : 100.0;
+            }
+        }
+
+        public double IsRadiatorFullOpen
+        {
+            get
+            {
+                return _binaryHeaterLogic.SwitchHeaterOn ? 100.0 : 0.0;
+            }
+        }
+
+        public double IsRadiatorFullClose
+        {
+            get
+            {
+                return _binaryHeaterLogic.SwitchHeaterOn ? 0.0 : 100.0;
+            }
+        }
+
+        private void FuzzyHeaterLogic_OutputChanged(object sender, EventArgs e)
         {
             NotifyPropertyChanged(nameof(IsMuchColderPercentage));
             NotifyPropertyChanged(nameof(IsColderPercentage));
@@ -266,25 +340,61 @@ namespace HeatFuzzy.Mvvm
             NotifyPropertyChanged(nameof(ResultIsWarmerAndGetWarmerPercentage));
         }
 
-        private void TemperatureSimulator_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void BinaryHeaterLogic_OutputChanged(object sender, EventArgs e)
+        {
+            NotifyPropertyChanged(nameof(IsWarmer));
+            NotifyPropertyChanged(nameof(IsColder));
+            NotifyPropertyChanged(nameof(IsRadiatorFullClose));
+            NotifyPropertyChanged(nameof(IsRadiatorFullOpen));
+        }
+
+        private void Simulator_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
-                case nameof(_temperatureSimulator.SimulationTime):
+                case nameof(_simulator.SimulationTime):
                     NotifyPropertyChanged(nameof(SimulationTime));
+                    Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => AddActualValuesToTrackPoints()));
                     break;
-                case nameof(_temperatureSimulator.InsideTemperatureChangePerSecond):
+                case nameof(_simulator.InsideTemperatureChangePerSecond):
                     NotifyPropertyChanged(nameof(InsideTemperatureChangePerSecond));
                     Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualChangesPoints()));
                     break;
-                case nameof(_temperatureSimulator.RadiatorControl):
+                case nameof(_simulator.RadiatorControl):
                     NotifyPropertyChanged(nameof(RadiatorControl));
                     break;
-                case nameof(_temperatureSimulator.RadiatorControlChange):
+                case nameof(_simulator.RadiatorControlChange):
                     NotifyPropertyChanged(nameof(RadiatorControlChange));
                     Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualRadiatorControlChangePoints()));
                     break;
             }
+        }
+
+        private void AddActualValuesToTrackPoints()
+        {
+            double overallSeconds = (_simulator.SimulationTime - DateTime.MinValue).TotalSeconds;
+            if (_maximumTimeOnAxis < overallSeconds)
+            {
+                MaximumTimeOnAxis = overallSeconds;
+            }
+            if (_maximumTimeOnAxis - _minimumTimeOnAxis > _maximumRangeForTimeAxis)
+            {
+                MinimumTimeOnAxis = _maximumTimeOnAxis - _maximumRangeForTimeAxis;
+            }
+            while (OutsideTemperatureTrackPoints.FirstOrDefault().X < _minimumTimeOnAxis)
+            {
+                OutsideTemperatureTrackPoints.RemoveAt(0);
+                InsideTemperatureTrackPoints.RemoveAt(0);
+                DesiredTemperatureTrackPoints.RemoveAt(0);
+                RadiatorTemperatureTrackPoints.RemoveAt(0);
+                RadiatorControlTrackPoints.RemoveAt(0);
+            }
+            OutsideTemperatureTrackPoints.Add(new DataPoint(overallSeconds, Temperature.OutsideTemperature));
+            InsideTemperatureTrackPoints.Add(new DataPoint(overallSeconds, Temperature.InsideTemperature));
+            DesiredTemperatureTrackPoints.Add(new DataPoint(overallSeconds, Temperature.DesiredTemperature));
+            RadiatorTemperatureTrackPoints.Add(new DataPoint(overallSeconds, Temperature.RadiatorTemperature));
+
+            RadiatorControlTrackPoints.Add(new DataPoint(overallSeconds, RadiatorControl));
         }
 
         private void Temperature_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -293,7 +403,10 @@ namespace HeatFuzzy.Mvvm
             {
                 case nameof(Temperature.InsideTemperature):
                 case nameof(Temperature.DesiredTemperature):
-                    Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualDiffPoints()));
+                    if (_fuzzyLogicSelected)
+                    {
+                        Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualDiffPoints()));
+                    }
                     break;
             }
         }
@@ -311,7 +424,7 @@ namespace HeatFuzzy.Mvvm
             ActualChangesPoints.Add(new DataPoint(InsideTemperatureChangePerSecond, 0.0));
             ActualChangesPoints.Add(new DataPoint(InsideTemperatureChangePerSecond, 1.0));
         }
-        
+
         private void SetActualRadiatorControlChangePoints()
         {
             ActualRadiatorControlChangePoints.Clear();
@@ -326,7 +439,7 @@ namespace HeatFuzzy.Mvvm
                 Temperature.OutsideTemperature = -10;
                 Temperature.InsideTemperature = 15;
                 Temperature.RadiatorTemperature = 55;
-                _temperatureSimulator.RadiatorControl = 2.5;
+                _simulator.RadiatorControl = 2.5;
             }
         }
     }

@@ -28,7 +28,7 @@ namespace HeatFuzzy.Logic
             Temperature = temperature;
 
             _simulationTimer.Elapsed += SimulationTimer_Elapsed;
-            _simulationTimer.Interval = 50;
+            _simulationTimer.Interval = 100;
         }
 
         public ILogic HeaterLogic { get; set; }
