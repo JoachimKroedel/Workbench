@@ -60,8 +60,8 @@
     <Compile Include="BaseNotifyPropertyChanged.cs" />
     <Compile Include="Logic\BinaryHeaterLogic.cs" />
     <Compile Include="Logic\IFuzzyLogic.cs" />
+    <Compile Include="Mvvm\Converters\BoolToVisbilityConverter.cs" />
     <Compile Include="Mvvm\Converters\DoubleToStringConverter.cs" />
-    <Compile Include="Mvvm\Converters\EnumToStringConverter.cs" />
     <Compile Include="Mvvm\Converters\TimeToStringConverter.cs" />
     <Compile Include="Mvvm\Converters\IntToStringConverter.cs" />
     <Compile Include="Logic\FuzzyHeaterLogic.cs" />
@@ -71,7 +71,7 @@
     <Compile Include="Logic\Enums\FuzzyTemperatureChangeTypes.cs" />
     <Compile Include="Logic\ILogic.cs" />
     <Compile Include="Logic\SimulatorOfTemperatures.cs" />
-    <Page Include="MainWindow.xaml">
+    <Page Include="TemperatureView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -80,13 +80,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mvvm\Converters\DoubleToIntConverter.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="TemperatureView.xaml.cs">
+      <DependentUpon>TemperatureView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mvvm\TemperatureMainViewModel.cs" />
+    <Compile Include="Mvvm\TemperatureViewModel.cs" />
     <Compile Include="Mvvm\TemperatureDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

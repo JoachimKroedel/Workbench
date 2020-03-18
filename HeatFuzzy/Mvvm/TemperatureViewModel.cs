@@ -11,7 +11,7 @@ using System.Windows.Threading;
 
 namespace HeatFuzzy.Mvvm
 {
-    public class TemperatureMainViewModel : BaseNotifyPropertyChanged
+    public class TemperatureViewModel : BaseNotifyPropertyChanged
     {
         private readonly double _maximumRangeForTimeAxis = 300;
         private readonly SimulatorOfTemperatures _simulator;
@@ -24,7 +24,7 @@ namespace HeatFuzzy.Mvvm
         private double _minimumTimeOnAxis = 0;
         private double _maximumTimeOnAxis = 100;
 
-        public TemperatureMainViewModel()
+        public TemperatureViewModel()
         {
             SimulationFactors = new List<int>() { 1, 2, 5, 10, 20, 50, 100 };
             Temperature = new TemperatureDto();
@@ -39,13 +39,12 @@ namespace HeatFuzzy.Mvvm
             _binaryHeaterLogic.OutputChanged += BinaryHeaterLogic_OutputChanged;
             _fuzzyHeaterLogic.OutputChanged += FuzzyHeaterLogic_OutputChanged;
 
-            BinaryLogicSelected = true;
-
             Temperature.OutsideTemperature = 10;
             Temperature.InsideTemperature = 20;
             Temperature.DesiredTemperature = 25;
 
-            FuzzyLogicSelected = false;
+            BinaryLogicSelected = false;
+            FuzzyLogicSelected = true;
 
             foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchColder))
             {
@@ -170,6 +169,7 @@ namespace HeatFuzzy.Mvvm
                     {
                         _simulator.HeaterLogic = null;
                     }
+                    BinaryHeaterLogic_OutputChanged(this, EventArgs.Empty);
                 }
             }
         }
@@ -191,6 +191,7 @@ namespace HeatFuzzy.Mvvm
                     {
                         _simulator.HeaterLogic = null;
                     }
+                    FuzzyHeaterLogic_OutputChanged(this, EventArgs.Empty);
                 }
             }
         }
@@ -292,7 +293,7 @@ namespace HeatFuzzy.Mvvm
         {
             get
             {
-                return _binaryHeaterLogic.IsColder ? 100.0 : 0.0;
+                return BinaryLogicSelected ? _binaryHeaterLogic.IsColder ? 100.0 : 0.0 : 0.0;
             }
         }
 
@@ -300,7 +301,7 @@ namespace HeatFuzzy.Mvvm
         {
             get
             {
-                return _binaryHeaterLogic.IsColder ? 0.0 : 100.0;
+                return BinaryLogicSelected ? _binaryHeaterLogic.IsColder ? 0.0 : 100.0 : 0.0;
             }
         }
 
@@ -308,7 +309,7 @@ namespace HeatFuzzy.Mvvm
         {
             get
             {
-                return _binaryHeaterLogic.SwitchHeaterOn ? 100.0 : 0.0;
+                return BinaryLogicSelected ? _binaryHeaterLogic.SwitchHeaterOn ? 100.0 : 0.0 : 0.0;
             }
         }
 
@@ -316,7 +317,7 @@ namespace HeatFuzzy.Mvvm
         {
             get
             {
-                return _binaryHeaterLogic.SwitchHeaterOn ? 0.0 : 100.0;
+                return BinaryLogicSelected ? _binaryHeaterLogic.SwitchHeaterOn ? 0.0 : 100.0 : 0.0;
             }
         }
 
@@ -403,10 +404,7 @@ namespace HeatFuzzy.Mvvm
             {
                 case nameof(Temperature.InsideTemperature):
                 case nameof(Temperature.DesiredTemperature):
-                    if (_fuzzyLogicSelected)
-                    {
-                        Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualDiffPoints()));
-                    }
+                    Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualDiffPoints()));
                     break;
             }
         }

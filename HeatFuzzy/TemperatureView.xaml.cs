@@ -3,11 +3,11 @@
 namespace HeatFuzzy
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for TemperatureView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class TemperatureView : Window
     {
-        public MainWindow()
+        public TemperatureView()
         {
             InitializeComponent();
         }
