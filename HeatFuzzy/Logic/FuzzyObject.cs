@@ -5,12 +5,14 @@ namespace HeatFuzzy.Logic
 {
     public class FuzzyObject<T> where T : Enum
     {
-        // ToDo: use Interface like IFuzzyLogic
-        private readonly FuzzyHeaterLogic _fuzzyLogic;
+        private readonly IFuzzyLogic _fuzzyLogic;
 
-        // ToDo: use Interface like IFuzzyLogic
-        public FuzzyObject(T value, double degree, FuzzyHeaterLogic fuzzyLogic)
+        public FuzzyObject(T value, double degree, IFuzzyLogic fuzzyLogic)
         {
+            if (fuzzyLogic == null)
+            {
+                throw new ArgumentNullException(nameof(fuzzyLogic));
+            }
             Value = value;
             Degree = degree;
             _fuzzyLogic = fuzzyLogic;

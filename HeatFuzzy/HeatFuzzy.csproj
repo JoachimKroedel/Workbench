@@ -59,6 +59,7 @@
     </ApplicationDefinition>
     <Compile Include="BaseNotifyPropertyChanged.cs" />
     <Compile Include="Logic\BinaryHeaterLogic.cs" />
+    <Compile Include="Logic\IFuzzyLogic.cs" />
     <Compile Include="Mvvm\Converters\DoubleToStringConverter.cs" />
     <Compile Include="Mvvm\Converters\EnumToStringConverter.cs" />
     <Compile Include="Mvvm\Converters\TimeToStringConverter.cs" />

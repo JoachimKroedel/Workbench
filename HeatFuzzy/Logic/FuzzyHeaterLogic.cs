@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace HeatFuzzy.Logic
 {
-    public class FuzzyHeaterLogic : BaseNotifyPropertyChanged, ILogic
+    public class FuzzyHeaterLogic : BaseNotifyPropertyChanged, IFuzzyLogic
     {
         public FuzzyObject<Enum> If(Enum value)
         {
@@ -282,9 +282,9 @@ namespace HeatFuzzy.Logic
             return GetAndDegree(GetDegree(enumTypeA), GetDegree(enumTypeB));
         }
 
-        public double GetAndDegree(double a, double b)
+        public double GetAndDegree(double degreeA, double degreeB)
         {
-            return Math.Min(a, b);
+            return Math.Min(degreeA, degreeB);
         }
 
         private double GetValueByFuzzyDegree(FuzzyRadiatorControlChangeTypes fuzzyRadiatorControlChangeType, double degree)
