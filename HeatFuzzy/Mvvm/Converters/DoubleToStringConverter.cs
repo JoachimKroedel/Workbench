@@ -8,7 +8,7 @@ namespace HeatFuzzy.Mvvm.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string result = ((double)value).ToString();
+            string result = ((double)value).ToString("#0.0");
             return result;
         }
 

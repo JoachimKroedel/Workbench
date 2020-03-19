@@ -15,7 +15,6 @@
         <mvvm:TemperatureViewModel />
     </Window.DataContext>
     <Window.Resources>
-        <converters:DoubleToIntConverter x:Key="DoubleToIntConverterKey"></converters:DoubleToIntConverter>
         <converters:DoubleToStringConverter x:Key="DoubleToStringConverterKey"></converters:DoubleToStringConverter>
         <converters:BoolToVisbilityConverter x:Key="BoolToVisbilityConverterKey"></converters:BoolToVisbilityConverter>
         <converters:IntToStringConverter x:Key="IntToStringConverterKey"></converters:IntToStringConverter>
@@ -45,20 +44,20 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Content="Select kind of logic:" />
+                <Label Grid.Column="0" Grid.Row="0" Content="Kind of logic:" HorizontalContentAlignment="Right" />
             <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical">
                     <RadioButton Content="No logic" VerticalAlignment="Center" Margin="5" />
                     <RadioButton Content="Binary logic" VerticalAlignment="Center" Margin="5" IsChecked="{Binding BinaryLogicSelected}" />
                     <RadioButton Content="Fuzzy logic" VerticalAlignment="Center" Margin="5" IsChecked="{Binding FuzzyLogicSelected}" />
                 </StackPanel>
 
-            <Label Grid.Column="0" Grid.Row="1" Content="Time factor:" />
+            <Label Grid.Column="0" Grid.Row="1" Content="Time factor:" HorizontalContentAlignment="Right" />
             <ComboBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left"  ItemsSource="{Binding SimulationFactors, Converter={StaticResource IntToStringConverterKey}}" SelectedItem="{Binding SelectedSimulationFactor, Converter={StaticResource IntToStringConverterKey}}" Width="50"/>
 
-            <Label Grid.Column="0" Grid.Row="2" Content="Simulation time:" />
+            <Label Grid.Column="0" Grid.Row="2" Content="Simulation time:" HorizontalContentAlignment="Right" />
             <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SimulationTime, Converter={StaticResource TimeToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
 
-            <CheckBox Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Content="Play simulation" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" IsChecked="{Binding PlaySimulation}" />
+            <CheckBox Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Content="Play simulation" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" IsChecked="{Binding PlaySimulation}" FontSize="20" VerticalContentAlignment="Center" />
         </Grid>
 
         <!-- Temperature slider -->
@@ -78,21 +77,21 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4"  Content="Temperatures [°C]" HorizontalAlignment="Center" />
-            <Label Grid.Column="0" Grid.Row="1"  Content="Outside" />
-            <TextBlock x:Name="txtTempOutside"  Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempOutside, Path=Value, Converter={StaticResource DoubleToIntConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4"  Content="Temperatures [°C]" HorizontalAlignment="Center" Background="Silver" />
+            <Label Grid.Column="0" Grid.Row="1"  Content="Outside" Background="Silver" />
+            <TextBlock x:Name="txtTempOutside"  Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempOutside, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
             <Slider x:Name="sliderTempOutside" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="-20" Maximum="50" SmallChange="1" LargeChange="5" TickPlacement="TopLeft" TickFrequency="5" Value="{Binding Temperature.OutsideTemperature}" Margin="5" />
 
-            <Label Grid.Column="1" Grid.Row="1"  Content="Inside" />
-            <TextBlock x:Name="txtTempInside"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempInside, Path=Value, Converter={StaticResource DoubleToIntConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+            <Label Grid.Column="1" Grid.Row="1"  Content="Inside" Background="Silver" />
+            <TextBlock x:Name="txtTempInside"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempInside, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
             <Slider x:Name="sliderTempInside" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="-20" Maximum="50" SmallChange="1" LargeChange="5" TickPlacement="TopLeft" TickFrequency="5" Value="{Binding Temperature.InsideTemperature}" Margin="5" />
 
-            <Label Grid.Column="2" Grid.Row="1"  Content="Desired" />
-            <TextBlock x:Name="txtTempDesired"  Grid.Column="2" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempDesired, Path=Value, Converter={StaticResource DoubleToIntConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+            <Label Grid.Column="2" Grid.Row="1"  Content="Desired" Background="Silver" />
+            <TextBlock x:Name="txtTempDesired"  Grid.Column="2" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempDesired, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
             <Slider x:Name="sliderTempDesired" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="-20" Maximum="50" SmallChange="1" LargeChange="5" TickPlacement="TopLeft" TickFrequency="5" Value="{Binding Temperature.DesiredTemperature}" Margin="5" />
 
-            <Label Grid.Column="3" Grid.Row="1"  Content="Radiator" />
-            <TextBlock x:Name="txtTempRadiator"  Grid.Column="3" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempRadiator, Path=Value, Converter={StaticResource DoubleToIntConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+            <Label Grid.Column="3" Grid.Row="1"  Content="Radiator" Background="Silver" />
+            <TextBlock x:Name="txtTempRadiator"  Grid.Column="3" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempRadiator, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
             <Grid Grid.Column="3" Grid.Row="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -101,9 +100,12 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Slider x:Name="sliderTempRadiator" Grid.Row="0" HorizontalAlignment="Center" Orientation="Vertical" Minimum="0" Maximum="100" SmallChange="1" LargeChange="5" TickPlacement="TopLeft" TickFrequency="5" Value="{Binding Temperature.RadiatorTemperature}" Margin="5" />
-                <Label Grid.Row="1"  Content="Controller" />
-                <TextBlock Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderControlRadiator, Path=Value, Converter={StaticResource DoubleToIntConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
-                <Slider x:Name="sliderControlRadiator" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="0" Maximum="5" SmallChange="0.1" LargeChange="1" TickPlacement="TopLeft" TickFrequency="1" Value="{Binding RadiatorControl}" Height="100" Margin="5" />
+                <StackPanel Grid.Row="1"  Orientation="Vertical" Background="Silver">
+                    <Label Content="Heating" />
+                    <Label Content="Control" />
+                </StackPanel>
+                <TextBlock Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderHeatingControl, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+                <Slider x:Name="sliderHeatingControl" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="0" Maximum="5" SmallChange="0.1" LargeChange="1" TickPlacement="TopLeft" TickFrequency="1" Value="{Binding HeatingControl}" Height="100" Margin="5" />
             </Grid>
 
         </Grid>
@@ -116,8 +118,8 @@
             <!-- Tracking data -->
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="3*" />
                     <RowDefinition Height="2*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <oxy:Plot Grid.Row="0" Title="Record of temperatures" Background="WhiteSmoke" LegendPosition="RightTop" >
                     <oxy:Plot.Axes>
@@ -131,114 +133,19 @@
                         <oxy:LineSeries ItemsSource="{Binding RadiatorTemperatureTrackPoints}" Title="Radiator" Color="Red" StrokeThickness="1"/>
                     </oxy:Plot.Series>
                 </oxy:Plot>
-                <oxy:Plot Grid.Row="1" Title="Record of radiator controller" Background="WhiteSmoke" LegendPosition="RightTop" >
+                <oxy:Plot Grid.Row="1" Title="Record of heating control setting" Background="WhiteSmoke" LegendPosition="RightTop" >
                     <oxy:Plot.Axes>
                         <oxy:LinearAxis Position="Left" Minimum="0" Maximum="6" />
                         <oxy:LinearAxis Position="Bottom" Minimum="{Binding MinimumTimeOnAxis}" Maximum="{Binding MaximumTimeOnAxis}" />
                     </oxy:Plot.Axes>
                     <oxy:Plot.Series>
-                        <oxy:LineSeries ItemsSource="{Binding RadiatorControlTrackPoints}"  Title="Radiator control" Color="Green" StrokeThickness="1" />
+                        <oxy:LineSeries ItemsSource="{Binding HeatingControlTrackPoints}"  Title="Heating control" Color="Green" StrokeThickness="1" />
                     </oxy:Plot.Series>
                 </oxy:Plot>
             </Grid>
 
+            <!-- Logic diagrams and conditions -->
             <TabControl Grid.Row="1">
-                <TabItem Header="Conditons">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <Grid Grid.Row="0" Visibility="{Binding BinaryLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="10" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <Label       Grid.Column="0" Grid.Row="0" Content="If temperature is colder" />
-                            <ProgressBar Grid.Column="1" Grid.Row="0" Value="{Binding IsColder, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="2" Grid.Row="0" Content="then radiator control full open" />
-                            <ProgressBar Grid.Column="3" Grid.Row="0" Value="{Binding IsRadiatorFullOpen, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
-
-                            <Label       Grid.Column="0" Grid.Row="2" Content="If temperature is warmer" />
-                            <ProgressBar Grid.Column="1" Grid.Row="2" Value="{Binding IsWarmer, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="2" Grid.Row="2" Content="then radiator control full close" />
-                            <ProgressBar Grid.Column="3" Grid.Row="2" Value="{Binding IsRadiatorFullClose, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
-                        </Grid>
-
-                        <Grid Grid.Row="1" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="39" />
-                                <ColumnDefinition Width="124"/>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="10" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <!--If it's only litle colder AND the temperature get fast warmer THEN the radiator has to be more close-->
-                            <Label       Grid.Column="0" Grid.Row="0" Content="If temperature litle colder" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="0" Value="{Binding IsLitleColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="3" Grid.Row="0" Content="and temperature get fast warmer" />
-                            <ProgressBar Grid.Column="4" Grid.Row="0" Value="{Binding GetFastWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
-                            <Label       Grid.Column="5" Grid.Row="0" Content="then radiator control more close" />
-                            <ProgressBar Grid.Column="7" Grid.Row="0" Value="{Binding ResultIsLitleColderAndGetFastWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
-                            <!--IF it's warmer AND the temperature get warmer THEN the radiator has to be more close -->
-                            <Label       Grid.Column="0" Grid.Row="1" Content="If temperature warmer" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="1" Value="{Binding IsWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="3" Grid.Row="1" Content="and temperature get warmer" />
-                            <ProgressBar Grid.Column="4" Grid.Row="1" Value="{Binding GetWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="0,5,1,5" />
-                            <Label       Grid.Column="5" Grid.Row="1" Content="then radiator control more close" />
-                            <ProgressBar Grid.Column="7" Grid.Row="1" Value="{Binding ResultIsWarmerAndGetWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
-                            <!--If it's much warmer than radiator control close -->
-                            <Label       Grid.Column="0" Grid.Row="2" Content="If temperature much warmer" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="2" Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="DarkRed" Width="64" Height="16" Margin="1,5,0,5"  />
-                            <Label       Grid.Column="5" Grid.Row="2" Content="then radiator control close" />
-                            <ProgressBar Grid.Column="6" Grid.Row="2" Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="1,5,0,5" />
-
-                            <!--If it's much colder than radiator control open -->
-                            <Label       Grid.Column="0" Grid.Row="4" Content="If temperature much colder" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="4" Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="DarkBlue" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="5" Grid.Row="4" Content="then radiator control open" />
-                            <ProgressBar Grid.Column="6" Grid.Row="4" Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="1,5,0,5" />
-                            <!--IF it's colder AND the temperature get colder THEN the radiator has to be more open -->
-                            <Label       Grid.Column="0" Grid.Row="5" Content="If temperature colder" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="5" Value="{Binding IsColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="3" Grid.Row="5" Content="and temperature get colder" />
-                            <ProgressBar Grid.Column="4" Grid.Row="5" Value="{Binding GetColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="0,5,1,5" />
-                            <Label       Grid.Column="5" Grid.Row="5" Content="then radiator control more open" />
-                            <ProgressBar Grid.Column="7" Grid.Row="5" Value="{Binding ResultIsColderAndGetColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
-                            <!--If it's only litle warmer AND the temperature get fast colder THEN the radiator has to be more open -->
-                            <Label       Grid.Column="0" Grid.Row="6" Content="If temperature litle warmer" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="6" Value="{Binding IsLitleWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="3" Grid.Row="6" Content="and temperature get fast colder" />
-                            <ProgressBar Grid.Column="4" Grid.Row="6" Value="{Binding GetFastColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
-                            <Label       Grid.Column="5" Grid.Row="6" Content="then radiator control more open" />
-                            <ProgressBar Grid.Column="7" Grid.Row="6" Value="{Binding ResultIsLitleWarmerAndGetFastColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
-                        </Grid>
-                    </Grid>
-                </TabItem>
                 <TabItem Header="Diagrams">
                     <Grid Height="200">
                         <Grid.ColumnDefinitions>
@@ -275,23 +182,117 @@
                                 <oxy:LineSeries ItemsSource="{Binding ActualChangesPoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
                             </oxy:Plot.Series>
                         </oxy:Plot>
-                        <oxy:Plot Grid.Column="2" Title="Radiator control change" Background="WhiteSmoke" LegendPosition="RightBottom" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}" >
+                        <oxy:Plot Grid.Column="2" Title="Heating control change" Background="WhiteSmoke" LegendPosition="RightBottom" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}" >
                             <oxy:Plot.Axes>
                                 <oxy:LinearAxis Position="Left" Minimum="0" Maximum="1" IsZoomEnabled="False" />
                                 <oxy:LinearAxis Position="Bottom" Minimum="-0.11" Maximum="0.11" />
                             </oxy:Plot.Axes>
                             <oxy:Plot.Series>
-                                <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMoreClosedPoints}"       StrokeThickness="1" Title="More close"  Color="Blue"/>
-                                <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeLitleMoreClosedPoints}"  StrokeThickness="1" Title="Close"       Color="LightBlue"/>
-                                <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeLitleMoreOpendPoints}"   StrokeThickness="1" Title="Open"        Color="LightSalmon" />
-                                <oxy:LineSeries ItemsSource="{Binding RadiatorControlChangeMoreOpendPoints}"        StrokeThickness="1" Title="More open"   Color="Red"/>
-                                <oxy:LineSeries ItemsSource="{Binding ActualRadiatorControlChangePoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
+                                <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeMoreClosedPoints}"       StrokeThickness="1" Title="More close"  Color="Blue"/>
+                                <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeLitleMoreClosedPoints}"  StrokeThickness="1" Title="Close"       Color="LightBlue"/>
+                                <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeLitleMoreOpendPoints}"   StrokeThickness="1" Title="Open"        Color="LightSalmon" />
+                                <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeMoreOpendPoints}"        StrokeThickness="1" Title="More open"   Color="Red"/>
+                                <oxy:LineSeries ItemsSource="{Binding ActualHeatingControlChangePoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
                             </oxy:Plot.Series>
                         </oxy:Plot>
                     </Grid>
                 </TabItem>
+                <TabItem Header="Conditons">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Visibility="{Binding BinaryLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Label       Grid.Column="0" Grid.Row="0" Content="If temperature is colder" />
+                            <ProgressBar Grid.Column="1" Grid.Row="0" Value="{Binding IsColder, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="1,5,0,5" />
+                            <Label       Grid.Column="2" Grid.Row="0" Content="then heating control full open" />
+                            <ProgressBar Grid.Column="3" Grid.Row="0" Value="{Binding IsHeatingControlFullOpen, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+
+                            <Label       Grid.Column="0" Grid.Row="2" Content="If temperature is warmer" />
+                            <ProgressBar Grid.Column="1" Grid.Row="2" Value="{Binding IsWarmer, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="1,5,0,5" />
+                            <Label       Grid.Column="2" Grid.Row="2" Content="then heating control full close" />
+                            <ProgressBar Grid.Column="3" Grid.Row="2" Value="{Binding IsHeatingControlFullClose, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
+                        </Grid>
+
+                        <Grid Grid.Row="1" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="39" />
+                                <ColumnDefinition Width="124"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Label       Grid.Column="0" Grid.Row="0" Content="If temperature is litle colder" Grid.ColumnSpan="2" />
+                            <ProgressBar Grid.Column="2" Grid.Row="0" Value="{Binding IsLitleColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="1,5,0,5" />
+                            <Label       Grid.Column="3" Grid.Row="0" Content="and temperature get fast warmer" />
+                            <ProgressBar Grid.Column="4" Grid.Row="0" Value="{Binding GetFastWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+                            <Label       Grid.Column="5" Grid.Row="0" Content="then heating control more close" />
+                            <ProgressBar Grid.Column="7" Grid.Row="0" Value="{Binding ResultIsLitleColderAndGetFastWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
+
+                            <Label       Grid.Column="0" Grid.Row="1" Content="If is temperature warmer" Grid.ColumnSpan="2" />
+                            <ProgressBar Grid.Column="2" Grid.Row="1" Value="{Binding IsWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="1,5,0,5" />
+                            <Label       Grid.Column="3" Grid.Row="1" Content="and temperature get warmer" />
+                            <ProgressBar Grid.Column="4" Grid.Row="1" Value="{Binding GetWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="0,5,1,5" />
+                            <Label       Grid.Column="5" Grid.Row="1" Content="then heating control more close" />
+                            <ProgressBar Grid.Column="7" Grid.Row="1" Value="{Binding ResultIsWarmerAndGetWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
+
+                            <Label       Grid.Column="0" Grid.Row="2" Content="If is temperature much warmer" Grid.ColumnSpan="2" />
+                            <ProgressBar Grid.Column="2" Grid.Row="2" Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="DarkRed" Width="64" Height="16" Margin="1,5,0,5"  />
+                            <Label       Grid.Column="5" Grid.Row="2" Content="then heating control close" />
+                            <ProgressBar Grid.Column="6" Grid.Row="2" Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="1,5,0,5" />
+
+
+                            <Label       Grid.Column="0" Grid.Row="4" Content="If is temperature much colder" Grid.ColumnSpan="2" />
+                            <ProgressBar Grid.Column="2" Grid.Row="4" Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="DarkBlue" Width="64" Height="16" Margin="1,5,0,5" />
+                            <Label       Grid.Column="5" Grid.Row="4" Content="then heating control open" />
+                            <ProgressBar Grid.Column="6" Grid.Row="4" Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="1,5,0,5" />
+
+                            <Label       Grid.Column="0" Grid.Row="5" Content="If is temperature colder" Grid.ColumnSpan="2" />
+                            <ProgressBar Grid.Column="2" Grid.Row="5" Value="{Binding IsColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="1,5,0,5" />
+                            <Label       Grid.Column="3" Grid.Row="5" Content="and temperature get colder" />
+                            <ProgressBar Grid.Column="4" Grid.Row="5" Value="{Binding GetColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="0,5,1,5" />
+                            <Label       Grid.Column="5" Grid.Row="5" Content="then heating control more open" />
+                            <ProgressBar Grid.Column="7" Grid.Row="5" Value="{Binding ResultIsColderAndGetColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+
+                            <Label       Grid.Column="0" Grid.Row="6" Content="If is temperature litle warmer" Grid.ColumnSpan="2" />
+                            <ProgressBar Grid.Column="2" Grid.Row="6" Value="{Binding IsLitleWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="1,5,0,5" />
+                            <Label       Grid.Column="3" Grid.Row="6" Content="and temperature get fast colder" />
+                            <ProgressBar Grid.Column="4" Grid.Row="6" Value="{Binding GetFastColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
+                            <Label       Grid.Column="5" Grid.Row="6" Content="then heating control more open" />
+                            <ProgressBar Grid.Column="7" Grid.Row="6" Value="{Binding ResultIsLitleWarmerAndGetFastColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+                        </Grid>
+                    </Grid>
+                </TabItem>
             </TabControl>
-            <!-- Logic conditions -->
         </Grid>
     </Grid>
 </Window>

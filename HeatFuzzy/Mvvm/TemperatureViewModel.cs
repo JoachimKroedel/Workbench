@@ -1,13 +1,15 @@
-﻿using HeatFuzzy.Logic;
-using HeatFuzzy.Logic.Enums;
-using OxyPlot;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
+
+using OxyPlot;
+
+using HeatFuzzy.Logic;
+using HeatFuzzy.Logic.Enums;
 
 namespace HeatFuzzy.Mvvm
 {
@@ -88,21 +90,21 @@ namespace HeatFuzzy.Mvvm
                 GettingFastWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreClose))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.MoreClose))
             {
-                RadiatorControlChangeMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
+                HeatingControlChangeMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.Close))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.Close))
             {
-                RadiatorControlChangeLitleMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
+                HeatingControlChangeLitleMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.Open))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.Open))
             {
-                RadiatorControlChangeLitleMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
+                HeatingControlChangeLitleMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyRadiatorControlChangeTypes.MoreOpen))
+            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.MoreOpen))
             {
-                RadiatorControlChangeMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
+                HeatingControlChangeMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
 
             SetDesignTimeData();
@@ -127,22 +129,22 @@ namespace HeatFuzzy.Mvvm
 
         public TemperatureDto Temperature { get; }
 
-        public double RadiatorControl
+        public double HeatingControl
         {
-            get { return _simulator.RadiatorControl; }
+            get { return _simulator.HeatingControl; }
             set
             {
-                if (AreValuesDifferent(value, _simulator.RadiatorControl))
+                if (AreValuesDifferent(value, _simulator.HeatingControl))
                 {
-                    _simulator.RadiatorControl = value;
+                    _simulator.HeatingControl = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        public double RadiatorControlChange
+        public double HeatingControlChange
         {
-            get { return _simulator.RadiatorControlChange; }
+            get { return _simulator.HeatingControlChange; }
         }
 
         public double InsideTemperatureChangePerSecond
@@ -245,17 +247,17 @@ namespace HeatFuzzy.Mvvm
         public IList<DataPoint> GettingFastWarmerPoints { get; } = new List<DataPoint>();
         public ObservableCollection<DataPoint> ActualChangesPoints { get; private set; } = new ObservableCollection<DataPoint>();
 
-        public IList<DataPoint> RadiatorControlChangeMoreClosedPoints { get; } = new List<DataPoint>();
-        public IList<DataPoint> RadiatorControlChangeLitleMoreClosedPoints { get; } = new List<DataPoint>();
-        public IList<DataPoint> RadiatorControlChangeLitleMoreOpendPoints { get; } = new List<DataPoint>();
-        public IList<DataPoint> RadiatorControlChangeMoreOpendPoints { get; } = new List<DataPoint>();
-        public ObservableCollection<DataPoint> ActualRadiatorControlChangePoints { get; private set; } = new ObservableCollection<DataPoint>();
+        public IList<DataPoint> HeatingControlChangeMoreClosedPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> HeatingControlChangeLitleMoreClosedPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> HeatingControlChangeLitleMoreOpendPoints { get; } = new List<DataPoint>();
+        public IList<DataPoint> HeatingControlChangeMoreOpendPoints { get; } = new List<DataPoint>();
+        public ObservableCollection<DataPoint> ActualHeatingControlChangePoints { get; private set; } = new ObservableCollection<DataPoint>();
 
         public ObservableCollection<DataPoint> OutsideTemperatureTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
         public ObservableCollection<DataPoint> InsideTemperatureTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
         public ObservableCollection<DataPoint> DesiredTemperatureTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
         public ObservableCollection<DataPoint> RadiatorTemperatureTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
-        public ObservableCollection<DataPoint> RadiatorControlTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
+        public ObservableCollection<DataPoint> HeatingControlTrackPoints { get; private set; } = new ObservableCollection<DataPoint>();
 
         public double MinimumTimeOnAxis
         {
@@ -305,7 +307,7 @@ namespace HeatFuzzy.Mvvm
             }
         }
 
-        public double IsRadiatorFullOpen
+        public double IsHeatingControlFullOpen
         {
             get
             {
@@ -313,7 +315,7 @@ namespace HeatFuzzy.Mvvm
             }
         }
 
-        public double IsRadiatorFullClose
+        public double IsHeatingControlFullClose
         {
             get
             {
@@ -345,8 +347,8 @@ namespace HeatFuzzy.Mvvm
         {
             NotifyPropertyChanged(nameof(IsWarmer));
             NotifyPropertyChanged(nameof(IsColder));
-            NotifyPropertyChanged(nameof(IsRadiatorFullClose));
-            NotifyPropertyChanged(nameof(IsRadiatorFullOpen));
+            NotifyPropertyChanged(nameof(IsHeatingControlFullClose));
+            NotifyPropertyChanged(nameof(IsHeatingControlFullOpen));
         }
 
         private void Simulator_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -361,11 +363,11 @@ namespace HeatFuzzy.Mvvm
                     NotifyPropertyChanged(nameof(InsideTemperatureChangePerSecond));
                     Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualChangesPoints()));
                     break;
-                case nameof(_simulator.RadiatorControl):
-                    NotifyPropertyChanged(nameof(RadiatorControl));
+                case nameof(_simulator.HeatingControl):
+                    NotifyPropertyChanged(nameof(HeatingControl));
                     break;
-                case nameof(_simulator.RadiatorControlChange):
-                    NotifyPropertyChanged(nameof(RadiatorControlChange));
+                case nameof(_simulator.HeatingControlChange):
+                    NotifyPropertyChanged(nameof(HeatingControlChange));
                     Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SetActualRadiatorControlChangePoints()));
                     break;
             }
@@ -388,14 +390,14 @@ namespace HeatFuzzy.Mvvm
                 InsideTemperatureTrackPoints.RemoveAt(0);
                 DesiredTemperatureTrackPoints.RemoveAt(0);
                 RadiatorTemperatureTrackPoints.RemoveAt(0);
-                RadiatorControlTrackPoints.RemoveAt(0);
+                HeatingControlTrackPoints.RemoveAt(0);
             }
             OutsideTemperatureTrackPoints.Add(new DataPoint(overallSeconds, Temperature.OutsideTemperature));
             InsideTemperatureTrackPoints.Add(new DataPoint(overallSeconds, Temperature.InsideTemperature));
             DesiredTemperatureTrackPoints.Add(new DataPoint(overallSeconds, Temperature.DesiredTemperature));
             RadiatorTemperatureTrackPoints.Add(new DataPoint(overallSeconds, Temperature.RadiatorTemperature));
 
-            RadiatorControlTrackPoints.Add(new DataPoint(overallSeconds, RadiatorControl));
+            HeatingControlTrackPoints.Add(new DataPoint(overallSeconds, HeatingControl));
         }
 
         private void Temperature_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -425,9 +427,9 @@ namespace HeatFuzzy.Mvvm
 
         private void SetActualRadiatorControlChangePoints()
         {
-            ActualRadiatorControlChangePoints.Clear();
-            ActualRadiatorControlChangePoints.Add(new DataPoint(RadiatorControlChange, 0.0));
-            ActualRadiatorControlChangePoints.Add(new DataPoint(RadiatorControlChange, 1.0));
+            ActualHeatingControlChangePoints.Clear();
+            ActualHeatingControlChangePoints.Add(new DataPoint(HeatingControlChange, 0.0));
+            ActualHeatingControlChangePoints.Add(new DataPoint(HeatingControlChange, 1.0));
         }
 
         private void SetDesignTimeData()
@@ -437,7 +439,7 @@ namespace HeatFuzzy.Mvvm
                 Temperature.OutsideTemperature = -10;
                 Temperature.InsideTemperature = 15;
                 Temperature.RadiatorTemperature = 55;
-                _simulator.RadiatorControl = 2.5;
+                _simulator.HeatingControl = 2.5;
             }
         }
     }

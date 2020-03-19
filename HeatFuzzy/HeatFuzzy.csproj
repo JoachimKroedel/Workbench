@@ -67,7 +67,7 @@
     <Compile Include="Logic\FuzzyHeaterLogic.cs" />
     <Compile Include="Logic\Enums\FuzzyDiffTemperatureTypes.cs" />
     <Compile Include="Logic\FuzzyObject.cs" />
-    <Compile Include="Logic\Enums\FuzzyRadiatorControlChangeTypes.cs" />
+    <Compile Include="Logic\Enums\FuzzyHeatingControlChangeTypes.cs" />
     <Compile Include="Logic\Enums\FuzzyTemperatureChangeTypes.cs" />
     <Compile Include="Logic\ILogic.cs" />
     <Compile Include="Logic\SimulatorOfTemperatures.cs" />
@@ -79,7 +79,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mvvm\Converters\DoubleToIntConverter.cs" />
     <Compile Include="TemperatureView.xaml.cs">
       <DependentUpon>TemperatureView.xaml</DependentUpon>
       <SubType>Code</SubType>

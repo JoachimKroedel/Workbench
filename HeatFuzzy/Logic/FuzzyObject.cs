@@ -21,15 +21,17 @@ namespace HeatFuzzy.Logic
 
         public double Degree { get; set; }
 
-        // ToDo: Find a better way ... maybe use _fuzzyLogic
-        public FuzzyObject<FuzzyRadiatorControlChangeTypes> Then(FuzzyRadiatorControlChangeTypes value)
+        // ToDo: Find a better way to return the right generic fuzzy object depending on value type ... maybe use _fuzzyLogic
+        public FuzzyObject<FuzzyHeatingControlChangeTypes> Then(FuzzyHeatingControlChangeTypes value)
         {
-            return new FuzzyObject<FuzzyRadiatorControlChangeTypes>(value, Degree, _fuzzyLogic);
+            return new FuzzyObject<FuzzyHeatingControlChangeTypes>(value, Degree, _fuzzyLogic);
         }
+        // ToDo: Find a better way to return the right generic fuzzy object depending on value type ... maybe use _fuzzyLogic
         public FuzzyObject<FuzzyDiffTemperatureTypes> Then(FuzzyDiffTemperatureTypes value)
         {
             return new FuzzyObject<FuzzyDiffTemperatureTypes>(value, Degree, _fuzzyLogic);
         }
+        // ToDo: Find a better way to return the right generic fuzzy object depending on value type ... maybe use _fuzzyLogic
         public FuzzyObject<FuzzyTemperatureChangeTypes> Then(FuzzyTemperatureChangeTypes value)
         {
             return new FuzzyObject<FuzzyTemperatureChangeTypes>(value, Degree, _fuzzyLogic);
@@ -44,7 +46,7 @@ namespace HeatFuzzy.Logic
 
         public override string ToString()
         {
-            return $"[{Value}, {Degree}]";
+            return $"{{{Value}, {Degree}}}";
         }
     }
 }
