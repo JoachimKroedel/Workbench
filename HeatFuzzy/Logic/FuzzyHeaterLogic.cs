@@ -32,8 +32,8 @@ namespace HeatFuzzy.Logic
 
         public FuzzyHeaterLogic()
         {
-            // Set default values for curves
-            _fuzzyDiffTemperatureCurvePoints.Add(FuzzyDiffTemperatureTypes.IsMuchColder , new List<Point>(){new Point(-10.0, 1.0), new Point( -0.0, 0.0)});
+            // Set default values for curves ... in further implementation this can be made changeable by user
+            _fuzzyDiffTemperatureCurvePoints.Add(FuzzyDiffTemperatureTypes.IsMuchColder,  new List<Point>(){new Point(-10.0, 1.0), new Point( 0.0, 0.0) });
             _fuzzyDiffTemperatureCurvePoints.Add(FuzzyDiffTemperatureTypes.IsColder     , new List<Point>(){new Point( -1.0, 1.0), new Point(  0.0, 0.0)});
             _fuzzyDiffTemperatureCurvePoints.Add(FuzzyDiffTemperatureTypes.IsLitleColder, new List<Point>(){new Point( -2.0, 0.0), new Point( -0.1, 1.0), new Point(  0.0, 0.0)});
             _fuzzyDiffTemperatureCurvePoints.Add(FuzzyDiffTemperatureTypes.IsLitleWarmer, new List<Point>(){new Point(  0.0, 0.0), new Point(  0.1, 1.0), new Point(  2.0, 0.0)});
@@ -300,8 +300,7 @@ namespace HeatFuzzy.Logic
             double result = 0.0;
             int hitCount = 0;
             Point leftPoint = new Point(double.MinValue, double.NaN);
-            // ToDo: List should be sorted by x values
-            foreach (Point rightPoint in curvePoints)
+            foreach (Point rightPoint in curvePoints.OrderBy(p => p.X))
             {
                 if (!double.IsNaN(leftPoint.Y))
                 {
@@ -353,8 +352,7 @@ namespace HeatFuzzy.Logic
         protected double GetFuzzyDegreeByValue(IList<Point> curvePoints, double value)
         {
             Point leftPoint = new Point(double.MinValue, double.NaN);
-            // ToDo: List should be sorted by x values
-            foreach (Point rightPoint in curvePoints)
+            foreach (Point rightPoint in curvePoints.OrderBy(p => p.X))
             {
                 if (value <= rightPoint.X)
                 {
