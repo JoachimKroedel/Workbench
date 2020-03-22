@@ -252,26 +252,23 @@ namespace HeatFuzzy.Logic
 
         public double GetDegree(Enum enumType)
         {
-            if (enumType is FuzzyDiffTemperatureTypes fuzzyDiffTemperatureType)
+            switch(enumType)
             {
-                lock (_fuzzyDiffTemperatureObjects)
-                {
-                    return _fuzzyDiffTemperatureObjects.FirstOrDefault(x => x.Value == fuzzyDiffTemperatureType)?.Degree ?? 0.0;
-                }
-            }
-            else if (enumType is FuzzyTemperatureChangeTypes fuzzyTemperatureChangeType)
-            {
-                lock (_fuzzyTemperatureChangeObjects)
-                {
-                    return _fuzzyTemperatureChangeObjects.FirstOrDefault(x => x.Value == fuzzyTemperatureChangeType)?.Degree ?? 0.0;
-                }
-            }
-            else if (enumType is FuzzyHeatingControlChangeTypes fuzzyRadiatorControlChangeType)
-            {
-                lock (_fuzzyHeatingControlChangeObjects)
-                {
-                    return _fuzzyHeatingControlChangeObjects.FirstOrDefault(x => x.Value == fuzzyRadiatorControlChangeType)?.Degree ?? 0.0;
-                }
+                case FuzzyDiffTemperatureTypes fuzzyDiffTemperatureType:
+                    lock (_fuzzyDiffTemperatureObjects)
+                    {
+                        return _fuzzyDiffTemperatureObjects.FirstOrDefault(x => x.Value == fuzzyDiffTemperatureType)?.Degree ?? 0.0;
+                    }
+                case FuzzyTemperatureChangeTypes fuzzyTemperatureChangeType:
+                    lock (_fuzzyTemperatureChangeObjects)
+                    {
+                        return _fuzzyTemperatureChangeObjects.FirstOrDefault(x => x.Value == fuzzyTemperatureChangeType)?.Degree ?? 0.0;
+                    }
+                case FuzzyHeatingControlChangeTypes fuzzyRadiatorControlChangeType:
+                    lock (_fuzzyHeatingControlChangeObjects)
+                    {
+                        return _fuzzyHeatingControlChangeObjects.FirstOrDefault(x => x.Value == fuzzyRadiatorControlChangeType)?.Degree ?? 0.0;
+                    }
             }
             return 0.0;
         }
