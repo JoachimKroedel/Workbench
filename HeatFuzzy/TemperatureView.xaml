@@ -15,10 +15,8 @@
         <mvvm:TemperatureViewModel />
     </Window.DataContext>
     <Window.Resources>
-        <converters:DoubleToStringConverter x:Key="DoubleToStringConverterKey"></converters:DoubleToStringConverter>
         <converters:BoolToVisbilityConverter x:Key="BoolToVisbilityConverterKey"></converters:BoolToVisbilityConverter>
         <converters:IntToStringConverter x:Key="IntToStringConverterKey"></converters:IntToStringConverter>
-        <converters:TimeToStringConverter x:Key="TimeToStringConverterKey"></converters:TimeToStringConverter>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
@@ -55,7 +53,7 @@
             <ComboBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left"  ItemsSource="{Binding SimulationFactors, Converter={StaticResource IntToStringConverterKey}}" SelectedItem="{Binding SelectedSimulationFactor, Converter={StaticResource IntToStringConverterKey}}" Width="50"/>
 
             <Label Grid.Column="0" Grid.Row="2" Content="Simulation time:" HorizontalContentAlignment="Right" />
-            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SimulationTime, Converter={StaticResource TimeToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SimulationTime, StringFormat='HH:mm:ss', UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
 
             <CheckBox Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Content="Play simulation" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" IsChecked="{Binding PlaySimulation}" FontSize="20" VerticalContentAlignment="Center" />
         </Grid>
@@ -79,19 +77,19 @@
 
             <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4"  Content="Temperatures [°C]" HorizontalAlignment="Center" Background="Silver" />
             <Label Grid.Column="0" Grid.Row="1"  Content="Outside" Background="Silver" />
-            <TextBlock x:Name="txtTempOutside"  Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempOutside, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+            <TextBlock x:Name="txtTempOutside"  Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempOutside, Path=Value, StringFormat='#0.0', UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
             <Slider x:Name="sliderTempOutside" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="-20" Maximum="50" SmallChange="1" LargeChange="5" TickPlacement="TopLeft" TickFrequency="5" Value="{Binding Temperature.OutsideTemperature}" Margin="5" />
 
             <Label Grid.Column="1" Grid.Row="1"  Content="Inside" Background="Silver" />
-            <TextBlock x:Name="txtTempInside"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempInside, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+            <TextBlock x:Name="txtTempInside"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempInside, Path=Value, StringFormat='#0.0', UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
             <Slider x:Name="sliderTempInside" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="-20" Maximum="50" SmallChange="1" LargeChange="5" TickPlacement="TopLeft" TickFrequency="5" Value="{Binding Temperature.InsideTemperature}" Margin="5" />
 
             <Label Grid.Column="2" Grid.Row="1"  Content="Desired" Background="Silver" />
-            <TextBlock x:Name="txtTempDesired"  Grid.Column="2" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempDesired, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+            <TextBlock x:Name="txtTempDesired"  Grid.Column="2" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempDesired, Path=Value, StringFormat='#0.0', UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
             <Slider x:Name="sliderTempDesired" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="-20" Maximum="50" SmallChange="1" LargeChange="5" TickPlacement="TopLeft" TickFrequency="5" Value="{Binding Temperature.DesiredTemperature}" Margin="5" />
 
             <Label Grid.Column="3" Grid.Row="1"  Content="Radiator" Background="Silver" />
-            <TextBlock x:Name="txtTempRadiator"  Grid.Column="3" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempRadiator, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+            <TextBlock x:Name="txtTempRadiator"  Grid.Column="3" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderTempRadiator, Path=Value, StringFormat='#0.0', UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
             <Grid Grid.Column="3" Grid.Row="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -104,7 +102,7 @@
                     <Label Content="Heating" />
                     <Label Content="Control" />
                 </StackPanel>
-                <TextBlock Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderHeatingControl, Path=Value, Converter={StaticResource DoubleToStringConverterKey}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
+                <TextBlock Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding ElementName=sliderHeatingControl, Path=Value, StringFormat='#0.00', UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
                 <Slider x:Name="sliderHeatingControl" Grid.Row="3" HorizontalAlignment="Center" Orientation="Vertical"  Minimum="0" Maximum="5" SmallChange="0.1" LargeChange="1" TickPlacement="TopLeft" TickFrequency="1" Value="{Binding HeatingControl}" Height="100" Margin="5" />
             </Grid>
 

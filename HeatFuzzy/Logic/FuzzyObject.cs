@@ -8,13 +8,9 @@ namespace HeatFuzzy.Logic
 
         public FuzzyObject(T value, double degree, IFuzzyLogic fuzzyLogic)
         {
-            if (fuzzyLogic == null)
-            {
-                throw new ArgumentNullException(nameof(fuzzyLogic));
-            }
             Value = value;
             Degree = degree;
-            _fuzzyLogic = fuzzyLogic;
+            _fuzzyLogic = fuzzyLogic ?? throw new ArgumentNullException(nameof(fuzzyLogic));
         }
         public T Value {  get; set; }
 
