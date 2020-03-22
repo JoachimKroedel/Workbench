@@ -1,5 +1,4 @@
-﻿using HeatFuzzy.Logic.Enums;
-using System;
+﻿using System;
 
 namespace HeatFuzzy.Logic
 {
@@ -21,20 +20,9 @@ namespace HeatFuzzy.Logic
 
         public double Degree { get; set; }
 
-        // ToDo: Find a better way to return the right generic fuzzy object depending on value type ... maybe use _fuzzyLogic
-        public FuzzyObject<FuzzyHeatingControlChangeTypes> Then(FuzzyHeatingControlChangeTypes value)
+        public FuzzyObject<RT> Then<RT>(RT value) where RT: Enum
         {
-            return new FuzzyObject<FuzzyHeatingControlChangeTypes>(value, Degree, _fuzzyLogic);
-        }
-        // ToDo: Find a better way to return the right generic fuzzy object depending on value type ... maybe use _fuzzyLogic
-        public FuzzyObject<FuzzyDiffTemperatureTypes> Then(FuzzyDiffTemperatureTypes value)
-        {
-            return new FuzzyObject<FuzzyDiffTemperatureTypes>(value, Degree, _fuzzyLogic);
-        }
-        // ToDo: Find a better way to return the right generic fuzzy object depending on value type ... maybe use _fuzzyLogic
-        public FuzzyObject<FuzzyTemperatureChangeTypes> Then(FuzzyTemperatureChangeTypes value)
-        {
-            return new FuzzyObject<FuzzyTemperatureChangeTypes>(value, Degree, _fuzzyLogic);
+            return new FuzzyObject<RT>(value, Degree, _fuzzyLogic);
         }
 
         public FuzzyObject<Enum> And(Enum value)
