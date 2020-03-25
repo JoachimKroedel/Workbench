@@ -28,6 +28,13 @@ namespace HeatFuzzy.Logic
         private readonly Dictionary<FuzzyTemperatureChangeTypes, IList<Point>> _fuzzyTemperatureChangeCurvePoints = new Dictionary<FuzzyTemperatureChangeTypes, IList<Point>>();
         private readonly Dictionary<FuzzyHeatingControlChangeTypes, IList<Point>> _fuzzyHeatingControlChangeCurvePoints = new Dictionary<FuzzyHeatingControlChangeTypes, IList<Point>>();
 
+        private bool _isConditionActiveLitleColderAndGetFastWarmer = true;
+        private bool _isConditionActiveWarmerAndGetWarmer = true;
+        private bool _isConditionActiveMuchWarmer = true;
+        private bool _isConditionActiveMuchColder = true;
+        private bool _isConditionActiveColderAndGetColder = true;
+        private bool _isConditionActiveLitleWarmerAndGetFastColder = true;
+
         public event EventHandler<EventArgs> OutputChanged;
 
         public FuzzyHeaterLogic()
@@ -118,6 +125,84 @@ namespace HeatFuzzy.Logic
             }
         }
 
+        public bool IsConditionActiveIsLittleColderAndGetFastWarmer
+        {
+            get { return _isConditionActiveLitleColderAndGetFastWarmer; }
+            set
+            {
+                if (AreValuesDifferent(_isConditionActiveLitleColderAndGetFastWarmer, value))
+                {
+                    _isConditionActiveLitleColderAndGetFastWarmer = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsConditionActiveIsWarmerAndGetWarmer
+        {
+            get { return _isConditionActiveWarmerAndGetWarmer; }
+            set
+            {
+                if (AreValuesDifferent(_isConditionActiveWarmerAndGetWarmer, value))
+                {
+                    _isConditionActiveWarmerAndGetWarmer = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsConditionActiveIsMuchWarmer
+        {
+            get { return _isConditionActiveMuchWarmer; }
+            set
+            {
+                if (AreValuesDifferent(_isConditionActiveMuchWarmer, value))
+                {
+                    _isConditionActiveMuchWarmer = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsConditionActiveIsMuchColder
+        {
+            get { return _isConditionActiveMuchColder; }
+            set
+            {
+                if (AreValuesDifferent(_isConditionActiveMuchColder, value))
+                {
+                    _isConditionActiveMuchColder = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsConditionActiveIsColderAndGetColder
+        {
+            get { return _isConditionActiveColderAndGetColder; }
+            set
+            {
+                if (AreValuesDifferent(_isConditionActiveColderAndGetColder, value))
+                {
+                    _isConditionActiveColderAndGetColder = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsConditionActiveIsLittleWarmerAndGetFastColder
+        {
+            get { return _isConditionActiveLitleWarmerAndGetFastColder; }
+            set
+            {
+                if (AreValuesDifferent(_isConditionActiveLitleWarmerAndGetFastColder, value))
+                {
+                    _isConditionActiveLitleWarmerAndGetFastColder = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public void CalculateOutput()
         {
             Fuzzification();
@@ -186,30 +271,64 @@ namespace HeatFuzzy.Logic
 
         private void Implication()
         {
-            var conditionResults = new List<FuzzyObject<FuzzyHeatingControlChangeTypes>>()
+            var conditionResults = new List<FuzzyObject<FuzzyHeatingControlChangeTypes>>();
+            if (IsConditionActiveIsMuchColder)
             {
-                If(FuzzyDiffTemperatureTypes.IsMuchColder)
-                .Then(FuzzyHeatingControlChangeTypes.Open),
+                conditionResults.Add
+                (
+                    If(FuzzyDiffTemperatureTypes.IsMuchColder)
+                        .Then(FuzzyHeatingControlChangeTypes.Open)
+                );
+            }
 
-                If(FuzzyDiffTemperatureTypes.IsMuchWarmer)
-                .Then(FuzzyHeatingControlChangeTypes.Close),
+            if (IsConditionActiveIsMuchWarmer)
+            {
+                conditionResults.Add
+                (
+                    If(FuzzyDiffTemperatureTypes.IsMuchWarmer)
+                        .Then(FuzzyHeatingControlChangeTypes.Close)
+                );
+            }
 
-                If(FuzzyDiffTemperatureTypes.IsLitleColder)
-                .And(FuzzyTemperatureChangeTypes.GetFastWarmer)
-                .Then(FuzzyHeatingControlChangeTypes.MoreClose),
+            if (IsConditionActiveIsLittleColderAndGetFastWarmer)
+            {
+                conditionResults.Add
+                (
+                    If(FuzzyDiffTemperatureTypes.IsLitleColder)
+                        .And(FuzzyTemperatureChangeTypes.GetFastWarmer)
+                            .Then(FuzzyHeatingControlChangeTypes.MoreClose)
+                );
+            }
 
-                If(FuzzyDiffTemperatureTypes.IsLitleWarmer)
-                .And(FuzzyTemperatureChangeTypes.GetFastColder)
-                .Then(FuzzyHeatingControlChangeTypes.MoreOpen),
+            if (IsConditionActiveIsLittleWarmerAndGetFastColder)
+            {
+                conditionResults.Add
+                (
+                    If(FuzzyDiffTemperatureTypes.IsLitleWarmer)
+                        .And(FuzzyTemperatureChangeTypes.GetFastColder)
+                            .Then(FuzzyHeatingControlChangeTypes.MoreOpen)
+                );
+            }
 
-                If(FuzzyDiffTemperatureTypes.IsColder)
-                .And(FuzzyTemperatureChangeTypes.GetColder)
-                .Then(FuzzyHeatingControlChangeTypes.MoreOpen),
+            if (IsConditionActiveIsColderAndGetColder)
+            {
+                conditionResults.Add
+                (
+                    If(FuzzyDiffTemperatureTypes.IsColder)
+                        .And(FuzzyTemperatureChangeTypes.GetColder)
+                            .Then(FuzzyHeatingControlChangeTypes.MoreOpen)
+                );
+            }
 
-                If(FuzzyDiffTemperatureTypes.IsWarmer)
-                .And(FuzzyTemperatureChangeTypes.GetWarmer)
-                .Then(FuzzyHeatingControlChangeTypes.MoreClose)
-            };
+            if (IsConditionActiveIsWarmerAndGetWarmer)
+            {
+                conditionResults.Add
+                (
+                    If(FuzzyDiffTemperatureTypes.IsWarmer)
+                        .And(FuzzyTemperatureChangeTypes.GetWarmer)
+                            .Then(FuzzyHeatingControlChangeTypes.MoreClose)
+                );
+            }
     
             lock (_fuzzyHeatingControlChangeObjects)
             {
@@ -264,10 +383,10 @@ namespace HeatFuzzy.Logic
                     {
                         return _fuzzyTemperatureChangeObjects.FirstOrDefault(x => x.Value == fuzzyTemperatureChangeType)?.Degree ?? 0.0;
                     }
-                case FuzzyHeatingControlChangeTypes fuzzyRadiatorControlChangeType:
+                case FuzzyHeatingControlChangeTypes fuzzyHeatingControlChangeType:
                     lock (_fuzzyHeatingControlChangeObjects)
                     {
-                        return _fuzzyHeatingControlChangeObjects.FirstOrDefault(x => x.Value == fuzzyRadiatorControlChangeType)?.Degree ?? 0.0;
+                        return _fuzzyHeatingControlChangeObjects.FirstOrDefault(x => x.Value == fuzzyHeatingControlChangeType)?.Degree ?? 0.0;
                     }
             }
             return 0.0;

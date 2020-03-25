@@ -141,156 +141,175 @@
                     </oxy:Plot.Series>
                 </oxy:Plot>
             </Grid>
-
             <!-- Logic diagrams and conditions -->
-            <TabControl Grid.Row="1">
-                <TabItem Header="Diagrams">
-                    <Grid Height="200">
+            <StackPanel Grid.Row="1" Orientation="Vertical">
+                <CheckBox Content="Show Diagrams" IsChecked="{Binding ShowDiagrams}" />
+                <Grid Height="200" Margin="16,0,0,0" Visibility="{Binding ShowDiagrams, Converter={StaticResource BoolToVisbilityConverterKey}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <oxy:Plot Grid.Column="0" Title="Different between temperatures" Background="WhiteSmoke" LegendPosition="RightBottom">
+                        <oxy:Plot.Axes>
+                            <oxy:LinearAxis Position="Left" Minimum="0" Maximum="1" IsZoomEnabled="False" />
+                            <oxy:LinearAxis Position="Bottom" Minimum="-10" Maximum="10" />
+                        </oxy:Plot.Axes>
+                        <oxy:Plot.Series>
+                            <oxy:LineSeries ItemsSource="{Binding IsMuchColderPoints}"  Title="Much colder"     StrokeThickness="1" Color="DarkBlue"    Visibility="{Binding ShowIsMuchColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}" />
+                            <oxy:LineSeries ItemsSource="{Binding IsColderPoints}"      Title="Colder"          StrokeThickness="1" Color="Blue"        Visibility="{Binding ShowIsColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding IsLitleColderPoints}" Title="Little colder"   StrokeThickness="1" Color="LightBlue"   Visibility="{Binding ShowIsLittleColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding IsLitleWarmerPoints}" Title="Little warmer"   StrokeThickness="1" Color="LightSalmon" Visibility="{Binding ShowIsLittleWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding IsWarmerPoints}"      Title="Warmer"          StrokeThickness="1" Color="Red"         Visibility="{Binding ShowIsWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding IsMuchWarmerPoints}"  Title="Much warmer"     StrokeThickness="1" Color="DarkRed"     Visibility="{Binding ShowIsMuchWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding ActualDiffPoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
+                        </oxy:Plot.Series>
+                    </oxy:Plot>
+                    <oxy:Plot Grid.Column="1" Title="Temperatures changes" Background="WhiteSmoke" LegendPosition="RightBottom">
+                        <oxy:Plot.Axes>
+                            <oxy:LinearAxis Position="Left" Minimum="0" Maximum="1" IsZoomEnabled="False" />
+                            <oxy:LinearAxis Position="Bottom" Minimum="-0.51" Maximum="0.51" />
+                        </oxy:Plot.Axes>
+                        <oxy:Plot.Series>
+                            <oxy:LineSeries ItemsSource="{Binding GettingFastColderPoints}" Title="Fast colder" StrokeThickness="1" Color="Blue"        Visibility="{Binding ShowGetFastColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding GettingColderPoints}"     Title="Colder"      StrokeThickness="1" Color="LightBlue"   Visibility="{Binding ShowGetColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding GettingWarmerPoints}"     Title="Warmer"      StrokeThickness="1" Color="LightSalmon" Visibility="{Binding ShowGetWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding GettingFastWarmerPoints}" Title="Fast warmer" StrokeThickness="1" Color="Red"         Visibility="{Binding ShowGetFastWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding ActualChangesPoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
+                        </oxy:Plot.Series>
+                    </oxy:Plot>
+                    <oxy:Plot Grid.Column="2" Title="Heating control change" Background="WhiteSmoke" LegendPosition="RightBottom" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}" >
+                        <oxy:Plot.Axes>
+                            <oxy:LinearAxis Position="Left" Minimum="0" Maximum="1" IsZoomEnabled="False" />
+                            <oxy:LinearAxis Position="Bottom" Minimum="-0.11" Maximum="0.11" />
+                        </oxy:Plot.Axes>
+                        <oxy:Plot.Series>
+                            <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeMoreClosedPoints}"       StrokeThickness="1" Title="More close"  Color="Blue"         Visibility="{Binding ShowMoreCloseCurve, Converter={StaticResource BoolToVisbilityConverterKey}}" />
+                            <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeLitleMoreClosedPoints}"  StrokeThickness="1" Title="Close"       Color="LightBlue"    Visibility="{Binding ShowCloseCurve, Converter={StaticResource BoolToVisbilityConverterKey}}" />
+                            <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeLitleMoreOpendPoints}"   StrokeThickness="1" Title="Open"        Color="LightSalmon"  Visibility="{Binding ShowOpenCurve, Converter={StaticResource BoolToVisbilityConverterKey}}" />
+                            <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeMoreOpendPoints}"        StrokeThickness="1" Title="More open"   Color="Red"          Visibility="{Binding ShowMoreOpenCurve, Converter={StaticResource BoolToVisbilityConverterKey}}" />
+                            <oxy:LineSeries ItemsSource="{Binding ActualHeatingControlChangePoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
+                        </oxy:Plot.Series>
+                    </oxy:Plot>
+                </Grid>
+                <CheckBox Content="Show Conditions" IsChecked="{Binding ShowConditions}" />
+                <Grid Margin="16,0,0,0" Visibility="{Binding ShowConditions, Converter={StaticResource BoolToVisbilityConverterKey}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Visibility="{Binding BinaryLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <oxy:Plot Grid.Column="0" Title="Different between temperatures" Background="WhiteSmoke" LegendPosition="RightBottom">
-                            <oxy:Plot.Axes>
-                                <oxy:LinearAxis Position="Left" Minimum="0" Maximum="1" IsZoomEnabled="False" />
-                                <oxy:LinearAxis Position="Bottom" Minimum="-10" Maximum="10" />
-                            </oxy:Plot.Axes>
-                            <oxy:Plot.Series>
-                                <oxy:LineSeries ItemsSource="{Binding IsMuchColderPoints}"  Title="Much colder"     StrokeThickness="1" Color="DarkBlue" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}" />
-                                <oxy:LineSeries ItemsSource="{Binding IsColderPoints}"      Title="Colder"          StrokeThickness="1" Color="Blue" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding IsLitleColderPoints}" Title="Litle colder"    StrokeThickness="1" Color="LightBlue" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding IsLitleWarmerPoints}" Title="Litle warmer"    StrokeThickness="1" Color="LightSalmon" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding IsWarmerPoints}"      Title="Warmer"          StrokeThickness="1" Color="Red" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding IsMuchWarmerPoints}"  Title="Much warmer"     StrokeThickness="1" Color="DarkRed" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding ActualDiffPoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
-                            </oxy:Plot.Series>
-                        </oxy:Plot>
-                        <oxy:Plot Grid.Column="1" Title="Temperatures changes" Background="WhiteSmoke" LegendPosition="RightBottom">
-                            <oxy:Plot.Axes>
-                                <oxy:LinearAxis Position="Left" Minimum="0" Maximum="1" IsZoomEnabled="False" />
-                                <oxy:LinearAxis Position="Bottom" Minimum="-0.51" Maximum="0.51" />
-                            </oxy:Plot.Axes>
-                            <oxy:Plot.Series>
-                                <oxy:LineSeries ItemsSource="{Binding GettingFastColderPoints}" Title="Fast colder" StrokeThickness="1" Color="Blue" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding GettingColderPoints}"     Title="Colder"      StrokeThickness="1" Color="LightBlue" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding GettingWarmerPoints}"     Title="Warmer"      StrokeThickness="1" Color="LightSalmon" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding GettingFastWarmerPoints}" Title="Fast warmer" StrokeThickness="1" Color="Red" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                                <oxy:LineSeries ItemsSource="{Binding ActualChangesPoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
-                            </oxy:Plot.Series>
-                        </oxy:Plot>
-                        <oxy:Plot Grid.Column="2" Title="Heating control change" Background="WhiteSmoke" LegendPosition="RightBottom" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}" >
-                            <oxy:Plot.Axes>
-                                <oxy:LinearAxis Position="Left" Minimum="0" Maximum="1" IsZoomEnabled="False" />
-                                <oxy:LinearAxis Position="Bottom" Minimum="-0.11" Maximum="0.11" />
-                            </oxy:Plot.Axes>
-                            <oxy:Plot.Series>
-                                <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeMoreClosedPoints}"       StrokeThickness="1" Title="More close"  Color="Blue"/>
-                                <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeLitleMoreClosedPoints}"  StrokeThickness="1" Title="Close"       Color="LightBlue"/>
-                                <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeLitleMoreOpendPoints}"   StrokeThickness="1" Title="Open"        Color="LightSalmon" />
-                                <oxy:LineSeries ItemsSource="{Binding HeatingControlChangeMoreOpendPoints}"        StrokeThickness="1" Title="More open"   Color="Red"/>
-                                <oxy:LineSeries ItemsSource="{Binding ActualHeatingControlChangePoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
-                            </oxy:Plot.Series>
-                        </oxy:Plot>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="Conditons">
-                    <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Label       Grid.Column="0" Grid.Row="0" Content="If temperature is colder" />
+                        <ProgressBar Grid.Column="1" Grid.Row="0" Value="{Binding IsColder, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="2" Grid.Row="0" Content="then heating control full open" />
+                        <ProgressBar Grid.Column="3" Grid.Row="0" Value="{Binding IsHeatingControlFullOpen, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+
+                        <Label       Grid.Column="0" Grid.Row="2" Content="If temperature is warmer" />
+                        <ProgressBar Grid.Column="1" Grid.Row="2" Value="{Binding IsWarmer, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="2" Grid.Row="2" Content="then heating control full close" />
+                        <ProgressBar Grid.Column="3" Grid.Row="2" Value="{Binding IsHeatingControlFullClose, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
+                    </Grid>
+
+                    <Grid Grid.Row="1" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="0" Visibility="{Binding BinaryLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                        <CheckBox    Grid.Column="0" Grid.Row="0" IsChecked="{Binding IsConditionActiveIsLittleColderAndGetFastWarmer}" VerticalAlignment="Center" />
+                        <Label       Grid.Column="1" Grid.Row="0" Content="If temperature is little colder" IsEnabled="{Binding IsConditionActiveIsLittleColderAndGetFastWarmer}" />
+                        <ProgressBar Grid.Column="2" Grid.Row="0" Value="{Binding IsLitleColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="2" Grid.Row="0" Content="{Binding IsLitleColderPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsLittleColderAndGetFastWarmer}"/>
+                        <Label       Grid.Column="3" Grid.Row="0" Content="and temperature get fast warmer" IsEnabled="{Binding IsConditionActiveIsLittleColderAndGetFastWarmer}"/>
+                        <ProgressBar Grid.Column="4" Grid.Row="0" Value="{Binding GetFastWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+                        <Label       Grid.Column="4" Grid.Row="0" Content="{Binding GetFastWarmerPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsLittleColderAndGetFastWarmer}"/>
+                        <Label       Grid.Column="5" Grid.Row="0" Content="then heating control more close" IsEnabled="{Binding IsConditionActiveIsLittleColderAndGetFastWarmer}"/>
+                        <ProgressBar Grid.Column="7" Grid.Row="0" Value="{Binding ResultIsLitleColderAndGetFastWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
+                        <Label       Grid.Column="7" Grid.Row="0" Content="{Binding ResultIsLitleColderAndGetFastWarmerPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsLittleColderAndGetFastWarmer}"/>
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="10" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <CheckBox    Grid.Column="0" Grid.Row="1" IsChecked="{Binding IsConditionActiveIsWarmerAndGetWarmer}" VerticalAlignment="Center" />
+                        <Label       Grid.Column="1" Grid.Row="1" Content="If is temperature warmer" IsEnabled="{Binding IsConditionActiveIsWarmerAndGetWarmer}" />
+                        <ProgressBar Grid.Column="2" Grid.Row="1" Value="{Binding IsWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="2" Grid.Row="1" Content="{Binding IsWarmerPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsWarmerAndGetWarmer}" />
+                        <Label       Grid.Column="3" Grid.Row="1" Content="and temperature get warmer" IsEnabled="{Binding IsConditionActiveIsWarmerAndGetWarmer}" />
+                        <ProgressBar Grid.Column="4" Grid.Row="1" Value="{Binding GetWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="0,5,1,5" />
+                        <Label       Grid.Column="4" Grid.Row="1" Content="{Binding GetWarmerPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsWarmerAndGetWarmer}" />
+                        <Label       Grid.Column="5" Grid.Row="1" Content="then heating control more close" IsEnabled="{Binding IsConditionActiveIsWarmerAndGetWarmer}" />
+                        <ProgressBar Grid.Column="7" Grid.Row="1" Value="{Binding ResultIsWarmerAndGetWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
+                        <Label       Grid.Column="7" Grid.Row="1" Content="{Binding ResultIsWarmerAndGetWarmerPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsWarmerAndGetWarmer}" />
 
-                            <Label       Grid.Column="0" Grid.Row="0" Content="If temperature is colder" />
-                            <ProgressBar Grid.Column="1" Grid.Row="0" Value="{Binding IsColder, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="2" Grid.Row="0" Content="then heating control full open" />
-                            <ProgressBar Grid.Column="3" Grid.Row="0" Value="{Binding IsHeatingControlFullOpen, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
-
-                            <Label       Grid.Column="0" Grid.Row="2" Content="If temperature is warmer" />
-                            <ProgressBar Grid.Column="1" Grid.Row="2" Value="{Binding IsWarmer, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="2" Grid.Row="2" Content="then heating control full close" />
-                            <ProgressBar Grid.Column="3" Grid.Row="2" Value="{Binding IsHeatingControlFullClose, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
-                        </Grid>
-
-                        <Grid Grid.Row="1" Visibility="{Binding FuzzyLogicSelected, Converter={StaticResource BoolToVisbilityConverterKey}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="39" />
-                                <ColumnDefinition Width="124"/>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="10" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <Label       Grid.Column="0" Grid.Row="0" Content="If temperature is litle colder" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="0" Value="{Binding IsLitleColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="3" Grid.Row="0" Content="and temperature get fast warmer" />
-                            <ProgressBar Grid.Column="4" Grid.Row="0" Value="{Binding GetFastWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
-                            <Label       Grid.Column="5" Grid.Row="0" Content="then heating control more close" />
-                            <ProgressBar Grid.Column="7" Grid.Row="0" Value="{Binding ResultIsLitleColderAndGetFastWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
-
-                            <Label       Grid.Column="0" Grid.Row="1" Content="If is temperature warmer" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="1" Value="{Binding IsWarmerPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="3" Grid.Row="1" Content="and temperature get warmer" />
-                            <ProgressBar Grid.Column="4" Grid.Row="1" Value="{Binding GetWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="0,5,1,5" />
-                            <Label       Grid.Column="5" Grid.Row="1" Content="then heating control more close" />
-                            <ProgressBar Grid.Column="7" Grid.Row="1" Value="{Binding ResultIsWarmerAndGetWarmerPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
-
-                            <Label       Grid.Column="0" Grid.Row="2" Content="If is temperature much warmer" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="2" Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="DarkRed" Width="64" Height="16" Margin="1,5,0,5"  />
-                            <Label       Grid.Column="5" Grid.Row="2" Content="then heating control close" />
-                            <ProgressBar Grid.Column="6" Grid.Row="2" Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="1,5,0,5" />
+                        <CheckBox    Grid.Column="0" Grid.Row="2" IsChecked="{Binding IsConditionActiveIsMuchWarmer}" VerticalAlignment="Center" />
+                        <Label       Grid.Column="1" Grid.Row="2" Content="If is temperature much warmer" IsEnabled="{Binding IsConditionActiveIsMuchWarmer}"  />
+                        <ProgressBar Grid.Column="2" Grid.Row="2" Value="{Binding IsMuchWarmerPercentage, Mode=OneWay}" Foreground="DarkRed" Width="64" Height="16" Margin="1,5,0,5"  />
+                        <Label       Grid.Column="2" Grid.Row="2" Content="{Binding IsMuchWarmerPercentage, Mode=OneWay}" ContentStringFormat="N1" Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsMuchWarmer}" />
+                        <Label       Grid.Column="5" Grid.Row="2" Content="then heating control close" IsEnabled="{Binding IsConditionActiveIsMuchWarmer}" />
+                        <ProgressBar Grid.Column="6" Grid.Row="2" Value="{Binding ResultIsMuchWarmerPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="6" Grid.Row="2" Content="{Binding ResultIsMuchWarmerPercentage, Mode=OneWay}" ContentStringFormat="N1" Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsMuchWarmer}" />
 
 
-                            <Label       Grid.Column="0" Grid.Row="4" Content="If is temperature much colder" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="4" Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="DarkBlue" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="5" Grid.Row="4" Content="then heating control open" />
-                            <ProgressBar Grid.Column="6" Grid.Row="4" Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="1,5,0,5" />
+                        <CheckBox    Grid.Column="0" Grid.Row="4" IsChecked="{Binding IsConditionActiveIsMuchColder}" VerticalAlignment="Center" />
+                        <Label       Grid.Column="1" Grid.Row="4" Content="If is temperature much colder" IsEnabled="{Binding IsConditionActiveIsMuchColder}" />
+                        <ProgressBar Grid.Column="2" Grid.Row="4" Value="{Binding IsMuchColderPercentage, Mode=OneWay}" Foreground="DarkBlue" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="2" Grid.Row="4" Content="{Binding IsMuchColderPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsMuchColder}" />
+                        <Label       Grid.Column="5" Grid.Row="4" Content="then heating control open" IsEnabled="{Binding IsConditionActiveIsMuchColder}" />
+                        <ProgressBar Grid.Column="6" Grid.Row="4" Value="{Binding ResultIsMuchColderPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="6" Grid.Row="4" Content="{Binding ResultIsMuchColderPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsMuchColder}" />
 
-                            <Label       Grid.Column="0" Grid.Row="5" Content="If is temperature colder" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="5" Value="{Binding IsColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="3" Grid.Row="5" Content="and temperature get colder" />
-                            <ProgressBar Grid.Column="4" Grid.Row="5" Value="{Binding GetColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="0,5,1,5" />
-                            <Label       Grid.Column="5" Grid.Row="5" Content="then heating control more open" />
-                            <ProgressBar Grid.Column="7" Grid.Row="5" Value="{Binding ResultIsColderAndGetColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+                        <CheckBox    Grid.Column="0" Grid.Row="5" IsChecked="{Binding IsConditionActiveIsColderAndGetColder}" VerticalAlignment="Center" />
+                        <Label       Grid.Column="1" Grid.Row="5" Content="If is temperature colder" IsEnabled="{Binding IsConditionActiveIsColderAndGetColder}" />
+                        <ProgressBar Grid.Column="2" Grid.Row="5" Value="{Binding IsColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="2" Grid.Row="5" Content="{Binding IsColderPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsColderAndGetColder}" />
+                        <Label       Grid.Column="3" Grid.Row="5" Content="and temperature get colder" IsEnabled="{Binding IsConditionActiveIsColderAndGetColder}" />
+                        <ProgressBar Grid.Column="4" Grid.Row="5" Value="{Binding GetColderPercentage, Mode=OneWay}" Foreground="LightBlue" Width="64" Height="16" Margin="0,5,1,5" />
+                        <Label       Grid.Column="4" Grid.Row="5" Content="{Binding GetColderPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsColderAndGetColder}" />
+                        <Label       Grid.Column="5" Grid.Row="5" Content="then heating control more open" IsEnabled="{Binding IsConditionActiveIsColderAndGetColder}" />
+                        <ProgressBar Grid.Column="7" Grid.Row="5" Value="{Binding ResultIsColderAndGetColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+                        <Label       Grid.Column="7" Grid.Row="5" Content="{Binding ResultIsColderAndGetColderPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsColderAndGetColder}" />
 
-                            <Label       Grid.Column="0" Grid.Row="6" Content="If is temperature litle warmer" Grid.ColumnSpan="2" />
-                            <ProgressBar Grid.Column="2" Grid.Row="6" Value="{Binding IsLitleWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="1,5,0,5" />
-                            <Label       Grid.Column="3" Grid.Row="6" Content="and temperature get fast colder" />
-                            <ProgressBar Grid.Column="4" Grid.Row="6" Value="{Binding GetFastColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
-                            <Label       Grid.Column="5" Grid.Row="6" Content="then heating control more open" />
-                            <ProgressBar Grid.Column="7" Grid.Row="6" Value="{Binding ResultIsLitleWarmerAndGetFastColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
-                        </Grid>
+                        <CheckBox    Grid.Column="0" Grid.Row="6" IsChecked="{Binding IsConditionActiveIsLittleWarmerAndGetFastColder}" VerticalAlignment="Center" />
+                        <Label       Grid.Column="1" Grid.Row="6" Content="If is temperature little warmer" IsEnabled="{Binding IsConditionActiveIsLittleWarmerAndGetFastColder}" />
+                        <ProgressBar Grid.Column="2" Grid.Row="6" Value="{Binding IsLitleWarmerPercentage, Mode=OneWay}" Foreground="LightSalmon" Width="64" Height="16" Margin="1,5,0,5" />
+                        <Label       Grid.Column="2" Grid.Row="6" Content="{Binding IsLitleWarmerPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsLittleWarmerAndGetFastColder}"/>
+                        <Label       Grid.Column="3" Grid.Row="6" Content="and temperature get fast colder" IsEnabled="{Binding IsConditionActiveIsLittleWarmerAndGetFastColder}" />
+                        <ProgressBar Grid.Column="4" Grid.Row="6" Value="{Binding GetFastColderPercentage, Mode=OneWay}" Foreground="Blue" Width="64" Height="16" Margin="0,5,1,5" />
+                        <Label       Grid.Column="4" Grid.Row="6" Content="{Binding GetFastColderPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsLittleWarmerAndGetFastColder}"/>
+                        <Label       Grid.Column="5" Grid.Row="6" Content="then heating control more open" IsEnabled="{Binding IsConditionActiveIsLittleWarmerAndGetFastColder}" />
+                        <ProgressBar Grid.Column="7" Grid.Row="6" Value="{Binding ResultIsLitleWarmerAndGetFastColderPercentage, Mode=OneWay}" Foreground="Red" Width="64" Height="16" Margin="0,5,1,5" />
+                        <Label       Grid.Column="7" Grid.Row="6" Content="{Binding ResultIsLitleWarmerAndGetFastColderPercentage, Mode=OneWay}" ContentStringFormat="N1"  Width="64" VerticalAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding IsConditionActiveIsLittleWarmerAndGetFastColder}"/>
                     </Grid>
-                </TabItem>
-            </TabControl>
+                </Grid>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
