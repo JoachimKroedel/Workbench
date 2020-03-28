@@ -18,8 +18,6 @@ namespace HeatFuzzy.Mvvm
         private readonly double _maximumRangeForTimeAxis = 300;
         private readonly SimulatorOfTemperatures _simulator;
         private readonly BinaryHeaterLogic _binaryHeaterLogic;
-        private readonly FuzzyHeaterLogic _fuzzyHeaterLogic;
-
         private bool _playSimulation;
         private bool _binaryLogicSelected;
         private bool _fuzzyLogicSelected;
@@ -34,14 +32,13 @@ namespace HeatFuzzy.Mvvm
             Temperature = new TemperatureDto();
             _simulator = new SimulatorOfTemperatures(Temperature);
             _binaryHeaterLogic = new BinaryHeaterLogic();
-            _fuzzyHeaterLogic = new FuzzyHeaterLogic();
+            FuzzyHeaterLogic = new FuzzyHeaterLogic();
 
             _simulator.SimulationTimeFactor = SimulationFactors.First();
 
             _simulator.PropertyChanged += Simulator_PropertyChanged;
             Temperature.PropertyChanged += Temperature_PropertyChanged;
             _binaryHeaterLogic.OutputChanged += BinaryHeaterLogic_OutputChanged;
-            _fuzzyHeaterLogic.OutputChanged += FuzzyHeaterLogic_OutputChanged;
 
             Temperature.OutsideTemperature = 10;
             Temperature.InsideTemperature = 20;
@@ -50,61 +47,61 @@ namespace HeatFuzzy.Mvvm
             BinaryLogicSelected = false;
             FuzzyLogicSelected = true;
 
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchColder))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchColder))
             {
                 IsMuchColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsColder))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsColder))
             {
                 IsColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsLitleColder))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsLittleColder))
             {
                 IsLitleColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsLitleWarmer))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsLittleWarmer))
             {
                 IsLitleWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsWarmer))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsWarmer))
             {
                 IsWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchWarmer))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyDiffTemperatureTypes.IsMuchWarmer))
             {
                 IsMuchWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetFastColder))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetFastColder))
             {
                 GettingFastColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetColder))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetColder))
             {
                 GettingColderPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetWarmer))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetWarmer))
             {
                 GettingWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetFastWarmer))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyTemperatureChangeTypes.GetFastWarmer))
             {
                 GettingFastWarmerPoints.Add(new DataPoint(point.X, point.Y));
             }
 
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.MoreClose))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.MoreClose))
             {
                 HeatingControlChangeMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.Close))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.Close))
             {
                 HeatingControlChangeLitleMoreClosedPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.Open))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.Open))
             {
                 HeatingControlChangeLitleMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
-            foreach (var point in _fuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.MoreOpen))
+            foreach (var point in FuzzyHeaterLogic.GetPoints(FuzzyHeatingControlChangeTypes.MoreOpen))
             {
                 HeatingControlChangeMoreOpendPoints.Add(new DataPoint(point.X, point.Y));
             }
@@ -112,33 +109,16 @@ namespace HeatFuzzy.Mvvm
             SetDesignTimeData();
         }
 
-        public double IsMuchColderPercentage => IsConditionActiveIsMuchColder ? _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsMuchColder) * 100 : 0;
-        public double IsColderPercentage => IsConditionActiveIsColderAndGetColder ? _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsColder) * 100 : 0;
-        public double IsLitleColderPercentage => IsConditionActiveIsLittleColderAndGetFastWarmer ? _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsLitleColder) * 100 : 0;
-        public double IsLitleWarmerPercentage => IsConditionActiveIsLittleWarmerAndGetFastColder ? _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsLitleWarmer) * 100 : 0;
-        public double IsWarmerPercentage => IsConditionActiveIsWarmerAndGetWarmer ? _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsWarmer) * 100 : 0;
-        public double IsMuchWarmerPercentage => IsConditionActiveIsMuchWarmer ? _fuzzyHeaterLogic.GetDegree(FuzzyDiffTemperatureTypes.IsMuchWarmer) * 100 : 0;
-
-        public double GetFastWarmerPercentage => IsConditionActiveIsLittleColderAndGetFastWarmer ? _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetFastWarmer) * 100 : 0;
-        public double GetWarmerPercentage => IsConditionActiveIsWarmerAndGetWarmer ? _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetWarmer) * 100 : 0;
-        public double GetColderPercentage => IsConditionActiveIsColderAndGetColder ? _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetColder) * 100 : 0;
-        public double GetFastColderPercentage => IsConditionActiveIsLittleWarmerAndGetFastColder ? _fuzzyHeaterLogic.GetDegree(FuzzyTemperatureChangeTypes.GetFastColder) * 100 : 0;
-
-        public double ResultIsLitleColderAndGetFastWarmerPercentage => IsConditionActiveIsLittleColderAndGetFastWarmer ? _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.IsLitleColder, FuzzyTemperatureChangeTypes.GetFastWarmer) * 100 : 0;
-        public double ResultIsLitleWarmerAndGetFastColderPercentage => IsConditionActiveIsLittleWarmerAndGetFastColder ? _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.IsLitleWarmer, FuzzyTemperatureChangeTypes.GetFastColder) * 100 : 0;
-        public double ResultIsColderAndGetColderPercentage => IsConditionActiveIsColderAndGetColder ? _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.IsColder, FuzzyTemperatureChangeTypes.GetColder) * 100 : 0;
-        public double ResultIsWarmerAndGetWarmerPercentage => IsConditionActiveIsWarmerAndGetWarmer ? _fuzzyHeaterLogic.GetAndDegree(FuzzyDiffTemperatureTypes.IsWarmer, FuzzyTemperatureChangeTypes.GetWarmer) * 100 : 0;
-        public double ResultIsMuchWarmerPercentage => IsConditionActiveIsMuchWarmer ? _fuzzyHeaterLogic.GetDegree(FuzzyHeatingControlChangeTypes.Close) * 100 : 0;
-        public double ResultIsMuchColderPercentage => IsConditionActiveIsMuchColder ? _fuzzyHeaterLogic.GetDegree(FuzzyHeatingControlChangeTypes.Open) * 100 : 0;
+        public FuzzyHeaterLogic FuzzyHeaterLogic { get; }
 
         public bool IsConditionActiveIsLittleColderAndGetFastWarmer
         {
-            get { return _fuzzyHeaterLogic.IsConditionActiveIsLittleColderAndGetFastWarmer; }
+            get { return FuzzyHeaterLogic.IsConditionActiveIsLittleColderAndGetFastWarmer; }
             set
             {
-                if (AreValuesDifferent(_fuzzyHeaterLogic.IsConditionActiveIsLittleColderAndGetFastWarmer, value))
+                if (AreValuesDifferent(FuzzyHeaterLogic.IsConditionActiveIsLittleColderAndGetFastWarmer, value))
                 {
-                    _fuzzyHeaterLogic.IsConditionActiveIsLittleColderAndGetFastWarmer = value;
+                    FuzzyHeaterLogic.IsConditionActiveIsLittleColderAndGetFastWarmer = value;
                     NotifyPropertyChanged();
                     NotifyPropertyChanged(nameof(ShowMoreCloseCurve));
                     NotifyPropertyChanged(nameof(ShowIsLittleColderCurve));
@@ -149,12 +129,12 @@ namespace HeatFuzzy.Mvvm
 
         public bool IsConditionActiveIsWarmerAndGetWarmer
         {
-            get { return _fuzzyHeaterLogic.IsConditionActiveIsWarmerAndGetWarmer; }
+            get { return FuzzyHeaterLogic.IsConditionActiveIsWarmerAndGetWarmer; }
             set
             {
-                if (AreValuesDifferent(_fuzzyHeaterLogic.IsConditionActiveIsWarmerAndGetWarmer, value))
+                if (AreValuesDifferent(FuzzyHeaterLogic.IsConditionActiveIsWarmerAndGetWarmer, value))
                 {
-                    _fuzzyHeaterLogic.IsConditionActiveIsWarmerAndGetWarmer = value;
+                    FuzzyHeaterLogic.IsConditionActiveIsWarmerAndGetWarmer = value;
                     NotifyPropertyChanged();
                     NotifyPropertyChanged(nameof(ShowMoreCloseCurve));
                     NotifyPropertyChanged(nameof(ShowIsWarmerCurve));
@@ -165,12 +145,12 @@ namespace HeatFuzzy.Mvvm
 
         public bool IsConditionActiveIsMuchWarmer
         {
-            get { return _fuzzyHeaterLogic.IsConditionActiveIsMuchWarmer; }
+            get { return FuzzyHeaterLogic.IsConditionActiveIsMuchWarmer; }
             set
             {
-                if (AreValuesDifferent(_fuzzyHeaterLogic.IsConditionActiveIsMuchWarmer, value))
+                if (AreValuesDifferent(FuzzyHeaterLogic.IsConditionActiveIsMuchWarmer, value))
                 {
-                    _fuzzyHeaterLogic.IsConditionActiveIsMuchWarmer = value;
+                    FuzzyHeaterLogic.IsConditionActiveIsMuchWarmer = value;
                     NotifyPropertyChanged();
                     NotifyPropertyChanged(nameof(ShowCloseCurve));
                     NotifyPropertyChanged(nameof(ShowIsMuchWarmerCurve));
@@ -180,12 +160,12 @@ namespace HeatFuzzy.Mvvm
 
         public bool IsConditionActiveIsMuchColder
         {
-            get { return _fuzzyHeaterLogic.IsConditionActiveIsMuchColder; }
+            get { return FuzzyHeaterLogic.IsConditionActiveIsMuchColder; }
             set
             {
-                if (AreValuesDifferent(_fuzzyHeaterLogic.IsConditionActiveIsMuchColder, value))
+                if (AreValuesDifferent(FuzzyHeaterLogic.IsConditionActiveIsMuchColder, value))
                 {
-                    _fuzzyHeaterLogic.IsConditionActiveIsMuchColder = value;
+                    FuzzyHeaterLogic.IsConditionActiveIsMuchColder = value;
                     NotifyPropertyChanged();
                     NotifyPropertyChanged(nameof(ShowOpenCurve));
                     NotifyPropertyChanged(nameof(ShowIsMuchColderCurve));
@@ -195,12 +175,12 @@ namespace HeatFuzzy.Mvvm
 
         public bool IsConditionActiveIsColderAndGetColder
         {
-            get { return _fuzzyHeaterLogic.IsConditionActiveIsColderAndGetColder; }
+            get { return FuzzyHeaterLogic.IsConditionActiveIsColderAndGetColder; }
             set
             {
-                if (AreValuesDifferent(_fuzzyHeaterLogic.IsConditionActiveIsColderAndGetColder, value))
+                if (AreValuesDifferent(FuzzyHeaterLogic.IsConditionActiveIsColderAndGetColder, value))
                 {
-                    _fuzzyHeaterLogic.IsConditionActiveIsColderAndGetColder = value;
+                    FuzzyHeaterLogic.IsConditionActiveIsColderAndGetColder = value;
                     NotifyPropertyChanged();
                     NotifyPropertyChanged(nameof(ShowMoreOpenCurve));
                     NotifyPropertyChanged(nameof(ShowIsColderCurve));
@@ -211,12 +191,12 @@ namespace HeatFuzzy.Mvvm
 
         public bool IsConditionActiveIsLittleWarmerAndGetFastColder
         {
-            get { return _fuzzyHeaterLogic.IsConditionActiveIsLittleWarmerAndGetFastColder; }
+            get { return FuzzyHeaterLogic.IsConditionActiveIsLittleWarmerAndGetFastColder; }
             set
             {
-                if (AreValuesDifferent(_fuzzyHeaterLogic.IsConditionActiveIsLittleWarmerAndGetFastColder, value))
+                if (AreValuesDifferent(FuzzyHeaterLogic.IsConditionActiveIsLittleWarmerAndGetFastColder, value))
                 {
-                    _fuzzyHeaterLogic.IsConditionActiveIsLittleWarmerAndGetFastColder = value;
+                    FuzzyHeaterLogic.IsConditionActiveIsLittleWarmerAndGetFastColder = value;
                     NotifyPropertyChanged();
                     NotifyPropertyChanged(nameof(ShowMoreOpenCurve));
                     NotifyPropertyChanged(nameof(ShowIsLittleWarmerCurve));
@@ -283,15 +263,14 @@ namespace HeatFuzzy.Mvvm
                 {
                     _fuzzyLogicSelected = value;
                     NotifyPropertyChanged();
-                    if (_fuzzyLogicSelected && _simulator.HeaterLogic != _fuzzyHeaterLogic)
+                    if (_fuzzyLogicSelected && _simulator.HeaterLogic != FuzzyHeaterLogic)
                     {
-                        _simulator.HeaterLogic = _fuzzyHeaterLogic;
+                        _simulator.HeaterLogic = FuzzyHeaterLogic;
                     }
-                    else if (!_fuzzyLogicSelected && _simulator.HeaterLogic == _fuzzyHeaterLogic)
+                    else if (!_fuzzyLogicSelected && _simulator.HeaterLogic == FuzzyHeaterLogic)
                     {
                         _simulator.HeaterLogic = null;
                     }
-                    FuzzyHeaterLogic_OutputChanged(this, EventArgs.Empty);
                 }
             }
         }
@@ -492,28 +471,6 @@ namespace HeatFuzzy.Mvvm
         public double IsHeatingControlFullOpen => _binaryHeaterLogic.SwitchHeaterOn ? 100.0 : 0.0;
 
         public double IsHeatingControlFullClose => _binaryHeaterLogic.SwitchHeaterOn ? 0.0 : 100.0;
-
-        private void FuzzyHeaterLogic_OutputChanged(object sender, EventArgs e)
-        {
-            NotifyPropertyChanged(nameof(IsMuchColderPercentage));
-            NotifyPropertyChanged(nameof(IsColderPercentage));
-            NotifyPropertyChanged(nameof(IsLitleColderPercentage));
-            NotifyPropertyChanged(nameof(IsLitleWarmerPercentage));
-            NotifyPropertyChanged(nameof(IsWarmerPercentage));
-            NotifyPropertyChanged(nameof(IsMuchWarmerPercentage));
-
-            NotifyPropertyChanged(nameof(GetFastWarmerPercentage));
-            NotifyPropertyChanged(nameof(GetWarmerPercentage));
-            NotifyPropertyChanged(nameof(GetColderPercentage));
-            NotifyPropertyChanged(nameof(GetFastColderPercentage));
-
-            NotifyPropertyChanged(nameof(ResultIsLitleColderAndGetFastWarmerPercentage));
-            NotifyPropertyChanged(nameof(ResultIsLitleWarmerAndGetFastColderPercentage));
-            NotifyPropertyChanged(nameof(ResultIsColderAndGetColderPercentage));
-            NotifyPropertyChanged(nameof(ResultIsWarmerAndGetWarmerPercentage));
-            NotifyPropertyChanged(nameof(ResultIsMuchWarmerPercentage));
-            NotifyPropertyChanged(nameof(ResultIsMuchColderPercentage));
-        }
 
         private void BinaryHeaterLogic_OutputChanged(object sender, EventArgs e)
         {

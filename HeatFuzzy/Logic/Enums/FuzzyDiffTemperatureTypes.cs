@@ -5,8 +5,8 @@
         Undefined,
         IsMuchColder,
         IsColder,
-        IsLitleColder,
-        IsLitleWarmer,
+        IsLittleColder,
+        IsLittleWarmer,
         IsWarmer,
         IsMuchWarmer
     }

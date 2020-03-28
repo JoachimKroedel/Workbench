@@ -4,7 +4,13 @@ namespace HeatFuzzy.Logic
 {
     public class FuzzyObject<T> where T : Enum
     {
+        public static FuzzyObject<T> Empty => new FuzzyObject<T>();
         private readonly IFuzzyLogic _fuzzyLogic;
+
+        private FuzzyObject()
+        {
+            Degree = 0.0; 
+        }
 
         public FuzzyObject(T value, double degree, IFuzzyLogic fuzzyLogic)
         {
@@ -23,6 +29,10 @@ namespace HeatFuzzy.Logic
 
         public FuzzyObject<Enum> And(Enum value)
         {
+            if (_fuzzyLogic == null)
+            {
+                return new FuzzyObject<Enum>();
+            }
             double otherDegree = _fuzzyLogic.GetDegree(value);
             double andDegree = _fuzzyLogic.GetAndDegree(Degree, otherDegree);
             return new FuzzyObject<Enum>(Value, andDegree, _fuzzyLogic);

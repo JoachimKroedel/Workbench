@@ -61,6 +61,7 @@
     <Compile Include="Logic\BinaryHeaterLogic.cs" />
     <Compile Include="Logic\IFuzzyLogic.cs" />
     <Compile Include="Mvvm\Converters\BoolToVisbilityConverter.cs" />
+    <Compile Include="Mvvm\Converters\DoubleToPercentageStringConverter.cs" />
     <Compile Include="Mvvm\Converters\IntToStringConverter.cs" />
     <Compile Include="Logic\FuzzyHeaterLogic.cs" />
     <Compile Include="Logic\Enums\FuzzyDiffTemperatureTypes.cs" />

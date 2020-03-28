@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HeatFuzzy.Logic;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -33,6 +34,19 @@ namespace HeatFuzzy
         protected bool AreValuesDifferent(double a, double b)
         {
             return System.Math.Abs(a - b) >= DELTA_DOUBLE_DIFF;
+        }
+
+        protected bool AreValuesDifferent<FT>(FuzzyObject<FT> a, FuzzyObject<FT> b) where FT : Enum
+        {
+            if (a == null && b == null)
+            {
+                return false;
+            }
+            if (a != null && b!= null)
+            {
+                return !a.Value.Equals(b.Value) || AreValuesDifferent(a.Degree, b.Degree);
+            }
+            return true;
         }
     }
 }
