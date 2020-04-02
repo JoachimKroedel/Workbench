@@ -146,7 +146,7 @@
             <!-- Logic diagrams and conditions -->
             <StackPanel Grid.Row="1" Orientation="Vertical">
                 <CheckBox Content="Show Conditions" IsChecked="{Binding ShowConditions}" />
-                <Grid Margin="16,0,0,0" Visibility="{Binding ShowConditions, Converter={StaticResource BoolToVisbilityConverterKey}}">
+                <Grid Margin="16,0,0,10" Visibility="{Binding ShowConditions, Converter={StaticResource BoolToVisbilityConverterKey}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -188,9 +188,6 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="64" />
                             <ColumnDefinition Width="64" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
@@ -267,7 +264,7 @@
                 </Grid>
 
                 <CheckBox Content="Show Diagrams" IsChecked="{Binding ShowDiagrams}" />
-                <Grid Height="200" Margin="16,0,0,0" Visibility="{Binding ShowDiagrams, Converter={StaticResource BoolToVisbilityConverterKey}}">
+                <Grid Height="200" Margin="16,0,0,10" Visibility="{Binding ShowDiagrams, Converter={StaticResource BoolToVisbilityConverterKey}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="*" />

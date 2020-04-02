@@ -561,18 +561,18 @@ namespace HeatFuzzy.Logic
             double minNegativHeatingControlChange = 0.0;
             foreach (FuzzyObject<FuzzyHeatingControlChangeTypes> fuzzyRadiatorControlChange in _fuzzyHeatingControlChangeObjects)
             {
-                var radiatorControlChange = GetValueByFuzzyDegree(fuzzyRadiatorControlChange.Value, fuzzyRadiatorControlChange.Degree);
-                if (double.IsNaN(radiatorControlChange))
+                var heatingControlChange = GetValueByFuzzyDegree(fuzzyRadiatorControlChange.Value, fuzzyRadiatorControlChange.Degree);
+                if (double.IsNaN(heatingControlChange))
                 {
                     continue;
                 }
-                if (radiatorControlChange > 0.0 && maxPositivHeatingControlChange < radiatorControlChange)
+                if (heatingControlChange > 0.0 && maxPositivHeatingControlChange < heatingControlChange)
                 {
-                    maxPositivHeatingControlChange = radiatorControlChange;
+                    maxPositivHeatingControlChange = heatingControlChange;
                 }
-                if (radiatorControlChange < 0.0 && minNegativHeatingControlChange > radiatorControlChange)
+                if (heatingControlChange < 0.0 && minNegativHeatingControlChange > heatingControlChange)
                 {
-                    minNegativHeatingControlChange = radiatorControlChange;
+                    minNegativHeatingControlChange = heatingControlChange;
                 }
             }
             // the highest value for open and for close wins (i.e. 'close' and 'much close' should be not more then 'much close' (it includes 'close' already)), 

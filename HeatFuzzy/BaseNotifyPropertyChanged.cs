@@ -7,7 +7,7 @@ namespace HeatFuzzy
 {
     public abstract class BaseNotifyPropertyChanged : INotifyPropertyChanged
     {
-        private const double DELTA_DOUBLE_DIFF = 0.001;
+        private const double DELTA_DOUBLE_DIFF = 0.00001;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
