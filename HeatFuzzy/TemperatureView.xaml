@@ -292,10 +292,10 @@
                             <oxy:LinearAxis Position="Bottom" Minimum="-0.51" Maximum="0.51" />
                         </oxy:Plot.Axes>
                         <oxy:Plot.Series>
-                            <oxy:LineSeries ItemsSource="{Binding GettingFastColderPoints}" Title="Fast colder" StrokeThickness="1" Color="Blue"        Visibility="{Binding ShowGetFastColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                            <oxy:LineSeries ItemsSource="{Binding GettingColderPoints}"     Title="Colder"      StrokeThickness="1" Color="LightBlue"   Visibility="{Binding ShowGetColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                            <oxy:LineSeries ItemsSource="{Binding GettingWarmerPoints}"     Title="Warmer"      StrokeThickness="1" Color="LightSalmon" Visibility="{Binding ShowGetWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
-                            <oxy:LineSeries ItemsSource="{Binding GettingFastWarmerPoints}" Title="Fast warmer" StrokeThickness="1" Color="Red"         Visibility="{Binding ShowGetFastWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding GettingFastColderPoints}" Title="Get fast colder" StrokeThickness="1" Color="Blue"        Visibility="{Binding ShowGetFastColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding GettingColderPoints}"     Title="Get colder"      StrokeThickness="1" Color="LightBlue"   Visibility="{Binding ShowGetColderCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding GettingWarmerPoints}"     Title="Get warmer"      StrokeThickness="1" Color="LightSalmon" Visibility="{Binding ShowGetWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
+                            <oxy:LineSeries ItemsSource="{Binding GettingFastWarmerPoints}" Title="Get fast warmer" StrokeThickness="1" Color="Red"         Visibility="{Binding ShowGetFastWarmerCurve, Converter={StaticResource BoolToVisbilityConverterKey}}"/>
                             <oxy:LineSeries ItemsSource="{Binding ActualChangesPoints}" LineStyle="Dash" StrokeThickness="2" Color="Black"  />
                         </oxy:Plot.Series>
                     </oxy:Plot>
