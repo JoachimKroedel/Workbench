@@ -1,21 +1,19 @@
 ﻿using FillAPixEngine;
 using FillAPixRobot;
 using FillAPixRobot.Enums;
-using FillAPixRobot.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace ConceptisPuzzles.Robot
 {
     public partial class FillAPixRobotView : Form
     {
-        private PuzzleBoard _board = null;
-        private RobotBrain _robot;
-        private PuzzleReferee _referee;
+        private PuzzleBoard _puzzleBoard = null;
+        private RobotBrain _robotBrain;
+        private PuzzleReferee _puzzleReferee;
         private int _cellSize = 20;
         private List<PuzzleArea> _knownAreas = new List<PuzzleArea>();
         private Bitmap _backGroundImage = null;
@@ -46,24 +44,24 @@ namespace ConceptisPuzzles.Robot
 
         private void FillAPixRobotView_Load(object sender, EventArgs e)
         {
-            _robot = new RobotBrain();
-            _robot.PropertyChanged += Robot_PropertyChanged;
-            _robot.ExperienceWanted += Robot_ExperienceWanted;
-            _robot.ActionWanted += Robot_ActionWanted;
+            _robotBrain = new RobotBrain();
+            _robotBrain.PropertyChanged += RobotBrain_PropertyChanged;
+            _robotBrain.ExperienceWanted += RobotBrain_ExperienceWanted;
+            _robotBrain.ActionWanted += RobotBrain_ActionWanted;
         }
 
-        private void _btnLoadPuzzle_Click(object sender, EventArgs e)
+        private void BtnLoadPuzzle_Click(object sender, EventArgs e)
         {
             DialogLoadPuzzle loadDialog = new DialogLoadPuzzle();
             // ToDo: Replace static hard coded folder reference with relative path
             loadDialog.InitialDirectory = @"D:\Entwicklung\VS.Net\2019\Workbench\ConceptisPuzzles\FillAPix\FillAPixRobot\Puzzles";
-            if (loadDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (loadDialog.ShowDialog() == DialogResult.OK)
             {
-                _board = new PuzzleBoard(loadDialog.FileName);
-                _robot.Activate(new Point(0, 0), new Rectangle(new Point(0, 0), _board.Size));
-                _referee = new PuzzleReferee(_board);
+                _puzzleBoard = new PuzzleBoard(loadDialog.FileName);
+                _robotBrain.Activate(new Point(0, 0), new Rectangle(new Point(0, 0), _puzzleBoard.Size));
+                _puzzleReferee = new PuzzleReferee(_puzzleBoard);
             }
-            _gbxRobot.Enabled = (_board != null);
+            _gbxRobot.Enabled = (_puzzleBoard != null);
             RefreshRobotSettings();
             RefreshPlayGround();
             RecreateCells();
@@ -71,22 +69,22 @@ namespace ConceptisPuzzles.Robot
 
         private void RefreshRobotSettings()
         {
-            _nudPositionX.Minimum = _robot.Area.Left;
-            _nudPositionX.Maximum = _robot.Area.Right - _robot.Area.Left - 1;
-            _nudPositionY.Minimum = _robot.Area.Top;
-            _nudPositionY.Maximum = _robot.Area.Bottom - _robot.Area.Top - 1;
+            _nudPositionX.Minimum = _robotBrain.Area.Left;
+            _nudPositionX.Maximum = _robotBrain.Area.Right - _robotBrain.Area.Left - 1;
+            _nudPositionY.Minimum = _robotBrain.Area.Top;
+            _nudPositionY.Maximum = _robotBrain.Area.Bottom - _robotBrain.Area.Top - 1;
         }
 
         private void RefreshPlayGround()
         {
-            if (_board == null)
+            if (_puzzleBoard == null)
             {
                 _pbxPlayGround.Image = null;
                 return;
             }
 
-            int width = _board.Columns * _cellSize;
-            int height = _board.Rows * _cellSize;
+            int width = _puzzleBoard.Columns * _cellSize;
+            int height = _puzzleBoard.Rows * _cellSize;
             Bitmap playGround = new Bitmap(width + 1, height + 1);
             Font font = new Font(Font.FontFamily, (int)Math.Round(_cellSize * 0.55));
             List<List<Point>> positionAreas = new List<List<Point>>();
@@ -97,23 +95,23 @@ namespace ConceptisPuzzles.Robot
             using (Graphics graphics = Graphics.FromImage(playGround))
             {
                 graphics.Clear(Color.Transparent);
-                for (int y = 0; y <= _board.Rows; y++)
+                for (int y = 0; y <= _puzzleBoard.Rows; y++)
                 {
                     graphics.DrawLine(new Pen(Color.Gray), 0, y * _cellSize, width, y * _cellSize);
                 }
-                for (int x = 0; x <= _board.Columns; x++)
+                for (int x = 0; x <= _puzzleBoard.Columns; x++)
                 {
                     graphics.DrawLine(new Pen(Color.Gray), x * _cellSize, 0, x * _cellSize, height);
                 }
-                for (int y = 0; y < _board.Rows; y++)
+                for (int y = 0; y < _puzzleBoard.Rows; y++)
                 {
-                    for (int x = 0; x < _board.Columns; x++)
+                    for (int x = 0; x < _puzzleBoard.Columns; x++)
                     {
                         Point cellPos = new Point(x, y);
-                        int number = _board.GetValue(cellPos);
+                        int number = _puzzleBoard.GetValue(cellPos);
                         if (number >= 0 && number <= 9)
                         {
-                            Brush fontBrush = _board.GetState(cellPos) == PuzzleCellStateTypes.Filled ? Brushes.White : Brushes.Black;
+                            Brush fontBrush = _puzzleBoard.GetState(cellPos) == PuzzleCellStateTypes.Filled ? Brushes.White : Brushes.Black;
                             graphics.DrawString(number.ToString(), font, fontBrush, new Rectangle(x * _cellSize + 3, y * _cellSize + 1, _cellSize, _cellSize));
                         }
                     }
@@ -155,16 +153,16 @@ namespace ConceptisPuzzles.Robot
             {
                 graphics.Clear(Color.White);
             }
-            for (int y = 0; y < _board.Rows; y++)
+            for (int y = 0; y < _puzzleBoard.Rows; y++)
             {
-                for (int x = 0; x < _board.Columns; x++)
+                for (int x = 0; x < _puzzleBoard.Columns; x++)
                 {
                     RefreshCell(x, y);
                 }
             }
-            for (int y = 0; y < _board.Rows; y++)
+            for (int y = 0; y < _puzzleBoard.Rows; y++)
             {
-                for (int x = 0; x < _board.Columns; x++)
+                for (int x = 0; x < _puzzleBoard.Columns; x++)
                 {
                     RefreshRobotCell(x, y);
                 }
@@ -179,7 +177,7 @@ namespace ConceptisPuzzles.Robot
             Point position = new Point(posX, posY);
             using (Graphics graphics = Graphics.FromImage(_backGroundImage))
             {
-                switch (_board.GetState(new Point(posX, posY)))
+                switch (_puzzleBoard.GetState(new Point(posX, posY)))
                 {
                     case PuzzleCellStateTypes.NotMarked: 
                         graphics.FillRectangle(Brushes.White, drawX, drawY, _cellSize, _cellSize); 
@@ -198,7 +196,7 @@ namespace ConceptisPuzzles.Robot
                         graphics.DrawLine(new Pen(Color.White), drawX, drawY + _cellSize, drawX + _cellSize, drawY);
                         break;
                 }
-                if (_cbxHighlightErrors.Checked && _board.IsWrong(position))
+                if (_cbxHighlightErrors.Checked && _puzzleBoard.IsWrong(position))
                 {
                     Pen errorPositionPen = new Pen(Brushes.Red, 3);
                     graphics.DrawRectangle(errorPositionPen, drawX + 2, drawY + 2, _cellSize - 4, _cellSize - 4);
@@ -208,38 +206,38 @@ namespace ConceptisPuzzles.Robot
 
         private void RefreshRobotCell(int posX, int posY)
         {
-            if (_robot == null)
+            if (_robotBrain == null)
                 return;
             int drawX = posX * _cellSize;
             int drawY = posY * _cellSize;
             Point position = new Point(posX, posY);
             using (Graphics graphics = Graphics.FromImage(_backGroundImage))
             {
-                if (_robot.Position.X == posX && _robot.Position.Y == posY)
+                if (_robotBrain.Position.X == posX && _robotBrain.Position.Y == posY)
                 {
                     Pen robotPen = new Pen(Color.Blue, 3);
                     graphics.DrawEllipse(robotPen, drawX + 2, drawY + 2, _cellSize - 4, _cellSize - 4);
                 }
-                else if (_robot.LastPositions.Contains(position))
+                else if (_robotBrain.LastPositions.Contains(position))
                 {
-                    int index = _robot.LastPositions.IndexOf(position);
-                    int grayColor = 255 / _robot.LastPositions.Count * index;
+                    int index = _robotBrain.LastPositions.IndexOf(position);
+                    int grayColor = 255 / _robotBrain.LastPositions.Count * index;
                     Pen robotPositionPen = new Pen(Color.FromArgb(grayColor, grayColor, grayColor), 2);
                     graphics.DrawEllipse(robotPositionPen, drawX, drawY, _cellSize, _cellSize);
                 }
             }
         }
 
-        private void _btnResetPuzzle_Click(object sender, EventArgs e)
+        private void BtnResetPuzzle_Click(object sender, EventArgs e)
         {
-            _board.Reset();
+            _puzzleBoard.Reset();
 
             RefreshRobotSettings();
             RefreshPlayGround();
             RecreateCells();
         }
 
-        private void _nudZoomFactor_ValueChanged(object sender, EventArgs e)
+        private void NudZoomFactor_ValueChanged(object sender, EventArgs e)
         {
             _cellSize = (int)Math.Round(20 * _nudZoomFactor.Value / 100);
             if (_cbxAutoRefreshPlayground.Checked)
@@ -250,33 +248,32 @@ namespace ConceptisPuzzles.Robot
             }
         }
 
-        private void _cbxHighlightErrors_CheckedChanged(object sender, EventArgs e)
+        private void CbxHighlightErrors_CheckedChanged(object sender, EventArgs e)
         {
             RecreateCells();
         }
 
         private void MoveRobot(DirectionTypes directionType)
         {
-            if (_referee.CheckAction(_robot.Position, directionType, ActionTypes.Move))
+            if (_puzzleReferee.CheckAction(_robotBrain.Position, directionType, ActionTypes.Move))
             {
                 Point direction = PuzzleReferee.ConvertToPoint(directionType);
-                Point actionPosition = new Point(_robot.Position.X + direction.X, _robot.Position.Y + direction.Y);
-                _robot.Position = actionPosition;
+                Point actionPosition = new Point(_robotBrain.Position.X + direction.X, _robotBrain.Position.Y + direction.Y);
+                _robotBrain.Position = actionPosition;
             }
         }
 
-        private void _btnMoveDown_Click(object sender, EventArgs e)
+        private void BtnMoveDown_Click(object sender, EventArgs e)
         {
-
             MoveRobot(DirectionTypes.South);
         }
 
-        private void _btnMoveRight_Click(object sender, EventArgs e)
+        private void BtnMoveRight_Click(object sender, EventArgs e)
         {
             MoveRobot(DirectionTypes.East);
         }
 
-        private void _btnMoveUp_Click(object sender, EventArgs e)
+        private void BtnMoveUp_Click(object sender, EventArgs e)
         {
             MoveRobot(DirectionTypes.North);
         }
@@ -286,32 +283,32 @@ namespace ConceptisPuzzles.Robot
             MoveRobot(DirectionTypes.West);
         }
 
-        private void _btnJump_Click(object sender, EventArgs e)
+        private void BtnJump_Click(object sender, EventArgs e)
         {
             if (_chkRandomJump.Checked)
             {
                 _nudPositionX.Value = _random.Next((int)_nudPositionX.Minimum, (int)_nudPositionX.Maximum);
                 _nudPositionY.Value = _random.Next((int)_nudPositionY.Minimum, (int)_nudPositionY.Maximum);
             }
-            _robot.Position = new Point((int)_nudPositionX.Value, (int)_nudPositionY.Value);
+            _robotBrain.Position = new Point((int)_nudPositionX.Value, (int)_nudPositionY.Value);
         }
 
-        private void _btnMarkAsFilled_Click(object sender, EventArgs e)
+        private void BtnMarkAsFilled_Click(object sender, EventArgs e)
         {
             DoStateAction(PuzzleCellStateTypes.Filled);
         }
 
-        private void _btnMarkAsEmpty_Click(object sender, EventArgs e)
+        private void BtnMarkAsEmpty_Click(object sender, EventArgs e)
         {
             DoStateAction(PuzzleCellStateTypes.Empty);
         }
 
-        private void _btnMarkAsUndefined_Click(object sender, EventArgs e)
+        private void BtnMarkAsUndefined_Click(object sender, EventArgs e)
         {
             DoStateAction(PuzzleCellStateTypes.NotMarked);
         }
 
-        private void _btnMove_Click(object sender, EventArgs e)
+        private void BtnMove_Click(object sender, EventArgs e)
         {
             if (_cbxDirectionTypes.SelectedIndex < 0)
             {
@@ -329,8 +326,8 @@ namespace ConceptisPuzzles.Robot
             }
             DirectionTypes directionType = (DirectionTypes)_cbxDirectionTypes.SelectedItem;
             Point direction = PuzzleReferee.ConvertToPoint(directionType);
-            Point markerPosition = new Point(_robot.Position.X + direction.X, _robot.Position.Y + direction.Y);
-            _board.SetState(markerPosition, markerState);
+            Point markerPosition = new Point(_robotBrain.Position.X + direction.X, _robotBrain.Position.Y + direction.Y);
+            _puzzleBoard.SetState(markerPosition, markerState);
 
             if (_cbxAutoRefreshPlayground.Checked)
             {
@@ -339,15 +336,15 @@ namespace ConceptisPuzzles.Robot
             }
         }
 
-        private void SetValueUndState(Point position, Point distancePoint, PuzzleBoard patialBoard)
+        private void SetValueAndState(Point position, Point distancePoint, PuzzleBoard patialBoard)
         {
             int width = patialBoard.Columns;
             int height = patialBoard.Rows;
             Point centerPos = new Point((width - 1) / 2, (height - 1) / 2);
             Point nextPosition = new Point(position.X + distancePoint.X, position.Y + distancePoint.Y);
             Point partialPos = new Point(centerPos.X + distancePoint.X, centerPos.Y + distancePoint.Y);
-            int number = _board.GetValue(nextPosition);
-            PuzzleCellStateTypes state = _board.GetState(nextPosition);
+            int number = _puzzleBoard.GetValue(nextPosition);
+            PuzzleCellStateTypes state = _puzzleBoard.GetState(nextPosition);
             patialBoard.SetValue(partialPos, number);
             patialBoard.SetState(partialPos, state);
         }
@@ -357,44 +354,44 @@ namespace ConceptisPuzzles.Robot
             switch(fieldOfVisionType)
             {
                 case FieldOfVisionTypes.Cross:
-                    SetValueUndState(position, new Point(0, 0), patialBoard);
-                    SetValueUndState(position, new Point(-1,  0), patialBoard);
-                    SetValueUndState(position, new Point( 1,  0), patialBoard);
-                    SetValueUndState(position, new Point( 0, -1), patialBoard);
-                    SetValueUndState(position, new Point( 0,  1), patialBoard);
+                    SetValueAndState(position, new Point(0, 0), patialBoard);
+                    SetValueAndState(position, new Point(-1,  0), patialBoard);
+                    SetValueAndState(position, new Point( 1,  0), patialBoard);
+                    SetValueAndState(position, new Point( 0, -1), patialBoard);
+                    SetValueAndState(position, new Point( 0,  1), patialBoard);
                     break;
                 case FieldOfVisionTypes.ThreeByThree:
                     FillPartialBoard(patialBoard, FieldOfVisionTypes.Cross, position);
-                    SetValueUndState(position, new Point(-1, -1), patialBoard);
-                    SetValueUndState(position, new Point(-1,  1), patialBoard);
-                    SetValueUndState(position, new Point( 1,  1), patialBoard);
-                    SetValueUndState(position, new Point( 1, -1), patialBoard);
+                    SetValueAndState(position, new Point(-1, -1), patialBoard);
+                    SetValueAndState(position, new Point(-1,  1), patialBoard);
+                    SetValueAndState(position, new Point( 1,  1), patialBoard);
+                    SetValueAndState(position, new Point( 1, -1), patialBoard);
                     break;
                 case FieldOfVisionTypes.Diamond:
                     FillPartialBoard(patialBoard, FieldOfVisionTypes.ThreeByThree, position);
-                    SetValueUndState(position, new Point(-2,  0), patialBoard);
-                    SetValueUndState(position, new Point( 2,  0), patialBoard);
-                    SetValueUndState(position, new Point( 0,  2), patialBoard);
-                    SetValueUndState(position, new Point( 0, -2), patialBoard);
+                    SetValueAndState(position, new Point(-2,  0), patialBoard);
+                    SetValueAndState(position, new Point( 2,  0), patialBoard);
+                    SetValueAndState(position, new Point( 0,  2), patialBoard);
+                    SetValueAndState(position, new Point( 0, -2), patialBoard);
                     break;
                 case FieldOfVisionTypes.FatCross:
                     FillPartialBoard(patialBoard, FieldOfVisionTypes.Diamond, position);
-                    SetValueUndState(position, new Point(-2, -1), patialBoard);
-                    SetValueUndState(position, new Point(-2,  1), patialBoard);
-                    SetValueUndState(position, new Point( 2, -1), patialBoard);
-                    SetValueUndState(position, new Point( 2,  1), patialBoard);
+                    SetValueAndState(position, new Point(-2, -1), patialBoard);
+                    SetValueAndState(position, new Point(-2,  1), patialBoard);
+                    SetValueAndState(position, new Point( 2, -1), patialBoard);
+                    SetValueAndState(position, new Point( 2,  1), patialBoard);
 
-                    SetValueUndState(position, new Point(-1,  2), patialBoard);
-                    SetValueUndState(position, new Point( 1,  2), patialBoard);
-                    SetValueUndState(position, new Point(-1, -2), patialBoard);
-                    SetValueUndState(position, new Point( 1, -2), patialBoard);
+                    SetValueAndState(position, new Point(-1,  2), patialBoard);
+                    SetValueAndState(position, new Point( 1,  2), patialBoard);
+                    SetValueAndState(position, new Point(-1, -2), patialBoard);
+                    SetValueAndState(position, new Point( 1, -2), patialBoard);
                     break;
                 case FieldOfVisionTypes.FiveByFive:
                     FillPartialBoard(patialBoard, FieldOfVisionTypes.FatCross, position);
-                    SetValueUndState(position, new Point(-2, -2), patialBoard);
-                    SetValueUndState(position, new Point(-2,  2), patialBoard);
-                    SetValueUndState(position, new Point( 2, -2), patialBoard);
-                    SetValueUndState(position, new Point( 2,  2), patialBoard);
+                    SetValueAndState(position, new Point(-2, -2), patialBoard);
+                    SetValueAndState(position, new Point(-2,  2), patialBoard);
+                    SetValueAndState(position, new Point( 2, -2), patialBoard);
+                    SetValueAndState(position, new Point( 2,  2), patialBoard);
                     break;
             }
         }
@@ -495,144 +492,15 @@ namespace ConceptisPuzzles.Robot
             _pbxLookResult.BackgroundImage = playGroundBackground;
         }
 
-        private void _ddbFieldOfVisionTypes_SelectedIndexChanged(object sender, EventArgs e)
+        private void DdbFieldOfVisionTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_robot != null && _ddbFieldOfVisionTypes.SelectedIndex >= 0)
+            if (_robotBrain != null && _ddbFieldOfVisionTypes.SelectedIndex >= 0)
             {
-                DrawFieldOfVision((FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem, _robot.Position);
+                DrawFieldOfVision((FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem, _robotBrain.Position);
             }
         }
 
-        private List<ISensoryPattern> GetSimilarityPatterns(List<ISensoryPattern> a, List<ISensoryPattern> b)
-        {
-            var result = new List<ISensoryPattern>();
-            int i = 0;
-            int j = 0;
-            while (i < a.Count && j < b.Count)
-            {
-                SensoryPattern left = a[i] as SensoryPattern;
-                SensoryPattern right = b[j] as SensoryPattern;
-                if (left.Equals(right))
-                {
-                    result.Add(left);
-                    i++;
-                    j++;
-                }
-                else if (left.CompareTo(right) < 0)
-                {
-                    i++;
-                }
-                else
-                {
-                    j++;
-                }
-            }
-            return result;
-        }
-
-        private bool CheckIfPatternsCompletelyIncluded(List<ISensoryPattern> fullPatternList, List<ISensoryPattern> partialPatternList)
-        {
-            bool result = true;
-
-            List<ISensoryPattern> checkList = new List<ISensoryPattern>();
-            checkList.AddRange(fullPatternList);
-            foreach (ISensoryPattern entry in partialPatternList)
-            {
-                if (checkList.Contains(entry))
-                {
-                    checkList.Remove(entry);
-                }
-                else
-                {
-                    result = false;
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        private void _btnTest_Click(object sender, EventArgs e)
-        {
-            List<ISensationResult> failedResults = SensationResult.SensationResults.Where(s => s.FeedbackValue < 0).ToList();
-            List<ISensationResult> otherResults = SensationResult.SensationResults.Where(s => s.FeedbackValue >= 0).ToList();
-            List<IPuzzleAction> actions = failedResults.Select(s => s.Action).Distinct().ToList();
-
-            List<IExperienceSensationResult> experienceSensationResults = new List<IExperienceSensationResult>();
-            foreach (IPuzzleAction action in actions)
-            {
-                List<IExperienceSensationSnapshot> experienceSensationSnapshots = new List<IExperienceSensationSnapshot>();
-                List<ISensationResult> failedActionResults = failedResults.Where(s => s.Action == action).ToList();
-                List<ISensationResult> otherActionResults = otherResults.Where(s => s.Action == action).ToList();
-
-                Console.WriteLine(action);
-
-                // Nun muss jeder Eintrag mit der Liste verglichen werden und das gemeiname Muster ermittelt werden.
-                IExperienceSensationSnapshot experienceSensationSnapshot = null;
-                FieldOfVisionTypes fieldOfVisionType = FieldOfVisionTypes.Cross;
-                double sumOfFeddback = 0;
-                int feedbackCounter = 0;
-                for(int i = 0; i < failedActionResults.Count - 1; i++)
-                {
-
-                    ISensationResult leftFailedActionResult = failedActionResults[i];
-                    ISensationSnapshot leftSnapshotBefore = leftFailedActionResult.SnapshotBefore;
-                    ISensationSnapshot leftSplittedSnapshotBefore = SensationSnapshot.SplitPattern(leftSnapshotBefore);
-
-                    feedbackCounter++;
-                    sumOfFeddback += leftFailedActionResult.FeedbackValue;
-
-                    if (experienceSensationSnapshot == null)
-                    {
-                        if (fieldOfVisionType < leftSplittedSnapshotBefore.FieldOfVisionType)
-                        {
-                            fieldOfVisionType = leftSplittedSnapshotBefore.FieldOfVisionType;
-                        }
-                        experienceSensationSnapshot = new ExperienceSensationSnapshot(leftSplittedSnapshotBefore);
-                    }
-                    else
-                    {
-                        var similarityPatterns = GetSimilarityPatterns(experienceSensationSnapshot.SensationSnapshot.SensoryPatterns, leftSplittedSnapshotBefore.SensoryPatterns);
-                        var nextExperienceSensationSnapshot = new ExperienceSensationSnapshot(fieldOfVisionType, similarityPatterns, false);
-
-                        bool patternExistAlsoInOtherResults = false;
-                        // Prüfen ob gemeinsames Muster in einer der anderen Erfahrungen (otherResults) vorkommt, wenn ja Ergbenis verwerfen
-                        foreach (ISensationResult otherSensationResult in otherActionResults)
-                        {
-                            ISensationSnapshot otherSplittedSnapshotBefore = SensationSnapshot.SplitPattern(otherSensationResult.SnapshotBefore);
-                            if (CheckIfPatternsCompletelyIncluded(otherSplittedSnapshotBefore.SensoryPatterns, similarityPatterns))
-                            {
-                                patternExistAlsoInOtherResults = true;
-                                break;
-                            }
-                        }
-                        if (!patternExistAlsoInOtherResults)
-                        {
-                            experienceSensationSnapshot = nextExperienceSensationSnapshot;
-                        }
-                        else
-                        {
-                            // Remember last ExperienceSensationSnapshot and start with new one
-                            experienceSensationSnapshots.Add(experienceSensationSnapshot);
-                            experienceSensationSnapshot = new ExperienceSensationSnapshot(leftSplittedSnapshotBefore);
-                        }
-                    }
-                }
-                if (experienceSensationSnapshot != null)
-                {
-                    experienceSensationSnapshots.Add(experienceSensationSnapshot);
-                    long averageFeedbackValue = feedbackCounter > 0 ? (long)(sumOfFeddback / feedbackCounter) : feedbackCounter;
-                    experienceSensationResults.Add(new ExperienceSensationResult(action, experienceSensationSnapshots, averageFeedbackValue));
-                }
-            }
-            foreach(var xxx in experienceSensationResults)
-            {
-                var experienceSensationResult = xxx as ExperienceSensationResult;
-                Console.WriteLine(experienceSensationResult);
-            }
-        }
-
-        private void _cbxTypeOfRobot_SelectedIndexChanged(object sender, EventArgs e)
+        private void CbxTypeOfRobot_SelectedIndexChanged(object sender, EventArgs e)
         {
             _allowedDirectionTypes.Clear();
             _allowedFieldOfVisionTypes.Clear();
@@ -696,14 +564,14 @@ namespace ConceptisPuzzles.Robot
             _cbxDirectionTypes.SelectedIndex = 0;
         }
 
-        private void Robot_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void RobotBrain_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
                 case "Position":
-                    _nudPositionX.Value = _robot.Position.X;
-                    _nudPositionY.Value = _robot.Position.Y;
-                    DrawFieldOfVision((FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem, _robot.Position);
+                    _nudPositionX.Value = _robotBrain.Position.X;
+                    _nudPositionY.Value = _robotBrain.Position.Y;
+                    DrawFieldOfVision((FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem, _robotBrain.Position);
                     break;
             }
             if (_cbxAutoRefreshPlayground.Checked)
@@ -712,52 +580,52 @@ namespace ConceptisPuzzles.Robot
             }
         }
 
-        private void Robot_ExperienceWanted(object sender, EventArgs e)
+        private void RobotBrain_ExperienceWanted(object sender, EventArgs e)
         {
             FieldOfVisionTypes fieldOfVisionType = (FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem;
-            PuzzleBoard partialBoard = CreatePartialBoard(fieldOfVisionType, _robot.Position);
+            PuzzleBoard partialBoard = CreatePartialBoard(fieldOfVisionType, _robotBrain.Position);
             if (partialBoard == null)
             {
                 return;
             }
-            _robot.Experience(fieldOfVisionType, partialBoard);
+            _robotBrain.Experience(fieldOfVisionType, partialBoard);
         }
 
-        private void Robot_ActionWanted(object sender, ActionWantedEventArgs e)
+        private void RobotBrain_ActionWanted(object sender, ActionWantedEventArgs e)
         {
             DirectionTypes directionType = (DirectionTypes)e.Action.DirectionType;
             ActionTypes actionType = (ActionTypes)e.Action.ActionType;
-            if (_referee.CheckAction(_robot.Position, directionType, actionType))
+            if (_puzzleReferee.CheckAction(_robotBrain.Position, directionType, actionType))
             {
                 Point direction = PuzzleReferee.ConvertToPoint(directionType);
-                Point actionPosition = new Point(_robot.Position.X + direction.X, _robot.Position.Y + direction.Y);
+                Point actionPosition = new Point(_robotBrain.Position.X + direction.X, _robotBrain.Position.Y + direction.Y);
                 int stateChangeCount = 0;
                 switch (actionType)
                 {
                     case ActionTypes.Move:
-                        _robot.Position = actionPosition;
+                        _robotBrain.Position = actionPosition;
                         break;
                     case ActionTypes.MarkAsEmpty:
-                        stateChangeCount = _board.SetState(actionPosition, PuzzleCellStateTypes.Empty).Count;
+                        stateChangeCount = _puzzleBoard.SetState(actionPosition, PuzzleCellStateTypes.Empty).Count;
                         break;
                     case ActionTypes.MarkAsFilled:
-                        stateChangeCount = _board.SetState(actionPosition, PuzzleCellStateTypes.Filled).Count;
+                        stateChangeCount = _puzzleBoard.SetState(actionPosition, PuzzleCellStateTypes.Filled).Count;
                         break;
                     case ActionTypes.RemoveMarker:
-                        stateChangeCount = _board.SetState(actionPosition, PuzzleCellStateTypes.NotMarked).Count;
+                        stateChangeCount = _puzzleBoard.SetState(actionPosition, PuzzleCellStateTypes.NotMarked).Count;
                         break;
                 }
-                if (_board.IsWrong())
+                if (_puzzleBoard.IsWrong())
                 {
-                    _robot.ActionFeedback -= 1000;
+                    _robotBrain.ActionFeedback -= 1000;
                 }
-                else if (_board.IsComplete())
+                else if (_puzzleBoard.IsComplete())
                 {
-                    _robot.ActionFeedback += 100;
+                    _robotBrain.ActionFeedback += 100;
                 }
                 else if(stateChangeCount > 0)
                 {
-                    _robot.ActionFeedback += stateChangeCount;
+                    _robotBrain.ActionFeedback += stateChangeCount;
                 }
             }
 
@@ -780,7 +648,7 @@ namespace ConceptisPuzzles.Robot
             }
         }
 
-        private void _chbRunInterations_CheckedChanged(object sender, EventArgs e)
+        private void ChbRunInterations_CheckedChanged(object sender, EventArgs e)
         {
             if (CheckIfTimerShouldBeActive())
             {
@@ -797,15 +665,15 @@ namespace ConceptisPuzzles.Robot
         {
             _timer.Enabled = false;
 
-            if (_board.IsWrong())
+            if (_puzzleBoard.IsWrong())
             {
                 if (_cbxBehaviourOnError.SelectedIndex == 1)
                 {
-                    _board.Undo();
+                    _puzzleBoard.Undo();
                 }
                 else if (_cbxBehaviourOnError.SelectedIndex == 2)
                 {
-                    _board.Reset();
+                    _puzzleBoard.Reset();
                 }
 
                 if (_cbxAutoRefreshPlayground.Checked)
@@ -814,7 +682,7 @@ namespace ConceptisPuzzles.Robot
                     RecreateCells();
                 }
             }
-            _robot.DoSomething(_cbxIsInLearningMode.Checked);
+            _robotBrain.DoSomething(_cbxIsInLearningMode.Checked);
 
             _nudRemainigIterationCount.Value = _nudRemainigIterationCount.Value - 1;
             if (_nudRemainigIterationCount.Value <= _nudRemainigIterationCount.Minimum)
@@ -825,7 +693,7 @@ namespace ConceptisPuzzles.Robot
 
         }
 
-        private void _btnStatisticForm_Click(object sender, EventArgs e)
+        private void BtnStatisticForm_Click(object sender, EventArgs e)
         {
             RobotTestForm robotTestDialog = new RobotTestForm();
             robotTestDialog.ShowDialog();

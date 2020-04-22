@@ -98,7 +98,6 @@
             this._btnTest.TabIndex = 25;
             this._btnTest.Text = "Test";
             this._btnTest.UseVisualStyleBackColor = true;
-            this._btnTest.Click += new System.EventHandler(this._btnTest_Click);
             // 
             // _btnLoadPuzzle
             // 
@@ -108,7 +107,7 @@
             this._btnLoadPuzzle.TabIndex = 16;
             this._btnLoadPuzzle.Text = "Load Puzzle";
             this._btnLoadPuzzle.UseVisualStyleBackColor = true;
-            this._btnLoadPuzzle.Click += new System.EventHandler(this._btnLoadPuzzle_Click);
+            this._btnLoadPuzzle.Click += new System.EventHandler(this.BtnLoadPuzzle_Click);
             // 
             // _btnResetPuzzle
             // 
@@ -118,7 +117,7 @@
             this._btnResetPuzzle.TabIndex = 17;
             this._btnResetPuzzle.Text = "Reset Puzzle";
             this._btnResetPuzzle.UseVisualStyleBackColor = true;
-            this._btnResetPuzzle.Click += new System.EventHandler(this._btnResetPuzzle_Click);
+            this._btnResetPuzzle.Click += new System.EventHandler(this.BtnResetPuzzle_Click);
             // 
             // _nudZoomFactor
             // 
@@ -147,7 +146,7 @@
             0,
             0,
             0});
-            this._nudZoomFactor.ValueChanged += new System.EventHandler(this._nudZoomFactor_ValueChanged);
+            this._nudZoomFactor.ValueChanged += new System.EventHandler(this.NudZoomFactor_ValueChanged);
             // 
             // _gbxRobot
             // 
@@ -190,7 +189,7 @@
             this._cbxTypeOfRobot.Name = "_cbxTypeOfRobot";
             this._cbxTypeOfRobot.Size = new System.Drawing.Size(236, 21);
             this._cbxTypeOfRobot.TabIndex = 26;
-            this._cbxTypeOfRobot.SelectedIndexChanged += new System.EventHandler(this._cbxTypeOfRobot_SelectedIndexChanged);
+            this._cbxTypeOfRobot.SelectedIndexChanged += new System.EventHandler(this.CbxTypeOfRobot_SelectedIndexChanged);
             // 
             // groupBox4
             // 
@@ -235,7 +234,7 @@
             this._cbxRunInterations.TabIndex = 17;
             this._cbxRunInterations.Text = "Run Iterations";
             this._cbxRunInterations.UseVisualStyleBackColor = true;
-            this._cbxRunInterations.CheckedChanged += new System.EventHandler(this._chbRunInterations_CheckedChanged);
+            this._cbxRunInterations.CheckedChanged += new System.EventHandler(this.ChbRunInterations_CheckedChanged);
             // 
             // _nudRemainigIterationCount
             // 
@@ -276,7 +275,7 @@
             this._btnMove.TabIndex = 14;
             this._btnMove.Text = "Move";
             this._btnMove.UseVisualStyleBackColor = true;
-            this._btnMove.Click += new System.EventHandler(this._btnMove_Click);
+            this._btnMove.Click += new System.EventHandler(this.BtnMove_Click);
             // 
             // _cbxDirectionTypes
             // 
@@ -297,7 +296,7 @@
             this._btnMarkAsNotMarked.TabIndex = 2;
             this._btnMarkAsNotMarked.Text = "Not marked";
             this._btnMarkAsNotMarked.UseVisualStyleBackColor = true;
-            this._btnMarkAsNotMarked.Click += new System.EventHandler(this._btnMarkAsUndefined_Click);
+            this._btnMarkAsNotMarked.Click += new System.EventHandler(this.BtnMarkAsUndefined_Click);
             // 
             // _btnMarkAsEmpty
             // 
@@ -307,7 +306,7 @@
             this._btnMarkAsEmpty.TabIndex = 1;
             this._btnMarkAsEmpty.Text = "Empty";
             this._btnMarkAsEmpty.UseVisualStyleBackColor = true;
-            this._btnMarkAsEmpty.Click += new System.EventHandler(this._btnMarkAsEmpty_Click);
+            this._btnMarkAsEmpty.Click += new System.EventHandler(this.BtnMarkAsEmpty_Click);
             // 
             // _cbxAutoDecision
             // 
@@ -329,7 +328,7 @@
             this._btnMarkAsFilled.TabIndex = 0;
             this._btnMarkAsFilled.Text = "Filled";
             this._btnMarkAsFilled.UseVisualStyleBackColor = true;
-            this._btnMarkAsFilled.Click += new System.EventHandler(this._btnMarkAsFilled_Click);
+            this._btnMarkAsFilled.Click += new System.EventHandler(this.BtnMarkAsFilled_Click);
             // 
             // groupBox1
             // 
@@ -353,6 +352,8 @@
             // _chkRandomJump
             // 
             this._chkRandomJump.AutoSize = true;
+            this._chkRandomJump.Checked = true;
+            this._chkRandomJump.CheckState = System.Windows.Forms.CheckState.Checked;
             this._chkRandomJump.Location = new System.Drawing.Point(75, 129);
             this._chkRandomJump.Name = "_chkRandomJump";
             this._chkRandomJump.Size = new System.Drawing.Size(80, 17);
@@ -368,7 +369,7 @@
             this._btnJump.TabIndex = 8;
             this._btnJump.Text = "Jump";
             this._btnJump.UseVisualStyleBackColor = true;
-            this._btnJump.Click += new System.EventHandler(this._btnJump_Click);
+            this._btnJump.Click += new System.EventHandler(this.BtnJump_Click);
             // 
             // label4
             // 
@@ -417,7 +418,7 @@
             this._btnMoveRight.TabIndex = 3;
             this._btnMoveRight.Text = "Right";
             this._btnMoveRight.UseVisualStyleBackColor = true;
-            this._btnMoveRight.Click += new System.EventHandler(this._btnMoveRight_Click);
+            this._btnMoveRight.Click += new System.EventHandler(this.BtnMoveRight_Click);
             // 
             // _btnMoveLeft
             // 
@@ -437,7 +438,7 @@
             this._btnMoveDown.TabIndex = 1;
             this._btnMoveDown.Text = "Down";
             this._btnMoveDown.UseVisualStyleBackColor = true;
-            this._btnMoveDown.Click += new System.EventHandler(this._btnMoveDown_Click);
+            this._btnMoveDown.Click += new System.EventHandler(this.BtnMoveDown_Click);
             // 
             // _btnMoveUp
             // 
@@ -447,7 +448,7 @@
             this._btnMoveUp.TabIndex = 0;
             this._btnMoveUp.Text = "Up";
             this._btnMoveUp.UseVisualStyleBackColor = true;
-            this._btnMoveUp.Click += new System.EventHandler(this._btnMoveUp_Click);
+            this._btnMoveUp.Click += new System.EventHandler(this.BtnMoveUp_Click);
             // 
             // groupBox2
             // 
@@ -472,7 +473,7 @@
             this._ddbFieldOfVisionTypes.Name = "_ddbFieldOfVisionTypes";
             this._ddbFieldOfVisionTypes.Size = new System.Drawing.Size(85, 21);
             this._ddbFieldOfVisionTypes.TabIndex = 12;
-            this._ddbFieldOfVisionTypes.SelectedIndexChanged += new System.EventHandler(this._ddbFieldOfVisionTypes_SelectedIndexChanged);
+            this._ddbFieldOfVisionTypes.SelectedIndexChanged += new System.EventHandler(this.DdbFieldOfVisionTypes_SelectedIndexChanged);
             // 
             // panel2
             // 
@@ -509,7 +510,7 @@
             this._cbxHighlightErrors.TabIndex = 23;
             this._cbxHighlightErrors.Text = "Highlight Errors";
             this._cbxHighlightErrors.UseVisualStyleBackColor = true;
-            this._cbxHighlightErrors.CheckedChanged += new System.EventHandler(this._cbxHighlightErrors_CheckedChanged);
+            this._cbxHighlightErrors.CheckedChanged += new System.EventHandler(this.CbxHighlightErrors_CheckedChanged);
             // 
             // splitContainer1
             // 
@@ -545,7 +546,7 @@
             this._btnStatisticForm.TabIndex = 26;
             this._btnStatisticForm.Text = "Statistic Form";
             this._btnStatisticForm.UseVisualStyleBackColor = true;
-            this._btnStatisticForm.Click += new System.EventHandler(this._btnStatisticForm_Click);
+            this._btnStatisticForm.Click += new System.EventHandler(this.BtnStatisticForm_Click);
             // 
             // _cbxAutoRefreshPlayground
             // 

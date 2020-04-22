@@ -14,7 +14,6 @@ namespace FillAPixRobot
 
     public class RobotBrain : INotifyPropertyChanged
     {
-        private const bool IS_SAVEABLE_RESULT = false;
         private const bool IS_SAVEABLE_SNAPSHOT = false;
         private const bool IS_SAVEABLE_PATTERN = false;
         private const bool IS_SAVEABLE_UNIT = false;
@@ -23,12 +22,9 @@ namespace FillAPixRobot
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
 
         private Point _position;
-        private readonly ObservableCollection<Point> _lastPositions = new ObservableCollection<Point>();
-        private Point _lastDirection = Point.Empty;
         private ISensationSnapshot _lastSensationSnapshot;
         private readonly List<ISensoryUnit> _kownSensoryUnits = new List<ISensoryUnit>();
         private readonly List<ISensoryPattern> _kownSensoryPatterns = new List<ISensoryPattern>();
-        private readonly List<ExperienceResult> _experienceResults = new List<ExperienceResult>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -88,10 +84,10 @@ namespace FillAPixRobot
             {
                 if (_position != value)
                 {
-                    _lastPositions.Insert(0, _position);
-                    while (_lastPositions.Count > MAX_MEMORY_FOR_POSITIONS)
+                    LastPositions.Insert(0, _position);
+                    while (LastPositions.Count > MAX_MEMORY_FOR_POSITIONS)
                     {
-                        _lastPositions.RemoveAt(MAX_MEMORY_FOR_POSITIONS);
+                        LastPositions.RemoveAt(MAX_MEMORY_FOR_POSITIONS);
                     }
                     _position = value;
                     NotifyPropertyChanged();
@@ -99,7 +95,7 @@ namespace FillAPixRobot
             }
         }
 
-        public ObservableCollection<Point> LastPositions { get { return _lastPositions; } }
+        public ObservableCollection<Point> LastPositions { get; } = new ObservableCollection<Point>();
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -324,18 +320,5 @@ namespace FillAPixRobot
         }
 
         public int ActionFeedback { get; set; }
-
-        public List<ExperienceResult> GetExperiencesForSensationSnapshotBeforeAction(ISensationSnapshot testSensationSnapshot)
-        {
-            List<ExperienceResult> result = new List<ExperienceResult>();
-            foreach (var experienceResult in _experienceResults)
-            {
-                if (SensationSnapshot.CheckIfOneSensationSnapshotIncludesAnother(experienceResult.SensationSnapshotBefore, testSensationSnapshot))
-                {
-                    result.Add(experienceResult);
-                }
-            }
-            return result;
-        }
     }
 }

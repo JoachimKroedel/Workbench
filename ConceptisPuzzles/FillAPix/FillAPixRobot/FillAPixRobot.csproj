@@ -49,11 +49,6 @@
     <Compile Include="ActionMemory.cs" />
     <Compile Include="ActionWantedEventArgs.cs" />
     <Compile Include="Enums\DirectionTypes.cs" />
-    <Compile Include="ExperienceKnowledge.cs" />
-    <Compile Include="ExperienceResult.cs" />
-    <Compile Include="ExperienceSensationResult.cs" />
-    <Compile Include="ExperienceSensationSnapshot.cs" />
-    <Compile Include="ExperienceSensoryPattern.cs" />
     <Compile Include="Enums\FieldOfVisionTypes.cs" />
     <Compile Include="PuzzleAction.cs" />
     <Compile Include="Enums\ActionTypes.cs" />

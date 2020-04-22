@@ -9,17 +9,7 @@ namespace FillAPixRobot
     {
         private const int MINIMUM_CALL_COUNT = 20;
         private const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 20;
-
         private const int MINIMUM_FEEDBACK_COUNT = 20;
-
-        private readonly Dictionary<ISensoryUnit, int> _differentUnits = new Dictionary<ISensoryUnit, int>();
-        private readonly Dictionary<ISensoryUnit, int> _noDifferentUnits = new Dictionary<ISensoryUnit, int>();
-
-        private readonly Dictionary<ISensoryUnit, int> _positiveFeedbackUnits = new Dictionary<ISensoryUnit, int>();
-        private readonly Dictionary<ISensoryUnit, int> _negativeFeedbackUnits = new Dictionary<ISensoryUnit, int>();
-
-        private readonly Dictionary<ISensoryPattern, int> _noDifferencePattern = new Dictionary<ISensoryPattern, int>();
-        private readonly Dictionary<ISensoryPattern, int> _negativeFeedbackPattern = new Dictionary<ISensoryPattern, int>();
 
         public ActionMemory(IPuzzleAction action)
         {
@@ -31,13 +21,13 @@ namespace FillAPixRobot
         public int DifferenceCount { get; set; }
 
 
-        public Dictionary<ISensoryUnit, int> DifferentUnits { get { return _differentUnits; } }
+        public Dictionary<ISensoryUnit, int> DifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
         public int NoDifferenceCount { get; set; }
 
-        public Dictionary<ISensoryUnit, int> NoDifferentUnits { get { return _noDifferentUnits; } }
+        public Dictionary<ISensoryUnit, int> NoDifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
-        public Dictionary<ISensoryPattern, int> NoDifferencePattern { get { return _noDifferencePattern; } }
+        public Dictionary<ISensoryPattern, int> NoDifferencePattern { get; } = new Dictionary<ISensoryPattern, int>();
 
         public int CallCount { get { return DifferenceCount + NoDifferenceCount; } }
 
@@ -45,10 +35,11 @@ namespace FillAPixRobot
 
         public double NegProcentualNegativeFeedback { get { return 1.0 - (double)NegativeFeedbackCount / Math.Max(MINIMUM_FEEDBACK_COUNT, PositiveFeedbackCount + NegativeFeedbackCount); } }
 
-        public Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get { return _positiveFeedbackUnits; } }
-        public Dictionary<ISensoryUnit, int> NegativeFeedbackUnits { get { return _negativeFeedbackUnits; } }
+        public Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
-        public Dictionary<ISensoryPattern, int> NegativeFeedbackPattern { get { return _negativeFeedbackPattern; } }
+        public Dictionary<ISensoryUnit, int> NegativeFeedbackUnits { get; } = new Dictionary<ISensoryUnit, int>();
+
+        public Dictionary<ISensoryPattern, int> NegativeFeedbackPattern { get; } = new Dictionary<ISensoryPattern, int>();
 
         public int PositiveFeedbackCount { get; set; }
 
@@ -232,6 +223,7 @@ namespace FillAPixRobot
             }
             return result;
         }
+
         public double CheckForPositiveFeedback(ISensationSnapshot snapShotBefore)
         {
             double result = 0.0;
