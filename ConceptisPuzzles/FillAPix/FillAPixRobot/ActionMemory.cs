@@ -7,9 +7,9 @@ namespace FillAPixRobot
 {
     public class ActionMemory : IActionMemory
     {
-        private const int MINIMUM_CALL_COUNT = 20;
-        private const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 20;
-        private const int MINIMUM_FEEDBACK_COUNT = 20;
+        private const int MINIMUM_CALL_COUNT = 10;
+        private const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
+        private const int MINIMUM_FEEDBACK_COUNT = 10;
 
         public ActionMemory(IPuzzleAction action)
         {

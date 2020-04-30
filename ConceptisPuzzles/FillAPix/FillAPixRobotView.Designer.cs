@@ -29,14 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this._btnTest = new System.Windows.Forms.Button();
             this._btnLoadPuzzle = new System.Windows.Forms.Button();
             this._btnResetPuzzle = new System.Windows.Forms.Button();
             this._nudZoomFactor = new System.Windows.Forms.NumericUpDown();
             this._gbxRobot = new System.Windows.Forms.GroupBox();
+            this._btnStatisticForm = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this._cbxTypeOfRobot = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this._btnRunInBackground = new System.Windows.Forms.Button();
             this._cbxBehaviourOnError = new System.Windows.Forms.ComboBox();
             this._cbxRunInterations = new System.Windows.Forms.CheckBox();
             this._nudRemainigIterationCount = new System.Windows.Forms.NumericUpDown();
@@ -64,7 +65,6 @@
             this._pbxLookResult = new System.Windows.Forms.PictureBox();
             this._cbxHighlightErrors = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this._btnStatisticForm = new System.Windows.Forms.Button();
             this._cbxAutoRefreshPlayground = new System.Windows.Forms.CheckBox();
             this._panelPlayground = new System.Windows.Forms.Panel();
             this._pbxPlayGround = new System.Windows.Forms.PictureBox();
@@ -88,16 +88,6 @@
             ((System.ComponentModel.ISupportInitialize)(this._pbxPlayGround)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fillAPixRobotBindingSource)).BeginInit();
             this.SuspendLayout();
-            // 
-            // _btnTest
-            // 
-            this._btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._btnTest.Location = new System.Drawing.Point(269, 374);
-            this._btnTest.Name = "_btnTest";
-            this._btnTest.Size = new System.Drawing.Size(75, 23);
-            this._btnTest.TabIndex = 25;
-            this._btnTest.Text = "Test";
-            this._btnTest.UseVisualStyleBackColor = true;
             // 
             // _btnLoadPuzzle
             // 
@@ -150,8 +140,7 @@
             // 
             // _gbxRobot
             // 
-            this._gbxRobot.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this._gbxRobot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this._gbxRobot.Controls.Add(this.label1);
             this._gbxRobot.Controls.Add(this._cbxTypeOfRobot);
@@ -161,10 +150,21 @@
             this._gbxRobot.Enabled = false;
             this._gbxRobot.Location = new System.Drawing.Point(3, 3);
             this._gbxRobot.Name = "_gbxRobot";
-            this._gbxRobot.Size = new System.Drawing.Size(343, 365);
+            this._gbxRobot.Size = new System.Drawing.Size(343, 366);
             this._gbxRobot.TabIndex = 19;
             this._gbxRobot.TabStop = false;
             this._gbxRobot.Text = "Robot";
+            // 
+            // _btnStatisticForm
+            // 
+            this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._btnStatisticForm.Location = new System.Drawing.Point(249, 515);
+            this._btnStatisticForm.Name = "_btnStatisticForm";
+            this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
+            this._btnStatisticForm.TabIndex = 26;
+            this._btnStatisticForm.Text = "Statistic Form";
+            this._btnStatisticForm.UseVisualStyleBackColor = true;
+            this._btnStatisticForm.Click += new System.EventHandler(this.BtnStatisticForm_Click);
             // 
             // label1
             // 
@@ -212,6 +212,17 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Action";
             // 
+            // _btnRunInBackground
+            // 
+            this._btnRunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._btnRunInBackground.Location = new System.Drawing.Point(217, 375);
+            this._btnRunInBackground.Name = "_btnRunInBackground";
+            this._btnRunInBackground.Size = new System.Drawing.Size(124, 21);
+            this._btnRunInBackground.TabIndex = 28;
+            this._btnRunInBackground.Text = "Run in Background";
+            this._btnRunInBackground.UseVisualStyleBackColor = true;
+            this._btnRunInBackground.Click += new System.EventHandler(this.BtnRunInBackground_Click);
+            // 
             // _cbxBehaviourOnError
             // 
             this._cbxBehaviourOnError.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -227,25 +238,27 @@
             // 
             // _cbxRunInterations
             // 
-            this._cbxRunInterations.AutoSize = true;
-            this._cbxRunInterations.Location = new System.Drawing.Point(135, 93);
+            this._cbxRunInterations.Appearance = System.Windows.Forms.Appearance.Button;
+            this._cbxRunInterations.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this._cbxRunInterations.Location = new System.Drawing.Point(81, 96);
             this._cbxRunInterations.Name = "_cbxRunInterations";
-            this._cbxRunInterations.Size = new System.Drawing.Size(92, 17);
+            this._cbxRunInterations.Size = new System.Drawing.Size(100, 20);
             this._cbxRunInterations.TabIndex = 17;
-            this._cbxRunInterations.Text = "Run Iterations";
+            this._cbxRunInterations.Text = "Play Simulation";
+            this._cbxRunInterations.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this._cbxRunInterations.UseVisualStyleBackColor = true;
             this._cbxRunInterations.CheckedChanged += new System.EventHandler(this.ChbRunInterations_CheckedChanged);
             // 
             // _nudRemainigIterationCount
             // 
-            this._nudRemainigIterationCount.Location = new System.Drawing.Point(9, 92);
+            this._nudRemainigIterationCount.Location = new System.Drawing.Point(9, 96);
             this._nudRemainigIterationCount.Maximum = new decimal(new int[] {
             500000,
             0,
             0,
             0});
             this._nudRemainigIterationCount.Name = "_nudRemainigIterationCount";
-            this._nudRemainigIterationCount.Size = new System.Drawing.Size(120, 20);
+            this._nudRemainigIterationCount.Size = new System.Drawing.Size(66, 20);
             this._nudRemainigIterationCount.TabIndex = 16;
             this._nudRemainigIterationCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this._nudRemainigIterationCount.ThousandsSeparator = true;
@@ -521,9 +534,9 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this._btnRunInBackground);
             this.splitContainer1.Panel1.Controls.Add(this._btnStatisticForm);
             this.splitContainer1.Panel1.Controls.Add(this._gbxRobot);
-            this.splitContainer1.Panel1.Controls.Add(this._btnTest);
             this.splitContainer1.Panel1MinSize = 340;
             // 
             // splitContainer1.Panel2
@@ -534,19 +547,9 @@
             this.splitContainer1.Panel2.Controls.Add(this._btnLoadPuzzle);
             this.splitContainer1.Panel2.Controls.Add(this._btnResetPuzzle);
             this.splitContainer1.Panel2.Controls.Add(this._nudZoomFactor);
-            this.splitContainer1.Size = new System.Drawing.Size(905, 408);
+            this.splitContainer1.Size = new System.Drawing.Size(1237, 542);
             this.splitContainer1.SplitterDistance = 347;
             this.splitContainer1.TabIndex = 25;
-            // 
-            // _btnStatisticForm
-            // 
-            this._btnStatisticForm.Location = new System.Drawing.Point(22, 374);
-            this._btnStatisticForm.Name = "_btnStatisticForm";
-            this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
-            this._btnStatisticForm.TabIndex = 26;
-            this._btnStatisticForm.Text = "Statistic Form";
-            this._btnStatisticForm.UseVisualStyleBackColor = true;
-            this._btnStatisticForm.Click += new System.EventHandler(this.BtnStatisticForm_Click);
             // 
             // _cbxAutoRefreshPlayground
             // 
@@ -559,6 +562,7 @@
             this._cbxAutoRefreshPlayground.TabIndex = 24;
             this._cbxAutoRefreshPlayground.Text = "Auto Refresh Playground";
             this._cbxAutoRefreshPlayground.UseVisualStyleBackColor = true;
+            this._cbxAutoRefreshPlayground.CheckedChanged += new System.EventHandler(this.CbxAutoRefreshPlayground_CheckedChanged);
             // 
             // _panelPlayground
             // 
@@ -570,7 +574,7 @@
             this._panelPlayground.Controls.Add(this._pbxPlayGround);
             this._panelPlayground.Location = new System.Drawing.Point(4, 32);
             this._panelPlayground.Name = "_panelPlayground";
-            this._panelPlayground.Size = new System.Drawing.Size(547, 373);
+            this._panelPlayground.Size = new System.Drawing.Size(879, 507);
             this._panelPlayground.TabIndex = 6;
             // 
             // _pbxPlayGround
@@ -581,7 +585,7 @@
             this._pbxPlayGround.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pbxPlayGround.Location = new System.Drawing.Point(0, 0);
             this._pbxPlayGround.Name = "_pbxPlayGround";
-            this._pbxPlayGround.Size = new System.Drawing.Size(545, 371);
+            this._pbxPlayGround.Size = new System.Drawing.Size(877, 505);
             this._pbxPlayGround.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this._pbxPlayGround.TabIndex = 4;
             this._pbxPlayGround.TabStop = false;
@@ -598,7 +602,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(905, 408);
+            this.ClientSize = new System.Drawing.Size(1237, 542);
             this.Controls.Add(this.splitContainer1);
             this.MinimumSize = new System.Drawing.Size(742, 369);
             this.Name = "FillAPixRobotView";
@@ -661,7 +665,6 @@
         private System.Windows.Forms.Button _btnMarkAsNotMarked;
         private System.Windows.Forms.Button _btnMarkAsEmpty;
         private System.Windows.Forms.Button _btnMarkAsFilled;
-        private System.Windows.Forms.Button _btnTest;
         private System.Windows.Forms.ComboBox _cbxDirectionTypes;
         private System.Windows.Forms.Button _btnMove;
         private System.Windows.Forms.Label label1;
@@ -672,5 +675,6 @@
         private System.Windows.Forms.CheckBox _cbxAutoRefreshPlayground;
         private System.Windows.Forms.Button _btnStatisticForm;
         private System.Windows.Forms.ComboBox _cbxBehaviourOnError;
+        private System.Windows.Forms.Button _btnRunInBackground;
     }
 }

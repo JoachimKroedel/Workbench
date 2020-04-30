@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ConceptisPuzzles.Robot
@@ -494,6 +496,7 @@ namespace ConceptisPuzzles.Robot
 
         private void DdbFieldOfVisionTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
+            _fieldOfVisionType = (FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem;
             if (_robotBrain != null && _ddbFieldOfVisionTypes.SelectedIndex >= 0)
             {
                 DrawFieldOfVision((FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem, _robotBrain.Position);
@@ -566,6 +569,10 @@ namespace ConceptisPuzzles.Robot
 
         private void RobotBrain_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (_simulationRunsInBackground)
+            {
+                return;
+            }
             switch (e.PropertyName)
             {
                 case "Position":
@@ -580,15 +587,16 @@ namespace ConceptisPuzzles.Robot
             }
         }
 
+        private FieldOfVisionTypes _fieldOfVisionType;
+
         private void RobotBrain_ExperienceWanted(object sender, EventArgs e)
         {
-            FieldOfVisionTypes fieldOfVisionType = (FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem;
-            PuzzleBoard partialBoard = CreatePartialBoard(fieldOfVisionType, _robotBrain.Position);
+            PuzzleBoard partialBoard = CreatePartialBoard(_fieldOfVisionType, _robotBrain.Position);
             if (partialBoard == null)
             {
                 return;
             }
-            _robotBrain.Experience(fieldOfVisionType, partialBoard);
+            _robotBrain.Experience(_fieldOfVisionType, partialBoard);
         }
 
         private void RobotBrain_ActionWanted(object sender, ActionWantedEventArgs e)
@@ -629,7 +637,7 @@ namespace ConceptisPuzzles.Robot
                 }
             }
 
-            if (_cbxAutoRefreshPlayground.Checked)
+            if (!_simulationRunsInBackground && _cbxAutoRefreshPlayground.Checked)
             {
                 RefreshPlayGround();
                 RecreateCells();
@@ -638,7 +646,7 @@ namespace ConceptisPuzzles.Robot
 
         private bool CheckIfTimerShouldBeActive()
         {
-            if (_cbxRunInterations.Checked && _nudRemainigIterationCount.Value > _nudRemainigIterationCount.Minimum)
+            if ((_cbxRunInterations.Checked || _simulationRunsInBackground) && _nudRemainigIterationCount.Value > _nudRemainigIterationCount.Minimum)
             {
                 return true;
             }
@@ -664,39 +672,108 @@ namespace ConceptisPuzzles.Robot
         private void Timer_Tick(object sender, EventArgs e)
         {
             _timer.Enabled = false;
+            if (_simulationRunsInBackground)
+            {
+                _nudRemainigIterationCount.Value = _backgroundIterations;
+                RefreshPlayGround();
+                RecreateCells();
+            }
+            else
+            {
+                RunOneIteration(_cbxBehaviourOnError.SelectedIndex == 2);
 
+                _nudRemainigIterationCount.Value = _nudRemainigIterationCount.Value - 1;
+                if (_nudRemainigIterationCount.Value <= _nudRemainigIterationCount.Minimum)
+                {
+                    _cbxRunInterations.Checked = false;
+                }
+            }
+            _timer.Enabled = CheckIfTimerShouldBeActive();
+        }
+
+        private void RunOneIteration(bool resetOnOrror = true)
+        {
             if (_puzzleBoard.IsWrong())
             {
-                if (_cbxBehaviourOnError.SelectedIndex == 1)
-                {
-                    _puzzleBoard.Undo();
-                }
-                else if (_cbxBehaviourOnError.SelectedIndex == 2)
+                if (resetOnOrror)
                 {
                     _puzzleBoard.Reset();
                 }
+                else
+                { 
+                    _puzzleBoard.Undo();
+                }
 
-                if (_cbxAutoRefreshPlayground.Checked)
+                if (!_simulationRunsInBackground && _cbxAutoRefreshPlayground.Checked)
                 {
                     RefreshPlayGround();
                     RecreateCells();
                 }
             }
             _robotBrain.DoSomething(_cbxIsInLearningMode.Checked);
-
-            _nudRemainigIterationCount.Value = _nudRemainigIterationCount.Value - 1;
-            if (_nudRemainigIterationCount.Value <= _nudRemainigIterationCount.Minimum)
-            {
-                _cbxRunInterations.Checked = false;
-            }
-            _timer.Enabled = CheckIfTimerShouldBeActive();
-
         }
 
         private void BtnStatisticForm_Click(object sender, EventArgs e)
         {
             RobotTestForm robotTestDialog = new RobotTestForm();
             robotTestDialog.ShowDialog();
+        }
+
+        private void CbxAutoRefreshPlayground_CheckedChanged(object sender, EventArgs e)
+        {
+            _pbxPlayGround.Visible = _cbxAutoRefreshPlayground.Checked;
+        }
+
+        private bool _simulationRunsInBackground = false;
+        private async void BtnRunInBackground_Click(object sender, EventArgs e)
+        {
+            if (_simulationRunsInBackground)
+            {
+                _cancellationTokenSource.Cancel();
+                return;
+            }
+
+            _simulationRunsInBackground = true;
+
+            if (!CheckIfTimerShouldBeActive())
+            {
+                return;
+            }
+
+            _gbxRobot.Enabled = false;
+            _timer.Interval = 1000;
+            _timer.Enabled = true;
+
+            _nudRemainigIterationCount.Value = await RunSimulationInBackgroundAsync();
+
+            _timer.Enabled = false;
+            _gbxRobot.Enabled = true;
+
+            _simulationRunsInBackground = false;
+        }
+
+        private int _backgroundIterations = 0;
+        private int RunSimulationInBackground(int iterrations, CancellationToken cancellationToken)
+        {
+            _backgroundIterations = iterrations;
+            while (_backgroundIterations > 0 && !cancellationToken.IsCancellationRequested)
+            {
+                RunOneIteration();
+                _backgroundIterations--;
+            }
+            return _backgroundIterations;
+        }
+
+        private Task<int> _backgroundTask = null;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private async Task<int> RunSimulationInBackgroundAsync()
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+            _backgroundTask = new Task<int>(() => RunSimulationInBackground((int)_nudRemainigIterationCount.Value, _cancellationTokenSource.Token));
+            _backgroundTask.Start();
+            int result = await _backgroundTask;
+            _backgroundTask = null;
+            return result;
         }
     }
 }

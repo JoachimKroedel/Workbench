@@ -18,7 +18,7 @@ namespace FillAPixRobot
         private const bool IS_SAVEABLE_PATTERN = false;
         private const bool IS_SAVEABLE_UNIT = false;
 
-        private const int MAX_MEMORY_FOR_POSITIONS = 0;
+        private const int MAX_MEMORY_FOR_POSITIONS = 10;
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
 
         private Point _position;
@@ -41,14 +41,22 @@ namespace FillAPixRobot
 
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.Center));
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.North));
+            _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthWest));
+            _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthEast));
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.East));
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.South));
+            _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthWest));
+            _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthEast));
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.West));
 
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.Center));
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.North));
+            _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthWest));
+            _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthEast));
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.East));
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.South));
+            _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthWest));
+            _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthEast));
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.West));
 
             _allPosibleActions.Add(new PuzzleAction(ActionTypes.RemoveMarker, DirectionTypes.Center));
