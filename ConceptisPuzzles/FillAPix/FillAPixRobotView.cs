@@ -715,8 +715,9 @@ namespace ConceptisPuzzles.Robot
 
         private void BtnStatisticForm_Click(object sender, EventArgs e)
         {
-            RobotTestForm robotTestDialog = new RobotTestForm();
-            robotTestDialog.ShowDialog();
+            RobotBrainInfoForm robotBrainInfoDialog = new RobotBrainInfoForm();
+            robotBrainInfoDialog.RobotBrain = _robotBrain;
+            robotBrainInfoDialog.ShowDialog();
         }
 
         private void CbxAutoRefreshPlayground_CheckedChanged(object sender, EventArgs e)

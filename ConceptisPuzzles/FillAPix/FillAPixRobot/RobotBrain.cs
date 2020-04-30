@@ -32,7 +32,7 @@ namespace FillAPixRobot
         public event EventHandler<ActionWantedEventArgs> ActionWanted;
 
         private readonly List<IPuzzleAction> _allPosibleActions = new List<IPuzzleAction>();
-        private readonly Dictionary<IPuzzleAction, IActionMemory> _actionMemoryDictonary = new Dictionary<IPuzzleAction, IActionMemory>();
+        public Dictionary<IPuzzleAction, IActionMemory> ActionMemoryDictonary { get; } = new Dictionary<IPuzzleAction, IActionMemory>();
 
         public RobotBrain()
         {
@@ -74,9 +74,9 @@ namespace FillAPixRobot
 
             foreach (IPuzzleAction action in _allPosibleActions)
             {
-                if (!_actionMemoryDictonary.ContainsKey(action))
+                if (!ActionMemoryDictonary.ContainsKey(action))
                 {
-                    _actionMemoryDictonary.Add(action, new ActionMemory(action));
+                    ActionMemoryDictonary.Add(action, new ActionMemory(action));
                 }
             }
 
@@ -218,7 +218,7 @@ namespace FillAPixRobot
             ISensationSnapshot sensationSnapshotAfterAction = _lastSensationSnapshot;
 
             var difference = SensationSnapshot.GetDifferenceSensoryPatterns(sensationSnapshotBeforeAction, sensationSnapshotAfterAction);
-            var actionMemory = _actionMemoryDictonary[action];
+            var actionMemory = ActionMemoryDictonary[action];
             bool isDifferent = difference.SensoryPatterns.Any();
             actionMemory.RememberDifference(isDifferent, sensationSnapshotBeforeAction);
             if (isDifferent && actionFeedback != 0)
@@ -247,7 +247,7 @@ namespace FillAPixRobot
             Dictionary<IPuzzleAction, double> posibilityForPositiveFeedbackByAction = new Dictionary<IPuzzleAction, double>();
             Dictionary<IPuzzleAction, double> posibilityForNegativeFeedbackByAction = new Dictionary<IPuzzleAction, double>();
 
-            foreach (IActionMemory actionMemory in _actionMemoryDictonary.Values)
+            foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
             {
                 var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(sensationSnapshot);
                 double posibilityForDifference = Math.Min(actionMemory.NegProcentualNoDifference, percentageForDifferenceByActualSnapshot);
@@ -279,7 +279,7 @@ namespace FillAPixRobot
             Dictionary<IPuzzleAction, double> rangeOfActions = new Dictionary<IPuzzleAction, double>();
             double rangeSize = 0.0;
 
-            foreach (IActionMemory actionMemory in _actionMemoryDictonary.Values)
+            foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
             {
                 double posibilityOfDifference = 1.0;
                 if (posibilityForDifferencesByAction.ContainsKey(actionMemory.Action))
@@ -308,7 +308,7 @@ namespace FillAPixRobot
             if (!rangeOfActions.Any())
             {
                 rangeSize = sumeOfPosibilityForDifference;
-                foreach (IActionMemory actionMemory in _actionMemoryDictonary.Values)
+                foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
                 {
                     double posibilityForDifference = posibilityForDifferencesByAction[actionMemory.Action];
                     rangeOfActions.Add(actionMemory.Action, posibilityForDifference);
