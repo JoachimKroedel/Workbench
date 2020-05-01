@@ -1,8 +1,10 @@
-﻿using FillAPixRobot.Interfaces;
+﻿using FillAPixRobot.Enums;
+using FillAPixRobot.Interfaces;
 using FillAPixRobot.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace FillAPixRobot
 {
@@ -38,7 +40,7 @@ namespace FillAPixRobot
             return true;
         }
 
-        static private List<ISensoryPattern> Split(int level, List<ISensoryUnit> sensoryUnits)
+        static private List<ISensoryPattern> Split(DirectionTypes directionType, int level, List<ISensoryUnit> sensoryUnits)
         {
             List<ISensoryPattern> result = new List<ISensoryPattern>();
 
@@ -48,7 +50,7 @@ namespace FillAPixRobot
                 {
                     var splittedSensoryUnits = new List<ISensoryUnit>();
                     splittedSensoryUnits.Add(leftUnit);
-                    ISensoryPattern newEntry = new SensoryPattern(splittedSensoryUnits, false);
+                    ISensoryPattern newEntry = new SensoryPattern(directionType,  splittedSensoryUnits, false);
                     result.Add(newEntry);
                 }
             }
@@ -64,13 +66,13 @@ namespace FillAPixRobot
                         break;
                     }
                     reducedSensoryUnits.RemoveAt(0);
-                    var testPattern = Split(level - 1, reducedSensoryUnits);
+                    var testPattern = Split(directionType, level - 1, reducedSensoryUnits);
                     foreach (var rightPattern in testPattern)
                     {
                         var splittedSensoryUnits = new List<ISensoryUnit>();
                         splittedSensoryUnits.Add(leftUnit);
                         splittedSensoryUnits.AddRange(rightPattern.SensoryUnits);
-                        ISensoryPattern newEntry = new SensoryPattern(splittedSensoryUnits, false);
+                        ISensoryPattern newEntry = new SensoryPattern(directionType, splittedSensoryUnits, false);
                         result.Add(newEntry);
                     }
                 }
@@ -86,7 +88,7 @@ namespace FillAPixRobot
 
             for (int i = 1; i < sensoryUnits.Count; i++)
             {
-                result.AddRange(Split(i, sensoryUnits));
+                result.AddRange(Split(sensoryPattern.DirectionType, i, sensoryUnits));
             }
 
             return result;
@@ -104,7 +106,7 @@ namespace FillAPixRobot
             }
         }
 
-        public SensoryPattern(List<ISensoryUnit> sensoryUnits) : base(sensoryUnits, true)
+        public SensoryPattern(DirectionTypes directionType, List<ISensoryUnit> sensoryUnits) : base(directionType, sensoryUnits, true)
         {
             if (!SensoryPatterns.Contains(this))
             {
@@ -112,8 +114,8 @@ namespace FillAPixRobot
             }
         }
 
-        public SensoryPattern(List<ISensoryUnit> sensoryUnits, bool saveable)
-            : base(sensoryUnits, saveable)
+        public SensoryPattern(DirectionTypes directionType, List<ISensoryUnit> sensoryUnits, bool saveable)
+            : base(directionType, sensoryUnits, saveable)
         {
             if (saveable && !SensoryPatterns.Contains(this))
             {
@@ -215,19 +217,20 @@ namespace FillAPixRobot
 
         public override string ToString()
         {
-            var result = "[" + " {";
+            var outputBuilder = new StringBuilder();
+            outputBuilder.Append("[" + DirectionType + ", {");
             if (SensoryUnits.Any())
             {
                 var sortedSensoryUnits = SensoryUnits;
                 sortedSensoryUnits.Sort();
                 foreach (var sensoryUnit in sortedSensoryUnits)
                 {
-                    result += sensoryUnit + ",";
+                    outputBuilder.Append(sensoryUnit + ",");
                 }
-                result = result.Remove(result.Length - 1, 1);
+                outputBuilder.Remove(outputBuilder.Length - 1, 1);
             }
-            result += "}]";
-            return result;
+            outputBuilder.Append("}]");
+            return outputBuilder.ToString();
         }
     }
 }

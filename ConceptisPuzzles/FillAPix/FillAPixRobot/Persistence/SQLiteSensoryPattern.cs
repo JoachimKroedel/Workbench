@@ -3,6 +3,7 @@ using System.Linq;
 
 using System.Data.SQLite;
 using FillAPixRobot.Interfaces;
+using FillAPixRobot.Enums;
 
 namespace FillAPixRobot.Persistence
 {
@@ -67,10 +68,11 @@ namespace FillAPixRobot.Persistence
             SensoryUnits = new List<ISensoryUnit>();
         }
 
-        public SQLiteSensoryPattern(List<ISensoryUnit> sensoryUnits, bool saveable = true)
+        public SQLiteSensoryPattern(DirectionTypes directionType, List<ISensoryUnit> sensoryUnits, bool saveable = true)
             : this()
         {
             Id = -1;
+            DirectionType = directionType;
             SensoryUnits.AddRange(sensoryUnits);
 
             if (!saveable)
@@ -101,8 +103,7 @@ namespace FillAPixRobot.Persistence
         }
 
         public long Id { get; protected set; }
-
+        public DirectionTypes DirectionType { get; set; }
         public List<ISensoryUnit> SensoryUnits { get; protected set; }
     }
-
 }

@@ -82,7 +82,7 @@ namespace FillAPixRobot
 
         public override string ToString()
         {
-            return "[" + Type + "='" + Value + "']";
+            return $"[{Type}='{Value}']";
         }
     }
 }

@@ -90,9 +90,9 @@ namespace FillAPixRobot.Persistence
 
         public long Id { get; protected set; }
 
+        public DirectionTypes DirectionType { get; set; }
         public FieldOfVisionTypes FieldOfVisionType { get; set; }
 
         public List<ISensoryPattern> SensoryPatterns { get; protected set; }
-        public DirectionTypes DirectionType { get; set; }
     }
 }

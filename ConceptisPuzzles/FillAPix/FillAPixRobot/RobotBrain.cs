@@ -170,7 +170,7 @@ namespace FillAPixRobot
                         sensoryUnits.Add(sensoryUnitValue);
                         sensoryUnits.Add(sensoryUnitPosition);
 
-                        ISensoryPattern sensoryPattern = new SensoryPattern(sensoryUnits, IS_SAVEABLE_PATTERN);
+                        ISensoryPattern sensoryPattern = new SensoryPattern(directionType, sensoryUnits, IS_SAVEABLE_PATTERN);
 
                         if (_kownSensoryPatterns.Contains(sensoryPattern))
                         {
@@ -233,6 +233,7 @@ namespace FillAPixRobot
 
         private IPuzzleAction GetDecisionByMemory(ISensationSnapshot sensationSnapshot)
         {
+            double sumeOfPosibilityForDifference = 0.0;
             double sumeOfPosibilityForPositiveFeedback = 0.0;
             double sumeOfPosibilityForNegativeFeedback = 0.0;
             Dictionary<IPuzzleAction, double> posibilityForDifferencesByAction = new Dictionary<IPuzzleAction, double>();
