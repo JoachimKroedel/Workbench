@@ -229,18 +229,10 @@ namespace FillAPixRobot
                 }
                 actionMemory.RememberFeedback(actionFeedback, sensationSnapshotBeforeAction);
             }
-
-            if (!difference.SensoryPatterns.Any())
-            {
-                _countForTestingNonDifferentActions++;
-            }
         }
-
-        private int _countForTestingNonDifferentActions = 0;
 
         private IPuzzleAction GetDecisionByMemory(ISensationSnapshot sensationSnapshot)
         {
-            double sumeOfPosibilityForDifference = 0.0;
             double sumeOfPosibilityForPositiveFeedback = 0.0;
             double sumeOfPosibilityForNegativeFeedback = 0.0;
             Dictionary<IPuzzleAction, double> posibilityForDifferencesByAction = new Dictionary<IPuzzleAction, double>();

@@ -3,6 +3,7 @@ using FillAPixRobot.Interfaces;
 using FillAPixRobot.Persistence;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace FillAPixRobot
@@ -45,7 +46,38 @@ namespace FillAPixRobot
         {
             var result = new List<ISensationSnapshot>();
 
-
+            if(sensationSnapshot.FieldOfVisionType == FieldOfVisionTypes.FiveByFive)
+            {
+                for (int y = -1; y < 2; y++)
+                {
+                    for (int x = -1; x < 2; x++)
+                    {
+                        Point centerPos = new Point(x, y);
+                        List<DirectionTypes> fieldOfVisionDirections = new List<DirectionTypes>();
+                        for (int sy = -1; sy < 2; sy++)
+                        {
+                            for (int sx = -1; sx < 2; sx++)
+                            {
+                                fieldOfVisionDirections.Add(PuzzleReferee.ConvertToDirectionType(new Point(sx + centerPos.X, sy + centerPos.Y)));
+                            }
+                        }
+                        List<string> directionStrings = new List<string>();
+                        foreach (var direction in fieldOfVisionDirections)
+                        {
+                            directionStrings.Add(direction.ToString());
+                        }
+                        var resultPatterns = new List<ISensoryPattern>();
+                        foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
+                        {
+                            if (pattern.SensoryUnits.Any(su => su.Type == SensoryTypes.FieldPosition && directionStrings.Contains(su.Value)))
+                            {
+                                resultPatterns.Add(new SensoryPattern(pattern));
+                            }
+                        }
+                        result.Add(new SensationSnapshot(PuzzleReferee.ConvertToDirectionType(centerPos), FieldOfVisionTypes.ThreeByThree, resultPatterns, false));
+                    }
+                }
+            }
 
             return result;
         }
