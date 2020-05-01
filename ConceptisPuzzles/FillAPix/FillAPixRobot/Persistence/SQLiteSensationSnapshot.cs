@@ -51,10 +51,11 @@ namespace FillAPixRobot.Persistence
             SensoryPatterns = new List<ISensoryPattern>();
         }
 
-        public SQLiteSensationSnapshot(FieldOfVisionTypes fieldOfVisionType, List<ISensoryPattern> sensoryPatterns, bool saveable = true)
+        public SQLiteSensationSnapshot(DirectionTypes directionType,FieldOfVisionTypes fieldOfVisionType, List<ISensoryPattern> sensoryPatterns, bool saveable = true)
             : this()
         {
             Id = -1;
+            DirectionType = directionType;
             FieldOfVisionType = fieldOfVisionType;
             SensoryPatterns.AddRange(sensoryPatterns);
 
@@ -92,6 +93,6 @@ namespace FillAPixRobot.Persistence
         public FieldOfVisionTypes FieldOfVisionType { get; set; }
 
         public List<ISensoryPattern> SensoryPatterns { get; protected set; }
+        public DirectionTypes DirectionType { get; set; }
     }
-
 }

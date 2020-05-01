@@ -8,8 +8,8 @@ namespace FillAPixRobot
     public class ActionMemory : IActionMemory
     {
         private const int MINIMUM_CALL_COUNT = 10;
-        private const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
         private const int MINIMUM_FEEDBACK_COUNT = 10;
+        private const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
 
         public ActionMemory(IPuzzleAction action)
         {
@@ -213,11 +213,20 @@ namespace FillAPixRobot
         public double CheckForNotNegativeFeedbackPattern(ISensationSnapshot sensationSnapshot)
         {
             double result = 1.0;
+            Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
+            foreach(var entry in NegativeFeedbackPattern)
+            {
+                if (entry.Value > 1)
+                {
+                    reducedNegativeFeedbackPatternDict.Add(entry.Key, entry.Value);
+                }
+            }
+            int minimumCountForNegativePattern = Math.Max(MINIMUM_PATTERN_NO_DIFFERENT_COUNT, reducedNegativeFeedbackPatternDict.Count);
             foreach (var pattern in SplitPattern(sensationSnapshot, 2))
             {
-                if (NegativeFeedbackPattern.ContainsKey(pattern))
+                if (reducedNegativeFeedbackPatternDict.ContainsKey(pattern))
                 {
-                    double posibilityForPositiveFeedback = 1.0 - (double)NegativeFeedbackPattern[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
+                    double posibilityForPositiveFeedback = Math.Max(0.0, 1.0 - (double)reducedNegativeFeedbackPatternDict[pattern] / minimumCountForNegativePattern);
                     result = Math.Min(result, posibilityForPositiveFeedback);
                 }
             }

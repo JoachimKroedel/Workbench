@@ -186,7 +186,7 @@ namespace FillAPixRobot
                     }
                 }
             }
-            _lastSensationSnapshot = new SensationSnapshot(fieldOfVisionType, sensoryPatterns, IS_SAVEABLE_SNAPSHOT);
+            _lastSensationSnapshot = new SensationSnapshot(DirectionTypes.Center, fieldOfVisionType, sensoryPatterns, IS_SAVEABLE_SNAPSHOT);
         }
 
         private void RaiseExperienceWanted()
@@ -265,12 +265,13 @@ namespace FillAPixRobot
                         posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, posibilityFeedback);
                     }
 
-                    double negativeFeedback = actionMemory.CheckForNegativeFeedback(sensationSnapshot);
-                    negativeFeedback = Math.Max(negativeFeedback, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(sensationSnapshot));
-                    if (negativeFeedback > 0.0)
+                    double negativeFeedbackByUnits = actionMemory.CheckForNegativeFeedback(sensationSnapshot);
+                    double negativeFeedbackByPattern = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(sensationSnapshot));
+                    negativeFeedbackByUnits = Math.Max(negativeFeedbackByUnits, negativeFeedbackByPattern);
+                    if (negativeFeedbackByUnits > 0.0)
                     {
-                        sumeOfPosibilityForNegativeFeedback += negativeFeedback;
-                        posibilityForNegativeFeedbackByAction.Add(actionMemory.Action, negativeFeedback);
+                        sumeOfPosibilityForNegativeFeedback += negativeFeedbackByUnits;
+                        posibilityForNegativeFeedbackByAction.Add(actionMemory.Action, negativeFeedbackByUnits);
                     }
                 }
             }

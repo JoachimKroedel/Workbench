@@ -29,7 +29,7 @@ namespace FillAPixRobot
 
         static public ISensationSnapshot SplitPattern(ISensationSnapshot sensationSnapshot)
         {
-            SensationSnapshot result = new SensationSnapshot(sensationSnapshot.FieldOfVisionType, sensationSnapshot.SensoryPatterns, false);
+            SensationSnapshot result = new SensationSnapshot(sensationSnapshot.DirectionType, sensationSnapshot.FieldOfVisionType, sensationSnapshot.SensoryPatterns, false);
             foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
             {
                 foreach (ISensoryPattern splitedPattern in SensoryPattern.Split(pattern))
@@ -41,9 +41,18 @@ namespace FillAPixRobot
             return result;
         }
 
+        static public List<ISensationSnapshot> SplitSensationSnapshot(ISensationSnapshot sensationSnapshot)
+        {
+            var result = new List<ISensationSnapshot>();
+
+
+
+            return result;
+        }
+
         static public ISensationSnapshot GetDifferenceSensoryPatterns(ISensationSnapshot a, ISensationSnapshot b)
         {
-            var result = new SensationSnapshot(a.FieldOfVisionType, a.SensoryPatterns, false);
+            var result = new SensationSnapshot(a.DirectionType, a.FieldOfVisionType, a.SensoryPatterns, false);
 
             foreach (ISensoryPattern sensoryPattern in b.SensoryPatterns)
             {
@@ -58,7 +67,7 @@ namespace FillAPixRobot
 
         static public ISensationSnapshot GetOverlapOfSensoryPatterns(ISensationSnapshot a, ISensationSnapshot b)
         {
-            var result = new SensationSnapshot(a.FieldOfVisionType, a.SensoryPatterns, false);
+            var result = new SensationSnapshot(a.DirectionType, a.FieldOfVisionType, a.SensoryPatterns, false);
 
             foreach (ISensoryPattern sensoryPattern in b.SensoryPatterns)
             {
@@ -101,8 +110,8 @@ namespace FillAPixRobot
             }
         }
 
-        public SensationSnapshot(FieldOfVisionTypes fieldOfVisionType, List<ISensoryPattern> sensoryPatterns, bool saveable = true)
-            : base(fieldOfVisionType, sensoryPatterns, saveable)
+        public SensationSnapshot(DirectionTypes directionType, FieldOfVisionTypes fieldOfVisionType, List<ISensoryPattern> sensoryPatterns, bool saveable = true)
+            : base(directionType, fieldOfVisionType, sensoryPatterns, saveable)
         {
             if (saveable && !SensationSnapshots.Contains(this))
             {
