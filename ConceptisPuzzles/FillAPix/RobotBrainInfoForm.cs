@@ -67,11 +67,11 @@ namespace ConceptisPuzzles.Robot
                 if (_cbxShowNegativeFeedbackPattern.Checked)
                 {
                     var countPattern = actionMemory.NegativeFeedbackPattern.Count;
-                    var countReducedPattern = actionMemory.NegativeFeedbackPattern.Count(x => x.Value > 1);
+                    var countReducedPattern = actionMemory.NegativeFeedbackPattern.Count(x => x.Value > ActionMemory.LOWER_FEEDBACK_PATTERN_COUNT);
                     infoText.Append($"\t NegativeFeedbackPattern: \t ({countReducedPattern}/{countPattern}) \n");
                     foreach (var entry in actionMemory.NegativeFeedbackPattern.OrderByDescending(x => x.Value))
                     {
-                        if (entry.Value < 2)
+                        if (entry.Value <= ActionMemory.LOWER_FEEDBACK_PATTERN_COUNT)
                         {
                             break;
                         }

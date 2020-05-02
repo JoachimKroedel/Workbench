@@ -7,9 +7,10 @@ namespace FillAPixRobot
 {
     public class ActionMemory : IActionMemory
     {
-        private const int MINIMUM_CALL_COUNT = 10;
-        private const int MINIMUM_FEEDBACK_COUNT = 10;
-        private const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
+        public const int MINIMUM_CALL_COUNT = 10;
+        public const int MINIMUM_FEEDBACK_COUNT = 10;
+        public const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
+        public const int LOWER_FEEDBACK_PATTERN_COUNT = 2;
 
         public ActionMemory(IPuzzleAction action)
         {
@@ -79,7 +80,7 @@ namespace FillAPixRobot
                 // Hier werden die Pattern von NoDifference entfernt, welche in diesem Fall doch ein Difference haten
                 if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
                 {
-                    foreach (var pattern in SplitPattern(snapShotBefore, 2))
+                    foreach (var pattern in SplitPattern(snapShotBefore, 1))
                     {
                         if (NoDifferencePattern.ContainsKey(pattern))
                         {
@@ -105,7 +106,7 @@ namespace FillAPixRobot
                 // nun prüfen, ob es Kombinationen gibt, welche eindeutig zu NoDifferenze führen
                 if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
                 {
-                    foreach (var pattern in SplitPattern(snapShotBefore, 2))
+                    foreach (var pattern in SplitPattern(snapShotBefore, 1))
                     {
                         bool patternFound = true;
                         foreach (var unit in pattern.SensoryUnits)
@@ -147,7 +148,7 @@ namespace FillAPixRobot
                 if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT)
                 {
                     // Speicern der negative Pattern
-                    foreach (var pattern in SplitPattern(snapShotBefore, 2))
+                    foreach (var pattern in SplitPattern(snapShotBefore, 1))
                     {
                         bool patternFound = true;
                         // Überprüfen ob anhand der Unit bereits klar ist, dass es zwangsläufig zu einem Fehler kommt
@@ -185,7 +186,7 @@ namespace FillAPixRobot
                 if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT)
                 {
                     // Entfernen der Pattern aus Negative
-                    foreach (var pattern in SplitPattern(snapShotBefore, 2))
+                    foreach (var pattern in SplitPattern(snapShotBefore, 1))
                     {
                         if (NegativeFeedbackPattern.ContainsKey(pattern))
                         {
@@ -199,7 +200,7 @@ namespace FillAPixRobot
         public double CheckForDifferencePattern(ISensationSnapshot sensationSnapshot)
         {
             double result = 1.0;
-            foreach (var pattern in SplitPattern(sensationSnapshot, 2))
+            foreach (var pattern in SplitPattern(sensationSnapshot, 1))
             {
                 if (NoDifferencePattern.ContainsKey(pattern))
                 {
@@ -216,13 +217,13 @@ namespace FillAPixRobot
             Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
             foreach(var entry in NegativeFeedbackPattern)
             {
-                if (entry.Value > 1)
+                if (entry.Value > LOWER_FEEDBACK_PATTERN_COUNT)
                 {
                     reducedNegativeFeedbackPatternDict.Add(entry.Key, entry.Value);
                 }
             }
             int minimumCountForNegativePattern = Math.Max(MINIMUM_PATTERN_NO_DIFFERENT_COUNT, reducedNegativeFeedbackPatternDict.Count);
-            foreach (var pattern in SplitPattern(sensationSnapshot, 2))
+            foreach (var pattern in SplitPattern(sensationSnapshot, 1))
             {
                 if (reducedNegativeFeedbackPatternDict.ContainsKey(pattern))
                 {

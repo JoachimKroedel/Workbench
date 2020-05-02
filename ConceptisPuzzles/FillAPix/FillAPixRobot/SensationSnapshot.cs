@@ -61,15 +61,10 @@ namespace FillAPixRobot
                                 fieldOfVisionDirections.Add(PuzzleReferee.ConvertToDirectionType(new Point(sx + centerPos.X, sy + centerPos.Y)));
                             }
                         }
-                        List<string> directionStrings = new List<string>();
-                        foreach (var direction in fieldOfVisionDirections)
-                        {
-                            directionStrings.Add(direction.ToString());
-                        }
                         var resultPatterns = new List<ISensoryPattern>();
                         foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
                         {
-                            if (pattern.SensoryUnits.Any(su => su.Type == SensoryTypes.FieldPosition && directionStrings.Contains(su.Value)))
+                            if(fieldOfVisionDirections.Contains(pattern.DirectionType))
                             {
                                 resultPatterns.Add(new SensoryPattern(pattern));
                             }

@@ -3,10 +3,6 @@
     public enum SensoryTypes
     {
         /// <summary>
-        /// Could be Center, North, South-West, ...
-        /// </summary>
-        FieldPosition,
-        /// <summary>
         /// Could be Nothing, 0, 1, 2, ... 9
         /// </summary>
         FieldValue,

@@ -157,6 +157,10 @@ namespace FillAPixRobot
                 return true;
             }
 
+            if (!DirectionType.Equals(sensoryPattern.DirectionType))
+            {
+                return false;
+            }
             foreach (var sensoryUnit in SensoryUnits)
             {
                 if (!sensoryPattern.SensoryUnits.Contains(sensoryUnit))

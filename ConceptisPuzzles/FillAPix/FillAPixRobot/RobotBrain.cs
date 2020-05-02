@@ -163,12 +163,10 @@ namespace FillAPixRobot
                     {
                         ISensoryUnit sensoryUnitState = GetOrCreateSensoryUnit(SensoryTypes.FieldState, state.ToString());
                         ISensoryUnit sensoryUnitValue = GetOrCreateSensoryUnit(SensoryTypes.FieldValue, valueString);
-                        ISensoryUnit sensoryUnitPosition = GetOrCreateSensoryUnit(SensoryTypes.FieldPosition, directionType.ToString());
 
                         List<ISensoryUnit> sensoryUnits = new List<ISensoryUnit>();
                         sensoryUnits.Add(sensoryUnitState);
                         sensoryUnits.Add(sensoryUnitValue);
-                        sensoryUnits.Add(sensoryUnitPosition);
 
                         ISensoryPattern sensoryPattern = new SensoryPattern(directionType, sensoryUnits, IS_SAVEABLE_PATTERN);
 

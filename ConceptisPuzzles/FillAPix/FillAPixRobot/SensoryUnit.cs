@@ -66,7 +66,7 @@ namespace FillAPixRobot
             {
                 return Id.GetHashCode();
             }
-            // ToDo: Check interger overflow ... how should this be handled?
+            // ToDo: Check integer overflow ... how should this be handled?
             return Type.GetHashCode() + Value.GetHashCode();
         }
 
