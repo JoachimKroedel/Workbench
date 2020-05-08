@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using FillAPixRobot.Enums;
+
 namespace FillAPixRobot.Interfaces
 {
     public interface IActionMemory
@@ -13,7 +15,7 @@ namespace FillAPixRobot.Interfaces
 
         Dictionary<ISensoryUnit, int> NoDifferentUnits { get; }
 
-        Dictionary<ISensoryPattern, int> NoDifferencePattern { get; }
+        Dictionary<ISensoryPattern, int> NoDifferencePattern3x3 { get; }
 
         int CallCount { get; }
 
@@ -30,11 +32,11 @@ namespace FillAPixRobot.Interfaces
 
         int NegativeFeedbackCount { get; set; }
 
-        void RememberDifference(bool isDifferent, ISensationSnapshot snapShotBefore);
+        void RememberDifference(bool isDifferent, ISensationSnapshot snapShotBefore, FieldOfVisionTypes fieldOfVision);
 
         void RememberFeedback(int feedbackValue, ISensationSnapshot snapShotBefore);
 
-        double CheckForDifferencePattern(ISensationSnapshot sensationSnapshot);
+        double CheckForDifferencePattern(ISensationSnapshot sensationSnapshot, FieldOfVisionTypes fieldOfVision);
 
         double CheckForNotNegativeFeedbackPattern(ISensationSnapshot sensationSnapshot);
 

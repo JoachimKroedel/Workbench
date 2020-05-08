@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using System.Data.SQLite;
+
 using FillAPixRobot.Interfaces;
 using FillAPixRobot.Enums;
 
@@ -16,7 +17,7 @@ namespace FillAPixRobot.Persistence
         {
             var sensationSnapshot = new SQLiteSensationSnapshot();
             sensationSnapshot.Id = (long)reader["Id"];
-            sensationSnapshot.FieldOfVisionType = (FieldOfVisionTypes)Enum.Parse(typeof(FieldOfVisionTypes), (string)reader["FieldOfVisionType"]);
+            sensationSnapshot.FieldOfVision = (FieldOfVisionTypes)Enum.Parse(typeof(FieldOfVisionTypes), (string)reader["FieldOfVisionType"]);
             string listOfPatternIds = (string)reader["SensoryPatternIds"];
             foreach (string unitId in listOfPatternIds.Split(';'))
             {
@@ -55,8 +56,8 @@ namespace FillAPixRobot.Persistence
             : this()
         {
             Id = -1;
-            DirectionType = directionType;
-            FieldOfVisionType = fieldOfVisionType;
+            Direction = directionType;
+            FieldOfVision = fieldOfVisionType;
             SensoryPatterns.AddRange(sensoryPatterns);
 
             if (!saveable)
@@ -77,7 +78,7 @@ namespace FillAPixRobot.Persistence
 
                 sqlCommand = new SQLiteCommand("INSERT INTO " + TABLE_NAME + " (Id, FieldOfVisionType, SensoryPatternIds) VALUES (@Id, @FieldOfVisionType, @SensoryPatternIds)");
                 sqlCommand.Parameters.Add(new SQLiteParameter("@Id", Id));
-                sqlCommand.Parameters.Add(new SQLiteParameter("@FieldOfVisionType", FieldOfVisionType.ToString()));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@FieldOfVisionType", FieldOfVision.ToString()));
                 sqlCommand.Parameters.Add(new SQLiteParameter("@SensoryPatternIds", sensoryPatternIds));
 
                 sqlCommand.Connection = SQLiteHelper.GetOpenConnection();
@@ -90,8 +91,8 @@ namespace FillAPixRobot.Persistence
 
         public long Id { get; protected set; }
 
-        public DirectionTypes DirectionType { get; set; }
-        public FieldOfVisionTypes FieldOfVisionType { get; set; }
+        public DirectionTypes Direction { get; set; }
+        public FieldOfVisionTypes FieldOfVision { get; set; }
 
         public List<ISensoryPattern> SensoryPatterns { get; protected set; }
     }

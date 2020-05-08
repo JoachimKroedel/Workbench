@@ -30,7 +30,7 @@ namespace FillAPixRobot
 
         public Dictionary<ISensoryUnit, int> NoDifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
-        public Dictionary<ISensoryPattern, int> NoDifferencePattern { get; } = new Dictionary<ISensoryPattern, int>();
+        public Dictionary<ISensoryPattern, int> NoDifferencePattern3x3 { get; } = new Dictionary<ISensoryPattern, int>();
 
         public int CallCount { get { return DifferenceCount + NoDifferenceCount; } }
 
@@ -48,8 +48,14 @@ namespace FillAPixRobot
 
         public int NegativeFeedbackCount { get; set; }
 
-        public void RememberDifference(bool isDifferent, ISensationSnapshot snapShotBefore)
+        public void RememberDifference(bool isDifferent, ISensationSnapshot snapShotBefore, FieldOfVisionTypes fieldOfVision)
         {
+            if (!fieldOfVision.Equals(FieldOfVisionTypes.ThreeByThree))
+            {
+                // ToDo: Handle other field of vision types also!
+                throw new NotImplementedException();
+            }
+
             if (isDifferent)
             {
                 DifferenceCount++;
@@ -84,9 +90,9 @@ namespace FillAPixRobot
                 {
                     foreach (var pattern in SplitPattern(snapShotBefore, 1))
                     {
-                        if (NoDifferencePattern.ContainsKey(pattern))
+                        if (NoDifferencePattern3x3.ContainsKey(pattern))
                         {
-                            NoDifferencePattern.Remove(pattern);
+                            NoDifferencePattern3x3.Remove(pattern);
                         }
                     }
                 }
@@ -94,6 +100,12 @@ namespace FillAPixRobot
             else
             {
                 NoDifferenceCount++;
+
+                // ToDo: Check if following part works and replaces the part behind
+
+
+                // ToDo: Remove that part behind if part before works
+
                 var singleUnits = SplitUnits(snapShotBefore);
                 foreach (var unit in singleUnits)
                 {
@@ -121,11 +133,11 @@ namespace FillAPixRobot
                         }
                         if (patternFound)
                         {
-                            if (!NoDifferencePattern.ContainsKey(pattern))
+                            if (!NoDifferencePattern3x3.ContainsKey(pattern))
                             {
-                                NoDifferencePattern.Add(pattern, 0);
+                                NoDifferencePattern3x3.Add(pattern, 0);
                             }
-                            NoDifferencePattern[pattern]++;
+                            NoDifferencePattern3x3[pattern]++;
                         }
                     }
                 }
@@ -200,18 +212,24 @@ namespace FillAPixRobot
             }
         }
 
-        public double CheckForDifferencePattern(ISensationSnapshot sensationSnapshot)
+        public double CheckForDifferencePattern(ISensationSnapshot sensationSnapshot, FieldOfVisionTypes fieldOfVision)
         {
             double result = 1.0;
-            foreach (var pattern in SplitPattern(sensationSnapshot, 1))
+            if (fieldOfVision.Equals(FieldOfVisionTypes.ThreeByThree))
             {
-                if (NoDifferencePattern.ContainsKey(pattern))
+                foreach (var pattern in SplitPattern(sensationSnapshot, 1))
                 {
-                    double posibilityForDifference = 1.0 - (double)NoDifferencePattern[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
-                    result = Math.Min(result, posibilityForDifference);
+                    if (NoDifferencePattern3x3.ContainsKey(pattern))
+                    {
+                        double posibilityForDifference = 1.0 - (double)NoDifferencePattern3x3[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
+                        result = Math.Min(result, posibilityForDifference);
+                    }
                 }
+                return result;
             }
-            return result;
+
+            // ToDo: Check for other field of vision types also and use more generic dictionary
+            throw new NotImplementedException();
         }
 
         public double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot)

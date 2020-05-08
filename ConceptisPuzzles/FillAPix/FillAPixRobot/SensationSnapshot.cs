@@ -1,10 +1,12 @@
-﻿using FillAPixRobot.Enums;
-using FillAPixRobot.Interfaces;
-using FillAPixRobot.Persistence;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
+
+using FillAPixRobot.Enums;
+using FillAPixRobot.Interfaces;
+using FillAPixRobot.Persistence;
 
 namespace FillAPixRobot
 {
@@ -30,7 +32,7 @@ namespace FillAPixRobot
 
         static public ISensationSnapshot SplitPattern(ISensationSnapshot sensationSnapshot)
         {
-            SensationSnapshot result = new SensationSnapshot(sensationSnapshot.DirectionType, sensationSnapshot.FieldOfVisionType, sensationSnapshot.SensoryPatterns, false);
+            SensationSnapshot result = new SensationSnapshot(sensationSnapshot.Direction, sensationSnapshot.FieldOfVision, sensationSnapshot.SensoryPatterns, false);
             foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
             {
                 foreach (ISensoryPattern splitedPattern in SensoryPattern.Split(pattern))
@@ -74,7 +76,7 @@ namespace FillAPixRobot
 
         static public List<ISensationSnapshot> SplitSnapshot(ISensationSnapshot sensationSnapshot)
         {
-            if(sensationSnapshot.FieldOfVisionType == FieldOfVisionTypes.FiveByFive)
+            if(sensationSnapshot.FieldOfVision == FieldOfVisionTypes.FiveByFive)
             {
                 var result = new List<ISensationSnapshot>();
                 for (int y = -1; y < 2; y++)
@@ -91,7 +93,7 @@ namespace FillAPixRobot
 
         static public ISensationSnapshot GetDifferenceSensoryPatterns(ISensationSnapshot a, ISensationSnapshot b)
         {
-            var result = new SensationSnapshot(a.DirectionType, a.FieldOfVisionType, a.SensoryPatterns, false);
+            var result = new SensationSnapshot(a.Direction, a.FieldOfVision, a.SensoryPatterns, false);
 
             foreach (ISensoryPattern sensoryPattern in b.SensoryPatterns)
             {
@@ -106,7 +108,7 @@ namespace FillAPixRobot
 
         static public ISensationSnapshot GetOverlapOfSensoryPatterns(ISensationSnapshot a, ISensationSnapshot b)
         {
-            var result = new SensationSnapshot(a.DirectionType, a.FieldOfVisionType, a.SensoryPatterns, false);
+            var result = new SensationSnapshot(a.Direction, a.FieldOfVision, a.SensoryPatterns, false);
 
             foreach (ISensoryPattern sensoryPattern in b.SensoryPatterns)
             {
@@ -199,7 +201,7 @@ namespace FillAPixRobot
                 return Id.GetHashCode();
             }
 
-            double result = FieldOfVisionType.GetHashCode();
+            double result = FieldOfVision.GetHashCode();
             foreach (var sensoryPattern in SensoryPatterns)
             {
                 result += sensoryPattern.GetHashCode();
@@ -243,19 +245,20 @@ namespace FillAPixRobot
 
         public override string ToString()
         {
-            var result = "[";
+            var output = new StringBuilder();
+            output.Append($"{{{FieldOfVision}, {Direction}, [");
             if (SensoryPatterns.Any())
             {
                 var sortedSensoryPatterns = SensoryPatterns;
                 sortedSensoryPatterns.Sort();
                 foreach (var sensoryPattern in sortedSensoryPatterns)
                 {
-                    result += "\n\t" + sensoryPattern + ",";
+                    output.Append($"\n\t{sensoryPattern},");
                 }
-                result = result.Remove(result.Length - 1, 1);
+                output.Remove(output.Length - 1, 1);
             }
-            result += "\n]";
-            return result;
+            output.Append("\n]}");
+            return output.ToString();
         }
     }
 }

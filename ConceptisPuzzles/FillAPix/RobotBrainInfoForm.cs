@@ -46,6 +46,15 @@ namespace ConceptisPuzzles.Robot
                     }
                 }
 
+                if (_cbxShowNoDifferencePattern3x3.Checked)
+                {
+                    infoText.Append("\t NoDifferencePattern3x3:\n");
+                    foreach (var entry in actionMemory.NoDifferencePattern3x3)
+                    {
+                        infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
+                    }
+                }
+
                 if (_cbxShowNegativeFeedbackUnits.Checked)
                 {
                     infoText.Append("\t NegativeFeedbackUnits:\n");

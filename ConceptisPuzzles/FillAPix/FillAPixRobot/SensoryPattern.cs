@@ -228,18 +228,18 @@ namespace FillAPixRobot
         public override string ToString()
         {
             var outputBuilder = new StringBuilder();
-            outputBuilder.Append("[" + DirectionType + ", {");
+            outputBuilder.Append($"{{{DirectionType}, [");
             if (SensoryUnits.Any())
             {
                 var sortedSensoryUnits = SensoryUnits;
                 sortedSensoryUnits.Sort();
                 foreach (var sensoryUnit in sortedSensoryUnits)
                 {
-                    outputBuilder.Append(sensoryUnit + ",");
+                    outputBuilder.Append(sensoryUnit + ", ");
                 }
-                outputBuilder.Remove(outputBuilder.Length - 1, 1);
+                outputBuilder.Remove(outputBuilder.Length - 2, 2);
             }
-            outputBuilder.Append("}]");
+            outputBuilder.Append("]}");
             return outputBuilder.ToString();
         }
     }
