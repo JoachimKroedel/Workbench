@@ -1,7 +1,9 @@
-﻿using FillAPixRobot.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using FillAPixRobot.Enums;
+using FillAPixRobot.Interfaces;
 
 namespace FillAPixRobot
 {
@@ -147,8 +149,9 @@ namespace FillAPixRobot
 
                 if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT)
                 {
-                    // Speicern der negative Pattern
-                    foreach (var pattern in SplitPattern(snapShotBefore, 1))
+                    // memorize negative pattern for (a direction depending) partial snapshot
+                    var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapShotBefore, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
+                    foreach (var pattern in SplitPattern(partialSnapShot, 1))
                     {
                         bool patternFound = true;
                         // Überprüfen ob anhand der Unit bereits klar ist, dass es zwangsläufig zu einem Fehler kommt
@@ -211,9 +214,10 @@ namespace FillAPixRobot
             return result;
         }
 
-        public double CheckForNotNegativeFeedbackPattern(ISensationSnapshot sensationSnapshot)
+        public double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot)
         {
             double result = 1.0;
+            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
             Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
             foreach(var entry in NegativeFeedbackPattern)
             {
@@ -223,7 +227,7 @@ namespace FillAPixRobot
                 }
             }
             int minimumCountForNegativePattern = Math.Max(MINIMUM_PATTERN_NO_DIFFERENT_COUNT, reducedNegativeFeedbackPatternDict.Count);
-            foreach (var pattern in SplitPattern(sensationSnapshot, 1))
+            foreach (var pattern in SplitPattern(partialSnapShot, 1))
             {
                 if (reducedNegativeFeedbackPatternDict.ContainsKey(pattern))
                 {

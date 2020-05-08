@@ -42,39 +42,51 @@ namespace FillAPixRobot
             return result;
         }
 
-        static public List<ISensationSnapshot> SplitSensationSnapshot(ISensationSnapshot sensationSnapshot)
+        static public ISensationSnapshot ExtractSnapshot(ISensationSnapshot sensationSnapshot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction)
         {
-            var result = new List<ISensationSnapshot>();
+            if (fieldOfVision == FieldOfVisionTypes.ThreeByThree)
+            {
+                Point centerPos = PuzzleReferee.ConvertToPoint(direction);
+                List<DirectionTypes> fieldOfVisionDirections = new List<DirectionTypes>();
+                for (int sy = -1; sy < 2; sy++)
+                {
+                    for (int sx = -1; sx < 2; sx++)
+                    {
+                        fieldOfVisionDirections.Add(PuzzleReferee.ConvertToDirectionType(new Point(sx + centerPos.X, sy + centerPos.Y)));
+                    }
+                }
+                var resultPatterns = new List<ISensoryPattern>();
+                foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
+                {
+                    if(fieldOfVisionDirections.Contains(pattern.DirectionType))
+                    {
+                        var newPattern = new SensoryPattern(pattern);
+                        Point oldPatternPos = PuzzleReferee.ConvertToPoint(newPattern.DirectionType);
+                        var newPatternPos = new Point(oldPatternPos.X - centerPos.X, oldPatternPos.Y - centerPos.Y);
+                        newPattern.DirectionType = PuzzleReferee.ConvertToDirectionType(newPatternPos);
+                        resultPatterns.Add(newPattern);
+                    }
+                }
+                return new SensationSnapshot(PuzzleReferee.ConvertToDirectionType(centerPos), FieldOfVisionTypes.ThreeByThree, resultPatterns, false);
+            }
+            throw new NotImplementedException();
+        }
 
+        static public List<ISensationSnapshot> SplitSnapshot(ISensationSnapshot sensationSnapshot)
+        {
             if(sensationSnapshot.FieldOfVisionType == FieldOfVisionTypes.FiveByFive)
             {
+                var result = new List<ISensationSnapshot>();
                 for (int y = -1; y < 2; y++)
                 {
                     for (int x = -1; x < 2; x++)
                     {
-                        Point centerPos = new Point(x, y);
-                        List<DirectionTypes> fieldOfVisionDirections = new List<DirectionTypes>();
-                        for (int sy = -1; sy < 2; sy++)
-                        {
-                            for (int sx = -1; sx < 2; sx++)
-                            {
-                                fieldOfVisionDirections.Add(PuzzleReferee.ConvertToDirectionType(new Point(sx + centerPos.X, sy + centerPos.Y)));
-                            }
-                        }
-                        var resultPatterns = new List<ISensoryPattern>();
-                        foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
-                        {
-                            if(fieldOfVisionDirections.Contains(pattern.DirectionType))
-                            {
-                                resultPatterns.Add(new SensoryPattern(pattern));
-                            }
-                        }
-                        result.Add(new SensationSnapshot(PuzzleReferee.ConvertToDirectionType(centerPos), FieldOfVisionTypes.ThreeByThree, resultPatterns, false));
+                        result.Add(ExtractSnapshot(sensationSnapshot, FieldOfVisionTypes.ThreeByThree, PuzzleReferee.ConvertToDirectionType(new Point(x, y))));
                     }
                 }
+                return result;
             }
-
-            return result;
+            throw new NotImplementedException();
         }
 
         static public ISensationSnapshot GetDifferenceSensoryPatterns(ISensationSnapshot a, ISensationSnapshot b)
@@ -133,7 +145,14 @@ namespace FillAPixRobot
             Id = sensationSnapshot.Id;
             foreach (ISensoryPattern sensoryPattern in sensationSnapshot.SensoryPatterns)
             {
-                SensoryPatterns.Add(SensoryPattern.SensoryPatterns.First(u => u.Id == sensoryPattern.Id));
+                if (sensationSnapshot.Id > -1)
+                {
+                    SensoryPatterns.Add(SensoryPattern.SensoryPatterns.First(u => u.Id == sensoryPattern.Id));
+                }
+                else
+                {
+                    SensoryPatterns.Add(new SensoryPattern(sensoryPattern));
+                }
             }
         }
 

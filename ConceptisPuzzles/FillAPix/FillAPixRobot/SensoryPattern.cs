@@ -94,15 +94,21 @@ namespace FillAPixRobot
             return result;
         }
 
-        private readonly List<ISensoryUnit> _sensoryUnits = new List<ISensoryUnit>();
-
         public SensoryPattern(ISensoryPattern sensoryPattern)
         {
             Id = sensoryPattern.Id;
+            DirectionType = sensoryPattern.DirectionType;
             SensoryUnits = new List<ISensoryUnit>();
             foreach (ISensoryUnit sensoryUnit in sensoryPattern.SensoryUnits)
             {
-                SensoryUnits.Add(SensoryUnit.SensoryUnits.First(u => u.Id == sensoryUnit.Id));
+                if (sensoryUnit.Id > -1)
+                {
+                    SensoryUnits.Add(SensoryUnit.SensoryUnits.First(u => u.Id == sensoryUnit.Id));
+                }
+                else
+                {
+                    SensoryUnits.Add(new SensoryUnit(sensoryUnit));
+                }
             }
         }
 

@@ -33,11 +33,9 @@
             this._btnResetPuzzle = new System.Windows.Forms.Button();
             this._nudZoomFactor = new System.Windows.Forms.NumericUpDown();
             this._gbxRobot = new System.Windows.Forms.GroupBox();
-            this._btnStatisticForm = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this._cbxTypeOfRobot = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this._btnRunInBackground = new System.Windows.Forms.Button();
             this._cbxBehaviourOnError = new System.Windows.Forms.ComboBox();
             this._cbxRunInterations = new System.Windows.Forms.CheckBox();
             this._nudRemainigIterationCount = new System.Windows.Forms.NumericUpDown();
@@ -63,6 +61,8 @@
             this._ddbFieldOfVisionTypes = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this._pbxLookResult = new System.Windows.Forms.PictureBox();
+            this._btnStatisticForm = new System.Windows.Forms.Button();
+            this._btnRunInBackground = new System.Windows.Forms.Button();
             this._cbxHighlightErrors = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._cbxAutoRefreshPlayground = new System.Windows.Forms.CheckBox();
@@ -143,6 +143,7 @@
             this._gbxRobot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this._gbxRobot.Controls.Add(this.label1);
+            this._gbxRobot.Controls.Add(this._btnStatisticForm);
             this._gbxRobot.Controls.Add(this._cbxTypeOfRobot);
             this._gbxRobot.Controls.Add(this.groupBox4);
             this._gbxRobot.Controls.Add(this.groupBox1);
@@ -150,21 +151,10 @@
             this._gbxRobot.Enabled = false;
             this._gbxRobot.Location = new System.Drawing.Point(3, 3);
             this._gbxRobot.Name = "_gbxRobot";
-            this._gbxRobot.Size = new System.Drawing.Size(343, 366);
+            this._gbxRobot.Size = new System.Drawing.Size(343, 392);
             this._gbxRobot.TabIndex = 19;
             this._gbxRobot.TabStop = false;
             this._gbxRobot.Text = "Robot";
-            // 
-            // _btnStatisticForm
-            // 
-            this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._btnStatisticForm.Location = new System.Drawing.Point(249, 515);
-            this._btnStatisticForm.Name = "_btnStatisticForm";
-            this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
-            this._btnStatisticForm.TabIndex = 26;
-            this._btnStatisticForm.Text = "Statistic Form";
-            this._btnStatisticForm.UseVisualStyleBackColor = true;
-            this._btnStatisticForm.Click += new System.EventHandler(this.BtnStatisticForm_Click);
             // 
             // label1
             // 
@@ -211,17 +201,6 @@
             this.groupBox4.TabIndex = 16;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Action";
-            // 
-            // _btnRunInBackground
-            // 
-            this._btnRunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._btnRunInBackground.Location = new System.Drawing.Point(217, 375);
-            this._btnRunInBackground.Name = "_btnRunInBackground";
-            this._btnRunInBackground.Size = new System.Drawing.Size(124, 21);
-            this._btnRunInBackground.TabIndex = 28;
-            this._btnRunInBackground.Text = "Run in Background";
-            this._btnRunInBackground.UseVisualStyleBackColor = true;
-            this._btnRunInBackground.Click += new System.EventHandler(this.BtnRunInBackground_Click);
             // 
             // _cbxBehaviourOnError
             // 
@@ -512,6 +491,28 @@
             this._pbxLookResult.TabIndex = 5;
             this._pbxLookResult.TabStop = false;
             // 
+            // _btnStatisticForm
+            // 
+            this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._btnStatisticForm.Location = new System.Drawing.Point(0, 363);
+            this._btnStatisticForm.Name = "_btnStatisticForm";
+            this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
+            this._btnStatisticForm.TabIndex = 26;
+            this._btnStatisticForm.Text = "Statistic Form";
+            this._btnStatisticForm.UseVisualStyleBackColor = true;
+            this._btnStatisticForm.Click += new System.EventHandler(this.BtnStatisticForm_Click);
+            // 
+            // _btnRunInBackground
+            // 
+            this._btnRunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._btnRunInBackground.Location = new System.Drawing.Point(220, 401);
+            this._btnRunInBackground.Name = "_btnRunInBackground";
+            this._btnRunInBackground.Size = new System.Drawing.Size(124, 21);
+            this._btnRunInBackground.TabIndex = 28;
+            this._btnRunInBackground.Text = "Run in Background";
+            this._btnRunInBackground.UseVisualStyleBackColor = true;
+            this._btnRunInBackground.Click += new System.EventHandler(this.BtnRunInBackground_Click);
+            // 
             // _cbxHighlightErrors
             // 
             this._cbxHighlightErrors.AutoSize = true;
@@ -535,7 +536,6 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this._btnRunInBackground);
-            this.splitContainer1.Panel1.Controls.Add(this._btnStatisticForm);
             this.splitContainer1.Panel1.Controls.Add(this._gbxRobot);
             this.splitContainer1.Panel1MinSize = 340;
             // 
@@ -547,7 +547,7 @@
             this.splitContainer1.Panel2.Controls.Add(this._btnLoadPuzzle);
             this.splitContainer1.Panel2.Controls.Add(this._btnResetPuzzle);
             this.splitContainer1.Panel2.Controls.Add(this._nudZoomFactor);
-            this.splitContainer1.Size = new System.Drawing.Size(1237, 542);
+            this.splitContainer1.Size = new System.Drawing.Size(1237, 573);
             this.splitContainer1.SplitterDistance = 347;
             this.splitContainer1.TabIndex = 25;
             // 
@@ -574,7 +574,7 @@
             this._panelPlayground.Controls.Add(this._pbxPlayGround);
             this._panelPlayground.Location = new System.Drawing.Point(4, 32);
             this._panelPlayground.Name = "_panelPlayground";
-            this._panelPlayground.Size = new System.Drawing.Size(879, 507);
+            this._panelPlayground.Size = new System.Drawing.Size(879, 538);
             this._panelPlayground.TabIndex = 6;
             // 
             // _pbxPlayGround
@@ -585,7 +585,7 @@
             this._pbxPlayGround.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pbxPlayGround.Location = new System.Drawing.Point(0, 0);
             this._pbxPlayGround.Name = "_pbxPlayGround";
-            this._pbxPlayGround.Size = new System.Drawing.Size(877, 505);
+            this._pbxPlayGround.Size = new System.Drawing.Size(877, 536);
             this._pbxPlayGround.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this._pbxPlayGround.TabIndex = 4;
             this._pbxPlayGround.TabStop = false;
@@ -602,7 +602,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1237, 542);
+            this.ClientSize = new System.Drawing.Size(1237, 573);
             this.Controls.Add(this.splitContainer1);
             this.MinimumSize = new System.Drawing.Size(742, 369);
             this.Name = "FillAPixRobotView";

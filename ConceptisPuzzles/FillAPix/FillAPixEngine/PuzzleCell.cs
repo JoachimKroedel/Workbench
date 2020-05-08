@@ -33,5 +33,9 @@ namespace FillAPixEngine
 
         public Point Position { get; private set; }
 
+        public override string ToString()
+        {
+            return "{" + Position.ToString() + ": " + _value + ", " + State + "}";
+        }
     }
 }

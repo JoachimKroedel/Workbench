@@ -79,6 +79,26 @@
       <Name>FillAPixEngine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Puzzles\2013-10-18 1.fap" />
+    <None Include="Puzzles\2013-10-18 3.fap" />
+    <None Include="Puzzles\2013-10-25 1.fap" />
+    <None Include="Puzzles\2013-11-01 1.fap" />
+    <None Include="Puzzles\2013-11-15 1.fap" />
+    <None Include="Puzzles\2013-11-22 1.fap" />
+    <None Include="Puzzles\2013-11-22 2.fap" />
+    <None Include="Puzzles\2013-11-22 3.fap" />
+    <None Include="Puzzles\2013-11-29 1.fap" />
+    <None Include="Puzzles\2013-11-29 2.fap" />
+    <None Include="Puzzles\2013-11-29 3.fap" />
+    <None Include="Puzzles\2013-11-29 4.fap" />
+    <None Include="Puzzles\2017-12-16 2.fap" />
+    <None Include="Puzzles\2018-03-02 2.fap" />
+    <None Include="Puzzles\2018-09-14 3.fap" />
+    <None Include="Puzzles\Calibration_5x5.fap" />
+    <None Include="Puzzles\Training 01.fap" />
+    <None Include="Puzzles\Training 02.fap" />
+    <None Include="Puzzles\Training 03.fap" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
