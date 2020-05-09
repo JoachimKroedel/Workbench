@@ -39,7 +39,7 @@ namespace ConceptisPuzzles.Robot
             _cbxDirectionTypes.SelectedIndex = 0;
 
             _cbxTypeOfRobot.SelectedIndex = 2;
-            _ddbFieldOfVisionTypes.SelectedIndex = 4;
+            _ddbFieldOfVisionTypes.SelectedIndex = 2;
 
             _cbxBehaviourOnError.SelectedIndex = 2;
         }
@@ -355,41 +355,35 @@ namespace ConceptisPuzzles.Robot
         {
             switch(fieldOfVisionType)
             {
-                case FieldOfVisionTypes.Cross:
+                case FieldOfVisionTypes.Single:
                     SetValueAndState(position, new Point(0, 0), patialBoard);
-                    SetValueAndState(position, new Point(-1,  0), patialBoard);
-                    SetValueAndState(position, new Point( 1,  0), patialBoard);
-                    SetValueAndState(position, new Point( 0, -1), patialBoard);
-                    SetValueAndState(position, new Point( 0,  1), patialBoard);
                     break;
                 case FieldOfVisionTypes.ThreeByThree:
-                    FillPartialBoard(patialBoard, FieldOfVisionTypes.Cross, position);
+                    FillPartialBoard(patialBoard, FieldOfVisionTypes.Single, position);
+                    SetValueAndState(position, new Point(-1, 0), patialBoard);
+                    SetValueAndState(position, new Point(1, 0), patialBoard);
+                    SetValueAndState(position, new Point(0, -1), patialBoard);
+                    SetValueAndState(position, new Point(0, 1), patialBoard);
                     SetValueAndState(position, new Point(-1, -1), patialBoard);
                     SetValueAndState(position, new Point(-1,  1), patialBoard);
                     SetValueAndState(position, new Point( 1,  1), patialBoard);
                     SetValueAndState(position, new Point( 1, -1), patialBoard);
                     break;
-                case FieldOfVisionTypes.Diamond:
-                    FillPartialBoard(patialBoard, FieldOfVisionTypes.ThreeByThree, position);
-                    SetValueAndState(position, new Point(-2,  0), patialBoard);
-                    SetValueAndState(position, new Point( 2,  0), patialBoard);
-                    SetValueAndState(position, new Point( 0,  2), patialBoard);
-                    SetValueAndState(position, new Point( 0, -2), patialBoard);
-                    break;
-                case FieldOfVisionTypes.FatCross:
-                    FillPartialBoard(patialBoard, FieldOfVisionTypes.Diamond, position);
-                    SetValueAndState(position, new Point(-2, -1), patialBoard);
-                    SetValueAndState(position, new Point(-2,  1), patialBoard);
-                    SetValueAndState(position, new Point( 2, -1), patialBoard);
-                    SetValueAndState(position, new Point( 2,  1), patialBoard);
-
-                    SetValueAndState(position, new Point(-1,  2), patialBoard);
-                    SetValueAndState(position, new Point( 1,  2), patialBoard);
-                    SetValueAndState(position, new Point(-1, -2), patialBoard);
-                    SetValueAndState(position, new Point( 1, -2), patialBoard);
-                    break;
                 case FieldOfVisionTypes.FiveByFive:
-                    FillPartialBoard(patialBoard, FieldOfVisionTypes.FatCross, position);
+                    FillPartialBoard(patialBoard, FieldOfVisionTypes.ThreeByThree, position);
+                    SetValueAndState(position, new Point(-2, 0), patialBoard);
+                    SetValueAndState(position, new Point(2, 0), patialBoard);
+                    SetValueAndState(position, new Point(0, 2), patialBoard);
+                    SetValueAndState(position, new Point(0, -2), patialBoard);
+                    SetValueAndState(position, new Point(-2, -1), patialBoard);
+                    SetValueAndState(position, new Point(-2, 1), patialBoard);
+                    SetValueAndState(position, new Point(2, -1), patialBoard);
+                    SetValueAndState(position, new Point(2, 1), patialBoard);
+
+                    SetValueAndState(position, new Point(-1, 2), patialBoard);
+                    SetValueAndState(position, new Point(1, 2), patialBoard);
+                    SetValueAndState(position, new Point(-1, -2), patialBoard);
+                    SetValueAndState(position, new Point(1, -2), patialBoard);
                     SetValueAndState(position, new Point(-2, -2), patialBoard);
                     SetValueAndState(position, new Point(-2,  2), patialBoard);
                     SetValueAndState(position, new Point( 2, -2), patialBoard);
@@ -403,12 +397,12 @@ namespace ConceptisPuzzles.Robot
             PuzzleBoard partialBoard;
             switch (fieldOfVisionType)
             {
-                case FieldOfVisionTypes.Cross:
+                case FieldOfVisionTypes.Single:
+                    partialBoard = new PuzzleBoard(1, 1);
+                    break;
                 case FieldOfVisionTypes.ThreeByThree:
                     partialBoard = new PuzzleBoard(3, 3);
                     break;
-                case FieldOfVisionTypes.Diamond:
-                case FieldOfVisionTypes.FatCross:
                 case FieldOfVisionTypes.FiveByFive:
                     partialBoard = new PuzzleBoard(5, 5);
                     break;
@@ -510,7 +504,7 @@ namespace ConceptisPuzzles.Robot
 
             if (_cbxTypeOfRobot.SelectedIndex >= 0)
             {
-                _allowedFieldOfVisionTypes.Add(FieldOfVisionTypes.Cross);
+                _allowedFieldOfVisionTypes.Add(FieldOfVisionTypes.Single);
 
                 _allowedDirectionTypes.Add(DirectionTypes.Center);
                 _allowedDirectionTypes.Add(DirectionTypes.North);
@@ -529,13 +523,13 @@ namespace ConceptisPuzzles.Robot
             }
             if (_cbxTypeOfRobot.SelectedIndex >= 2)
             {
-                _allowedFieldOfVisionTypes.Add(FieldOfVisionTypes.Diamond);
+                _allowedFieldOfVisionTypes.Add(FieldOfVisionTypes.FiveByFive);
+
                 _allowedDirectionTypes.Add(DirectionTypes.NorthNorth);
                 _allowedDirectionTypes.Add(DirectionTypes.SouthSouth);
                 _allowedDirectionTypes.Add(DirectionTypes.WestWest);
                 _allowedDirectionTypes.Add(DirectionTypes.EastEast);
 
-                _allowedFieldOfVisionTypes.Add(FieldOfVisionTypes.FatCross);
                 _allowedDirectionTypes.Add(DirectionTypes.NorthNorthWest);
                 _allowedDirectionTypes.Add(DirectionTypes.NorthNorthEast);
                 _allowedDirectionTypes.Add(DirectionTypes.SouthSouthWest);
@@ -545,7 +539,6 @@ namespace ConceptisPuzzles.Robot
                 _allowedDirectionTypes.Add(DirectionTypes.SouthWestWest);
                 _allowedDirectionTypes.Add(DirectionTypes.SouthEastEast);
 
-                _allowedFieldOfVisionTypes.Add(FieldOfVisionTypes.FiveByFive);
                 _allowedDirectionTypes.Add(DirectionTypes.NorthNorthWestWest);
                 _allowedDirectionTypes.Add(DirectionTypes.NorthNorthEastEast);
                 _allowedDirectionTypes.Add(DirectionTypes.SouthSouthWestWest);

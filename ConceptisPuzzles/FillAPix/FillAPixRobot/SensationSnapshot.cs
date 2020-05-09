@@ -46,7 +46,24 @@ namespace FillAPixRobot
 
         static public ISensationSnapshot ExtractSnapshot(ISensationSnapshot sensationSnapshot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction)
         {
-            if (fieldOfVision == FieldOfVisionTypes.ThreeByThree)
+            if (fieldOfVision == FieldOfVisionTypes.Single)
+            {
+                Point centerPos = PuzzleReferee.ConvertToPoint(direction);
+                var resultPatterns = new List<ISensoryPattern>();
+                foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
+                {
+                    if (direction.Equals(pattern.DirectionType))
+                    {
+                        var newPattern = new SensoryPattern(pattern);
+                        Point oldPatternPos = PuzzleReferee.ConvertToPoint(newPattern.DirectionType);
+                        var newPatternPos = new Point(oldPatternPos.X - centerPos.X, oldPatternPos.Y - centerPos.Y);
+                        newPattern.DirectionType = PuzzleReferee.ConvertToDirectionType(newPatternPos);
+                        resultPatterns.Add(newPattern);
+                    }
+                }
+                return new SensationSnapshot(PuzzleReferee.ConvertToDirectionType(centerPos), FieldOfVisionTypes.Single, resultPatterns, false);
+            }
+            else if (fieldOfVision == FieldOfVisionTypes.ThreeByThree)
             {
                 Point centerPos = PuzzleReferee.ConvertToPoint(direction);
                 List<DirectionTypes> fieldOfVisionDirections = new List<DirectionTypes>();

@@ -23,13 +23,13 @@ namespace FillAPixRobot
 
         public int DifferenceCount { get; set; }
 
-
         public Dictionary<ISensoryUnit, int> DifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
         public int NoDifferenceCount { get; set; }
 
         public Dictionary<ISensoryUnit, int> NoDifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
+        public Dictionary<ISensoryPattern, int> NoDifferencePattern1x1 { get; } = new Dictionary<ISensoryPattern, int>();
         public Dictionary<ISensoryPattern, int> NoDifferencePattern3x3 { get; } = new Dictionary<ISensoryPattern, int>();
 
         public int CallCount { get { return DifferenceCount + NoDifferenceCount; } }
@@ -50,12 +50,6 @@ namespace FillAPixRobot
 
         public void RememberDifference(bool isDifferent, ISensationSnapshot snapShotBefore, FieldOfVisionTypes fieldOfVision)
         {
-            if (!fieldOfVision.Equals(FieldOfVisionTypes.ThreeByThree))
-            {
-                // ToDo: Handle other field of vision types also!
-                throw new NotImplementedException();
-            }
-
             if (isDifferent)
             {
                 DifferenceCount++;
@@ -84,28 +78,10 @@ namespace FillAPixRobot
                 {
                     DifferentUnits.Remove(unit);
                 }
-
-                // Hier werden die Pattern von NoDifference entfernt, welche in diesem Fall doch ein Difference haten
-                if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
-                {
-                    foreach (var pattern in SplitPattern(snapShotBefore, 1))
-                    {
-                        if (NoDifferencePattern3x3.ContainsKey(pattern))
-                        {
-                            NoDifferencePattern3x3.Remove(pattern);
-                        }
-                    }
-                }
             }
             else
             {
                 NoDifferenceCount++;
-
-                // ToDo: Check if following part works and replaces the part behind
-
-
-                // ToDo: Remove that part behind if part before works
-
                 var singleUnits = SplitUnits(snapShotBefore);
                 foreach (var unit in singleUnits)
                 {
@@ -115,32 +91,102 @@ namespace FillAPixRobot
                     }
                     NoDifferentUnits[unit]++;
                 }
+            }
 
-                // Für die Aktionen, die nicht sowieso schon eindeutig sind und bei dennen eine gewisse Anzahl von Versuchen statt gefunden hat
-                // nun prüfen, ob es Kombinationen gibt, welche eindeutig zu NoDifferenze führen
-                if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
+            if (fieldOfVision.Equals(FieldOfVisionTypes.Single))
+            {
+                if (isDifferent)
                 {
-                    foreach (var pattern in SplitPattern(snapShotBefore, 1))
+                    // Hier werden die Pattern von NoDifference entfernt, welche in diesem Fall doch ein Difference haten
+                    if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
                     {
-                        bool patternFound = true;
-                        foreach (var unit in pattern.SensoryUnits)
+                        foreach (var pattern in SplitPattern(snapShotBefore, 1))
                         {
-                            if (!NoDifferentUnits.ContainsKey(unit))
+                            if (NoDifferencePattern1x1.ContainsKey(pattern))
                             {
-                                patternFound = false;
-                                break;
+                                NoDifferencePattern1x1.Remove(pattern);
                             }
-                        }
-                        if (patternFound)
-                        {
-                            if (!NoDifferencePattern3x3.ContainsKey(pattern))
-                            {
-                                NoDifferencePattern3x3.Add(pattern, 0);
-                            }
-                            NoDifferencePattern3x3[pattern]++;
                         }
                     }
                 }
+                else
+                {
+                    // Für die Aktionen, die nicht sowieso schon eindeutig sind und bei dennen eine gewisse Anzahl von Versuchen statt gefunden hat
+                    // nun prüfen, ob es Kombinationen gibt, welche eindeutig zu NoDifferenze führen
+                    if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
+                    {
+                        foreach (var pattern in SplitPattern(snapShotBefore, 1))
+                        {
+                            bool patternFound = true;
+                            foreach (var unit in pattern.SensoryUnits)
+                            {
+                                if (!NoDifferentUnits.ContainsKey(unit))
+                                {
+                                    patternFound = false;
+                                    break;
+                                }
+                            }
+                            if (patternFound)
+                            {
+                                if (!NoDifferencePattern1x1.ContainsKey(pattern))
+                                {
+                                    NoDifferencePattern1x1.Add(pattern, 0);
+                                }
+                                NoDifferencePattern1x1[pattern]++;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (fieldOfVision.Equals(FieldOfVisionTypes.ThreeByThree))
+            {
+                if (isDifferent)
+                {
+                    // Hier werden die Pattern von NoDifference entfernt, welche in diesem Fall doch ein Difference haten
+                    if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
+                    {
+                        foreach (var pattern in SplitPattern(snapShotBefore, 1))
+                        {
+                            if (NoDifferencePattern3x3.ContainsKey(pattern))
+                            {
+                                NoDifferencePattern3x3.Remove(pattern);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Für die Aktionen, die nicht sowieso schon eindeutig sind und bei dennen eine gewisse Anzahl von Versuchen statt gefunden hat
+                    // nun prüfen, ob es Kombinationen gibt, welche eindeutig zu NoDifferenze führen
+                    if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
+                    {
+                        foreach (var pattern in SplitPattern(snapShotBefore, 1))
+                        {
+                            bool patternFound = true;
+                            foreach (var unit in pattern.SensoryUnits)
+                            {
+                                if (!NoDifferentUnits.ContainsKey(unit))
+                                {
+                                    patternFound = false;
+                                    break;
+                                }
+                            }
+                            if (patternFound)
+                            {
+                                if (!NoDifferencePattern3x3.ContainsKey(pattern))
+                                {
+                                    NoDifferencePattern3x3.Add(pattern, 0);
+                                }
+                                NoDifferencePattern3x3[pattern]++;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // ToDo: Handle other field of vision types also!
+                throw new NotImplementedException();
             }
         }
 
@@ -215,7 +261,19 @@ namespace FillAPixRobot
         public double CheckForDifferencePattern(ISensationSnapshot sensationSnapshot, FieldOfVisionTypes fieldOfVision)
         {
             double result = 1.0;
-            if (fieldOfVision.Equals(FieldOfVisionTypes.ThreeByThree))
+            if (fieldOfVision.Equals(FieldOfVisionTypes.Single))
+            {
+                foreach (var pattern in SplitPattern(sensationSnapshot, 1))
+                {
+                    if (NoDifferencePattern1x1.ContainsKey(pattern))
+                    {
+                        double posibilityForDifference = 1.0 - (double)NoDifferencePattern1x1[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
+                        result = Math.Min(result, posibilityForDifference);
+                    }
+                }
+                return result;
+            }
+            else if (fieldOfVision.Equals(FieldOfVisionTypes.ThreeByThree))
             {
                 foreach (var pattern in SplitPattern(sensationSnapshot, 1))
                 {

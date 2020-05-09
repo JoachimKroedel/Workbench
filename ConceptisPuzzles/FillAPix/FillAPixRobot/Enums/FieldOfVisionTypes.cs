@@ -2,10 +2,8 @@
 {
     public enum FieldOfVisionTypes
     {
-        Cross,
+        Single,
         ThreeByThree,
-        Diamond,
-        FatCross,
         FiveByFive
     }
 }

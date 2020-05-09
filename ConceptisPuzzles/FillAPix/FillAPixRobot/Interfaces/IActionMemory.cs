@@ -15,6 +15,7 @@ namespace FillAPixRobot.Interfaces
 
         Dictionary<ISensoryUnit, int> NoDifferentUnits { get; }
 
+        Dictionary<ISensoryPattern, int> NoDifferencePattern1x1 { get; }
         Dictionary<ISensoryPattern, int> NoDifferencePattern3x3 { get; }
 
         int CallCount { get; }

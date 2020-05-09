@@ -45,6 +45,23 @@ namespace ConceptisPuzzles.Robot
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
                     }
                 }
+                if (_cbxShowNoDifferentUnits.Checked)
+                {
+                    infoText.Append("\t NoDifferentUnits:\n");
+                    foreach (var entry in actionMemory.NoDifferentUnits)
+                    {
+                        infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
+                    }
+                }
+
+                if (_cbxShowNoDifferencePattern1x1.Checked)
+                {
+                    infoText.Append("\t NoDifferencePattern1x1:\n");
+                    foreach (var entry in actionMemory.NoDifferencePattern1x1)
+                    {
+                        infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
+                    }
+                }
 
                 if (_cbxShowNoDifferencePattern3x3.Checked)
                 {
