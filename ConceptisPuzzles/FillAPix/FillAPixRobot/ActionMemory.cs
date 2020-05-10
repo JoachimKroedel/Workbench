@@ -10,6 +10,7 @@ namespace FillAPixRobot
     public class ActionMemory : IActionMemory
     {
         public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_SINGLE = 10;
+        public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_THREE_BY_THREE = 50;
         public const int MINIMUM_FEEDBACK_COUNT = 10;
         public const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
         public const int LOWER_FEEDBACK_PATTERN_COUNT = 2;
@@ -49,15 +50,20 @@ namespace FillAPixRobot
             return _noDifferencePatternDictonary[fieldOfVision];
         }
 
-        public void RememberDifference(bool isDifferent, ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision)
+        public void RememberDifference(bool isDifferent, ISensationSnapshot snapshot)
         {
-            // ToDo: Extract snapshot inside this method, depending on counter values
+            FieldOfVisionTypes fieldOfVision = FieldOfVisionTypes.Single;
+            if (NoDifferenceCount >= MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_THREE_BY_THREE)
+            {
+                fieldOfVision = FieldOfVisionTypes.ThreeByThree;
+            }
+            var partialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, (DirectionTypes)Action.DirectionType);
 
             // Handles counter and single units
             if (isDifferent)
             {
                 DifferenceCount++;
-                var singleUnits = SplitUnits(snapshot);
+                var singleUnits = SplitUnits(partialSnapshot);
                 foreach (var unit in singleUnits)
                 {
                     if (!DifferentUnits.ContainsKey(unit) && NoDifferentUnits.ContainsKey(unit))
@@ -86,7 +92,7 @@ namespace FillAPixRobot
             else
             {
                 NoDifferenceCount++;
-                var singleUnits = SplitUnits(snapshot);
+                var singleUnits = SplitUnits(partialSnapshot);
                 foreach (var unit in singleUnits)
                 {
                     if (!NoDifferentUnits.ContainsKey(unit))
@@ -102,7 +108,7 @@ namespace FillAPixRobot
                 if (isDifferent)
                 {
                     // Look for pattern in No-Difference-Dictionary, which have brought about a change
-                    foreach (var pattern in SplitPattern(snapshot, 1))
+                    foreach (var pattern in SplitPattern(partialSnapshot, 1))
                     {
                         if (GetNoDifferencePattern(fieldOfVision).ContainsKey(pattern))
                         {
@@ -113,7 +119,7 @@ namespace FillAPixRobot
                 else
                 {
                     // Looking for pattern that probably show, that there is no effect by handling this action
-                    foreach (var pattern in SplitPattern(snapshot, 1))
+                    foreach (var pattern in SplitPattern(partialSnapshot, 1))
                     {
                         bool patternFound = true;
                         foreach (var unit in pattern.SensoryUnits)
@@ -137,17 +143,26 @@ namespace FillAPixRobot
             }
         }
 
-        public double CheckForDifferencePattern(ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision)
+        public double CheckForDifferencePattern(ISensationSnapshot snapshot)
         {
-            // ToDo: Extract snapshot inside this method, depending on counter values
+            List<FieldOfVisionTypes> fieldOfVisions = new List<FieldOfVisionTypes> { FieldOfVisionTypes.Single };
+            if (NoDifferenceCount > MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_THREE_BY_THREE)
+            {
+                fieldOfVisions.Add(FieldOfVisionTypes.ThreeByThree);
+            }
 
             double result = 1.0;
-            foreach (var pattern in SplitPattern(snapshot, 1))
+            foreach (var fieldOfVision in fieldOfVisions)
             {
-                if (GetNoDifferencePattern(fieldOfVision).ContainsKey(pattern))
+                var partialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, (DirectionTypes)Action.DirectionType);
+
+                foreach (var pattern in SplitPattern(partialSnapshot, 1))
                 {
-                    double posibilityForDifference = 1.0 - (double)GetNoDifferencePattern(fieldOfVision)[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
-                    result = Math.Min(result, posibilityForDifference);
+                    if (GetNoDifferencePattern(fieldOfVision).ContainsKey(pattern))
+                    {
+                        double posibilityForDifference = 1.0 - (double)GetNoDifferencePattern(fieldOfVision)[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
+                        result = Math.Min(result, posibilityForDifference);
+                    }
                 }
             }
             return result;

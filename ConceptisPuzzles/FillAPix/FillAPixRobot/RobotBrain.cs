@@ -220,8 +220,7 @@ namespace FillAPixRobot
             var difference = SensationSnapshot.GetDifferenceSensoryPatterns(sensationSnapshotBeforeAction, sensationSnapshotAfterAction);
             var actionMemory = ActionMemoryDictonary[action];
             bool isDifferent = difference.SensoryPatterns.Any();
-            var partialSnapshotSingle = SensationSnapshot.ExtractSnapshot(sensationSnapshotBeforeAction, FieldOfVisionTypes.Single, (DirectionTypes)actionMemory.Action.DirectionType);
-            actionMemory.RememberDifference(isDifferent, partialSnapshotSingle, FieldOfVisionTypes.Single);
+            actionMemory.RememberDifference(isDifferent, sensationSnapshotBeforeAction);
             if (isDifferent && actionFeedback != 0)
             {
                 if (actionFeedback < 0)
@@ -243,8 +242,7 @@ namespace FillAPixRobot
 
             foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
             {
-                var partialSnapshotSingle = SensationSnapshot.ExtractSnapshot(sensationSnapshot, FieldOfVisionTypes.Single, (DirectionTypes)actionMemory.Action.DirectionType);
-                var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(partialSnapshotSingle, FieldOfVisionTypes.Single);
+                var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(sensationSnapshot);
                 double posibilityForDifference = Math.Min(actionMemory.NegProcentualNoDifference, percentageForDifferenceByActualSnapshot);
                 sumeOfPosibilityForDifference += posibilityForDifference;
                 posibilityForDifferencesByAction.Add(actionMemory.Action, posibilityForDifference);

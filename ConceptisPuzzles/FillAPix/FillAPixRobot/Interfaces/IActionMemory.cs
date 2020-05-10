@@ -25,8 +25,8 @@ namespace FillAPixRobot.Interfaces
         Dictionary<ISensoryPattern, int> NegativeFeedbackPattern { get; }
 
         Dictionary<ISensoryPattern, int> GetNoDifferencePattern(FieldOfVisionTypes fieldOfVision);
-        void RememberDifference(bool isDifferent, ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision);
-        double CheckForDifferencePattern(ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision);
+        void RememberDifference(bool isDifferent, ISensationSnapshot snapshot);
+        double CheckForDifferencePattern(ISensationSnapshot snapshot);
 
         void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot);
         double CheckForPositiveFeedback(ISensationSnapshot snapshot);
