@@ -7,7 +7,7 @@ namespace FillAPixRobot.Persistence
     public static class SQLiteHelper
     {
         // ToDo: Make this hard coded db-filename more dynamic ... maybe add to config-file
-        private const string DATA_SOURCE_FILE_NAME = "FillAPixRobotKnowledgeBase.db";
+        private const string DATA_SOURCE_FILE_NAME = @"..\..\FillAPixRobot\Data\FillAPixRobotKnowledgeBase.db";
 
         private static SQLiteConnection _connection = null;
 
