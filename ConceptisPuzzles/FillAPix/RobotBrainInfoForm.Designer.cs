@@ -33,7 +33,7 @@
             this._cbxShowDifferentUnits = new System.Windows.Forms.CheckBox();
             this._cbxShowNegativeFeedbackUnits = new System.Windows.Forms.CheckBox();
             this._cbxShowPositveFeedbackUnits = new System.Windows.Forms.CheckBox();
-            this._cbxShowNegativeFeedbackPattern = new System.Windows.Forms.CheckBox();
+            this._cbxShowNegativeFeedbackPattern3x3 = new System.Windows.Forms.CheckBox();
             this._cbxShowNoDifferencePattern3x3 = new System.Windows.Forms.CheckBox();
             this._cbxShowNoDifferencePattern1x1 = new System.Windows.Forms.CheckBox();
             this._cbxShowNoDifferentUnits = new System.Windows.Forms.CheckBox();
@@ -94,13 +94,13 @@
             // 
             // _cbxShowNegativeFeedbackPattern
             // 
-            this._cbxShowNegativeFeedbackPattern.AutoSize = true;
-            this._cbxShowNegativeFeedbackPattern.Location = new System.Drawing.Point(725, 16);
-            this._cbxShowNegativeFeedbackPattern.Name = "_cbxShowNegativeFeedbackPattern";
-            this._cbxShowNegativeFeedbackPattern.Size = new System.Drawing.Size(157, 17);
-            this._cbxShowNegativeFeedbackPattern.TabIndex = 5;
-            this._cbxShowNegativeFeedbackPattern.Text = "Negative Feedback Pattern";
-            this._cbxShowNegativeFeedbackPattern.UseVisualStyleBackColor = true;
+            this._cbxShowNegativeFeedbackPattern3x3.AutoSize = true;
+            this._cbxShowNegativeFeedbackPattern3x3.Location = new System.Drawing.Point(725, 16);
+            this._cbxShowNegativeFeedbackPattern3x3.Name = "_cbxShowNegativeFeedbackPattern";
+            this._cbxShowNegativeFeedbackPattern3x3.Size = new System.Drawing.Size(157, 17);
+            this._cbxShowNegativeFeedbackPattern3x3.TabIndex = 5;
+            this._cbxShowNegativeFeedbackPattern3x3.Text = "Negative Feedback Pattern";
+            this._cbxShowNegativeFeedbackPattern3x3.UseVisualStyleBackColor = true;
             // 
             // _cbxShowNoDifferencePattern3x3
             // 
@@ -144,7 +144,7 @@
             this.Controls.Add(this._cbxShowNoDifferentUnits);
             this.Controls.Add(this._cbxShowNoDifferencePattern1x1);
             this.Controls.Add(this._cbxShowNoDifferencePattern3x3);
-            this.Controls.Add(this._cbxShowNegativeFeedbackPattern);
+            this.Controls.Add(this._cbxShowNegativeFeedbackPattern3x3);
             this.Controls.Add(this._cbxShowPositveFeedbackUnits);
             this.Controls.Add(this._cbxShowNegativeFeedbackUnits);
             this.Controls.Add(this._cbxShowDifferentUnits);
@@ -165,7 +165,7 @@
         private System.Windows.Forms.CheckBox _cbxShowDifferentUnits;
         private System.Windows.Forms.CheckBox _cbxShowNegativeFeedbackUnits;
         private System.Windows.Forms.CheckBox _cbxShowPositveFeedbackUnits;
-        private System.Windows.Forms.CheckBox _cbxShowNegativeFeedbackPattern;
+        private System.Windows.Forms.CheckBox _cbxShowNegativeFeedbackPattern3x3;
         private System.Windows.Forms.CheckBox _cbxShowNoDifferencePattern3x3;
         private System.Windows.Forms.CheckBox _cbxShowNoDifferencePattern1x1;
         private System.Windows.Forms.CheckBox _cbxShowNoDifferentUnits;

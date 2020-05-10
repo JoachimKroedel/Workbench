@@ -91,14 +91,14 @@ namespace ConceptisPuzzles.Robot
                     }
                 }
 
-                if (_cbxShowNegativeFeedbackPattern.Checked)
+                if (_cbxShowNegativeFeedbackPattern3x3.Checked)
                 {
-                    var countPattern = actionMemory.NegativeFeedbackPattern.Count;
-                    var countReducedPattern = actionMemory.NegativeFeedbackPattern.Count(x => x.Value > ActionMemory.LOWER_FEEDBACK_PATTERN_COUNT);
+                    var countPattern = actionMemory.NegativeFeedbackPattern_3x3.Count;
+                    var countReducedPattern = actionMemory.NegativeFeedbackPattern_3x3.Count(x => x.Value > ActionMemory.LOWER_FEEDBACK_PATTERN_3X3_COUNT);
                     infoText.Append($"\t NegativeFeedbackPattern: \t ({countReducedPattern}/{countPattern}) \n");
-                    foreach (var entry in actionMemory.NegativeFeedbackPattern.OrderByDescending(x => x.Value))
+                    foreach (var entry in actionMemory.NegativeFeedbackPattern_3x3.OrderByDescending(x => x.Value))
                     {
-                        if (entry.Value <= ActionMemory.LOWER_FEEDBACK_PATTERN_COUNT)
+                        if (entry.Value <= ActionMemory.LOWER_FEEDBACK_PATTERN_3X3_COUNT)
                         {
                             break;
                         }

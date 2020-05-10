@@ -43,22 +43,22 @@ namespace FillAPixRobot
             // ToDo: Only for testing it's allowed to reduce actions ... don't forget to release all possible actions again!
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.Center));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.North));
-            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthWest));
-            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthEast));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthWest));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthEast));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.East));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.South));
-            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthWest));
-            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthEast));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthWest));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthEast));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.West));
 
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.Center));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.North));
-            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthWest));
-            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthEast));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthWest));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthEast));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.East));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.South));
-            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthWest));
-            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthEast));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthWest));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthEast));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.West));
 
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.RemoveMarker, DirectionTypes.Center));
@@ -69,10 +69,10 @@ namespace FillAPixRobot
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.South));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.West));
 
-            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.NorthEast));
-            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.NorthWest));
-            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.SouthEast));
-            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.SouthWest));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.NorthEast));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.NorthWest));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.SouthEast));
+            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.SouthWest));
 
             foreach (IPuzzleAction action in _allPossibleActions)
             {
@@ -231,7 +231,7 @@ namespace FillAPixRobot
             }
         }
 
-        private IPuzzleAction GetDecisionByMemory(ISensationSnapshot sensationSnapshot)
+        private IPuzzleAction GetDecisionByMemory(ISensationSnapshot snapshot)
         {
             double sumeOfPosibilityForDifference = 0.0;
             double sumeOfPosibilityForPositiveFeedback = 0.0;
@@ -242,14 +242,14 @@ namespace FillAPixRobot
 
             foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
             {
-                var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(sensationSnapshot);
+                var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(snapshot);
                 double posibilityForDifference = Math.Min(actionMemory.NegProcentualNoDifference, percentageForDifferenceByActualSnapshot);
                 sumeOfPosibilityForDifference += posibilityForDifference;
                 posibilityForDifferencesByAction.Add(actionMemory.Action, posibilityForDifference);
 
                 if (posibilityForDifference > 0.0)
                 {
-                    double posibilityFeedback = actionMemory.CheckForPositiveFeedback(sensationSnapshot);
+                    double posibilityFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
                     // ToDo: Überlegen, ob man nicht auch allgemein bei einer Aktion von positivem Feedback ausgehen sollte (ähnlich wie bei Difference)
                     posibilityFeedback = Math.Min(actionMemory.NegProcentualNegativeFeedback, posibilityFeedback);
                     if (posibilityFeedback > 0.0)
@@ -258,8 +258,8 @@ namespace FillAPixRobot
                         posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, posibilityFeedback);
                     }
 
-                    double negativeFeedbackByUnits = actionMemory.CheckForNegativeFeedback(sensationSnapshot);
-                    double negativeFeedbackByPattern = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(sensationSnapshot));
+                    double negativeFeedbackByUnits = actionMemory.CheckForNegativeFeedback(snapshot);
+                    double negativeFeedbackByPattern = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(snapshot));
                     negativeFeedbackByUnits = Math.Max(negativeFeedbackByUnits, negativeFeedbackByPattern);
                     if (negativeFeedbackByUnits > 0.0)
                     {

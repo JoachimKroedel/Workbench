@@ -12,8 +12,9 @@ namespace FillAPixRobot
         public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_SINGLE = 10;
         public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_THREE_BY_THREE = 50;
         public const int MINIMUM_FEEDBACK_COUNT = 10;
+        public const int MINIMUM_FEEDBACK_COUNT_FOR_3X3 = 10;
         public const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
-        public const int LOWER_FEEDBACK_PATTERN_COUNT = 2;
+        public const int LOWER_FEEDBACK_PATTERN_3X3_COUNT = 2;
 
         private readonly Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>> _noDifferencePatternDictonary = new Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>>();
 
@@ -43,7 +44,7 @@ namespace FillAPixRobot
         public Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get; } = new Dictionary<ISensoryUnit, int>();
         public Dictionary<ISensoryUnit, int> NegativeFeedbackUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
-        public Dictionary<ISensoryPattern, int> NegativeFeedbackPattern { get; } = new Dictionary<ISensoryPattern, int>();
+        public Dictionary<ISensoryPattern, int> NegativeFeedbackPattern_3x3 { get; } = new Dictionary<ISensoryPattern, int>();
 
         public Dictionary<ISensoryPattern, int> GetNoDifferencePattern(FieldOfVisionTypes fieldOfVision)
         {
@@ -170,6 +171,9 @@ namespace FillAPixRobot
 
         public void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot)
         {
+            // ToDo: Make the field of vision more generic ... depending on call count
+            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
+
             var singleUnits = SplitUnits(snapshot);
             if (feedbackValue < 0)
             {
@@ -183,10 +187,9 @@ namespace FillAPixRobot
                     NegativeFeedbackUnits[unit]++;
                 }
 
-                if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT)
+                if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_3X3)
                 {
                     // memorize negative pattern for (a direction depending) partial snapshot
-                    var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
                     foreach (var pattern in SplitPattern(partialSnapShot, 1))
                     {
                         bool patternFound = true;
@@ -201,11 +204,11 @@ namespace FillAPixRobot
                         }
                         if (patternFound)
                         {
-                            if (!NegativeFeedbackPattern.ContainsKey(pattern))
+                            if (!NegativeFeedbackPattern_3x3.ContainsKey(pattern))
                             {
-                                NegativeFeedbackPattern.Add(pattern, 0);
+                                NegativeFeedbackPattern_3x3.Add(pattern, 0);
                             }
-                            NegativeFeedbackPattern[pattern]++;
+                            NegativeFeedbackPattern_3x3[pattern]++;
                         }
                     }
                 }
@@ -222,14 +225,14 @@ namespace FillAPixRobot
                     PositveFeedbackUnits[unit]++;
                 }
 
-                if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT)
+                if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_3X3)
                 {
                     // Entfernen der Pattern aus Negative
-                    foreach (var pattern in SplitPattern(snapshot, 1))
+                    foreach (var pattern in SplitPattern(partialSnapShot, 1))
                     {
-                        if (NegativeFeedbackPattern.ContainsKey(pattern))
+                        if (NegativeFeedbackPattern_3x3.ContainsKey(pattern))
                         {
-                            NegativeFeedbackPattern.Remove(pattern);
+                            NegativeFeedbackPattern_3x3.Remove(pattern);
                         }
                     }
                 }
@@ -258,69 +261,15 @@ namespace FillAPixRobot
             return result;
         }
 
-        public double CheckForFeedback(ISensationSnapshot snapshot, bool errorAllowed = true)
-        {
-            var singleUnits = SplitUnits(snapshot);
-            double maxPositivePercetage = 0.0;
-            double minNegativePercentage = 0.0;
-            double posibilityForNotNegativeFeedback = CheckForNotNegativeFeedbackPattern(snapshot);
-            foreach (var unit in singleUnits)
-            {
-                double negativePercentage = Math.Max(GetNegativeFeedbackPercentage(unit), 1.0 - posibilityForNotNegativeFeedback);
-
-                if (negativePercentage >= 0.0)
-                {
-                    if (errorAllowed)
-                    {
-                        double testResult = 1.0 - 2 * negativePercentage;
-                        if (testResult < 0.0)
-                        {
-                            minNegativePercentage = Math.Min(minNegativePercentage, testResult);
-                        }
-                        else if (testResult > 0.0)
-                        {
-                            maxPositivePercetage = Math.Max(maxPositivePercetage, testResult * posibilityForNotNegativeFeedback);
-                        }
-                    }
-                    else
-                    {
-                        minNegativePercentage = Math.Min(minNegativePercentage, -negativePercentage);
-                        maxPositivePercetage = Math.Max(maxPositivePercetage, 1.0 - negativePercentage);
-                    }
-                }
-            }
-
-            if (errorAllowed)
-            {
-                // Hier wird ein Wert zwischen -1.0 und 1.0 zurück gegeben, der angibt ob mit einer Strafe oder Belohnung zu rechnen ist.
-                if (minNegativePercentage < 0.0)
-                {
-                    return minNegativePercentage;
-                }
-                return maxPositivePercetage;
-            }
-            else
-            {
-                // =====================================
-                // ToDo: Hier sollte lediglich ausgeschlossen werden, was definitiv einen Fehler ergibt ... den wenn alles ausgeschlossen wird, was zum Fehler führt müsste der Rest kein Fehler ergeben (Sherlok Holmes)
-                // =====================================
-                double xxx = minNegativePercentage + maxPositivePercetage;
-                if (xxx >= 0.66)
-                {
-                    return xxx;
-                }
-                return minNegativePercentage;
-            }
-        }
-
         public double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot)
         {
             double result = 1.0;
+            // ToDo: Make the field of vision more generic ... depending on call count
             var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
             Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
-            foreach (var entry in NegativeFeedbackPattern)
+            foreach (var entry in NegativeFeedbackPattern_3x3)
             {
-                if (entry.Value > LOWER_FEEDBACK_PATTERN_COUNT)
+                if (entry.Value > LOWER_FEEDBACK_PATTERN_3X3_COUNT)
                 {
                     reducedNegativeFeedbackPatternDict.Add(entry.Key, entry.Value);
                 }
@@ -336,8 +285,6 @@ namespace FillAPixRobot
             }
             return result;
         }
-
-
 
         private double GetPositiveFeedbackPercentage(ISensoryUnit unit)
         {
