@@ -3,6 +3,7 @@ using FillAPixRobot.Interfaces;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using FillAPixRobot.Enums;
 
 namespace ConceptisPuzzles.Robot
 {
@@ -56,8 +57,8 @@ namespace ConceptisPuzzles.Robot
 
                 if (_cbxShowNoDifferencePattern1x1.Checked)
                 {
-                    infoText.Append("\t NoDifferencePattern1x1:\n");
-                    foreach (var entry in actionMemory.NoDifferencePattern1x1)
+                    infoText.Append("\t No Difference Pattern Single:\n");
+                    foreach (var entry in actionMemory.GetNoDifferencePattern(FieldOfVisionTypes.Single))
                     {
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
                     }
@@ -65,8 +66,8 @@ namespace ConceptisPuzzles.Robot
 
                 if (_cbxShowNoDifferencePattern3x3.Checked)
                 {
-                    infoText.Append("\t NoDifferencePattern3x3:\n");
-                    foreach (var entry in actionMemory.NoDifferencePattern3x3)
+                    infoText.Append("\t No Difference Pattern Three By Three:\n");
+                    foreach (var entry in actionMemory.GetNoDifferencePattern(FieldOfVisionTypes.ThreeByThree))
                     {
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
                     }

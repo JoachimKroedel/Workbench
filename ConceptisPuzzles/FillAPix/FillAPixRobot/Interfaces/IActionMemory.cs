@@ -8,43 +8,31 @@ namespace FillAPixRobot.Interfaces
     {
         IPuzzleAction Action { get; }
 
-        int DifferenceCount { get; set; }
-        Dictionary<ISensoryUnit, int> DifferentUnits { get; }
-
-        int NoDifferenceCount { get; set; }
-
-        Dictionary<ISensoryUnit, int> NoDifferentUnits { get; }
-
-        Dictionary<ISensoryPattern, int> NoDifferencePattern1x1 { get; }
-        Dictionary<ISensoryPattern, int> NoDifferencePattern3x3 { get; }
-
         int CallCount { get; }
-
+        int DifferenceCount { get; }
+        int NoDifferenceCount { get; }
         double NegProcentualNoDifference { get; }
+
+        int PositiveFeedbackCount { get; }
+        int NegativeFeedbackCount { get; }
         double NegProcentualNegativeFeedback { get; }
 
+        Dictionary<ISensoryUnit, int> DifferentUnits { get; }
+        Dictionary<ISensoryUnit, int> NoDifferentUnits { get; }
+
         Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get; }
-
         Dictionary<ISensoryUnit, int> NegativeFeedbackUnits { get; }
-
         Dictionary<ISensoryPattern, int> NegativeFeedbackPattern { get; }
 
-        int PositiveFeedbackCount { get; set; }
+        Dictionary<ISensoryPattern, int> GetNoDifferencePattern(FieldOfVisionTypes fieldOfVision);
+        void RememberDifference(bool isDifferent, ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision);
+        double CheckForDifferencePattern(ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision);
 
-        int NegativeFeedbackCount { get; set; }
-
-        void RememberDifference(bool isDifferent, ISensationSnapshot snapShotBefore, FieldOfVisionTypes fieldOfVision);
-
-        void RememberFeedback(int feedbackValue, ISensationSnapshot snapShotBefore);
-
-        double CheckForDifferencePattern(ISensationSnapshot sensationSnapshot, FieldOfVisionTypes fieldOfVision);
-
-        double CheckForNotNegativeFeedbackPattern(ISensationSnapshot sensationSnapshot);
+        void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot);
+        double CheckForPositiveFeedback(ISensationSnapshot snapshot);
 
         double CheckForFeedback(ISensationSnapshot snapshot, bool errorAllowed = true);
-
-        double CheckForPositiveFeedback(ISensationSnapshot snapShotBefore);
-
-        double CheckForNegativeFeedback(ISensationSnapshot snapShotBefore);
+        double CheckForNegativeFeedback(ISensationSnapshot snapshot);
+        double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot);
     }
 }

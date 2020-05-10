@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Text;
 using FillAPixRobot.Enums;
 using FillAPixRobot.Interfaces;
 
@@ -9,51 +9,55 @@ namespace FillAPixRobot
 {
     public class ActionMemory : IActionMemory
     {
-        public const int MINIMUM_CALL_COUNT = 10;
+        public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_SINGLE = 10;
         public const int MINIMUM_FEEDBACK_COUNT = 10;
         public const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
         public const int LOWER_FEEDBACK_PATTERN_COUNT = 2;
 
+        private readonly Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>> _noDifferencePatternDictonary = new Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>>();
+
         public ActionMemory(IPuzzleAction action)
         {
             Action = action;
+            foreach(FieldOfVisionTypes fieldOfVision in Enum.GetValues(typeof(FieldOfVisionTypes)))
+            {
+                _noDifferencePatternDictonary.Add(fieldOfVision, new Dictionary<ISensoryPattern, int>());
+            }
         }
 
         public IPuzzleAction Action { get; private set; }
 
-        public int DifferenceCount { get; set; }
-
-        public Dictionary<ISensoryUnit, int> DifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
-
-        public int NoDifferenceCount { get; set; }
-
-        public Dictionary<ISensoryUnit, int> NoDifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
-
-        public Dictionary<ISensoryPattern, int> NoDifferencePattern1x1 { get; } = new Dictionary<ISensoryPattern, int>();
-        public Dictionary<ISensoryPattern, int> NoDifferencePattern3x3 { get; } = new Dictionary<ISensoryPattern, int>();
-
         public int CallCount { get { return DifferenceCount + NoDifferenceCount; } }
+        public int DifferenceCount { get; private set; }
+        public int NoDifferenceCount { get; private set; }
+        public double NegProcentualNoDifference { get { return 1.0 - (double)NoDifferenceCount / Math.Max(MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_SINGLE, CallCount); } }
 
-        public double NegProcentualNoDifference { get { return 1.0 - (double)NoDifferenceCount / Math.Max(MINIMUM_CALL_COUNT, CallCount); } }
-
+        public int PositiveFeedbackCount { get; private set; }
+        public int NegativeFeedbackCount { get; private set; }
         public double NegProcentualNegativeFeedback { get { return 1.0 - (double)NegativeFeedbackCount / Math.Max(MINIMUM_FEEDBACK_COUNT, PositiveFeedbackCount + NegativeFeedbackCount); } }
 
-        public Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get; } = new Dictionary<ISensoryUnit, int>();
+        public Dictionary<ISensoryUnit, int> DifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
+        public Dictionary<ISensoryUnit, int> NoDifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
+        public Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get; } = new Dictionary<ISensoryUnit, int>();
         public Dictionary<ISensoryUnit, int> NegativeFeedbackUnits { get; } = new Dictionary<ISensoryUnit, int>();
 
         public Dictionary<ISensoryPattern, int> NegativeFeedbackPattern { get; } = new Dictionary<ISensoryPattern, int>();
 
-        public int PositiveFeedbackCount { get; set; }
-
-        public int NegativeFeedbackCount { get; set; }
-
-        public void RememberDifference(bool isDifferent, ISensationSnapshot snapShotBefore, FieldOfVisionTypes fieldOfVision)
+        public Dictionary<ISensoryPattern, int> GetNoDifferencePattern(FieldOfVisionTypes fieldOfVision)
         {
+            return _noDifferencePatternDictonary[fieldOfVision];
+        }
+
+        public void RememberDifference(bool isDifferent, ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision)
+        {
+            // ToDo: Extract snapshot inside this method, depending on counter values
+
+            // Handles counter and single units
             if (isDifferent)
             {
                 DifferenceCount++;
-                var singleUnits = SplitUnits(snapShotBefore);
+                var singleUnits = SplitUnits(snapshot);
                 foreach (var unit in singleUnits)
                 {
                     if (!DifferentUnits.ContainsKey(unit) && NoDifferentUnits.ContainsKey(unit))
@@ -65,7 +69,7 @@ namespace FillAPixRobot
                         DifferentUnits[unit]++;
                     }
                 }
-                // Hier werden alle Units wieder entfernt, welche nicht bei NoDifference aufgefallen sind
+
                 List<ISensoryUnit> unitsToRemove = new List<ISensoryUnit>();
                 foreach (var entry in DifferentUnits)
                 {
@@ -82,7 +86,7 @@ namespace FillAPixRobot
             else
             {
                 NoDifferenceCount++;
-                var singleUnits = SplitUnits(snapShotBefore);
+                var singleUnits = SplitUnits(snapshot);
                 foreach (var unit in singleUnits)
                 {
                     if (!NoDifferentUnits.ContainsKey(unit))
@@ -93,106 +97,65 @@ namespace FillAPixRobot
                 }
             }
 
-            if (fieldOfVision.Equals(FieldOfVisionTypes.Single))
+            if (NoDifferenceCount > MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_SINGLE && DifferenceCount > 0)
             {
                 if (isDifferent)
                 {
-                    // Hier werden die Pattern von NoDifference entfernt, welche in diesem Fall doch ein Difference haten
-                    if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
+                    // Look for pattern in No-Difference-Dictionary, which have brought about a change
+                    foreach (var pattern in SplitPattern(snapshot, 1))
                     {
-                        foreach (var pattern in SplitPattern(snapShotBefore, 1))
+                        if (GetNoDifferencePattern(fieldOfVision).ContainsKey(pattern))
                         {
-                            if (NoDifferencePattern1x1.ContainsKey(pattern))
-                            {
-                                NoDifferencePattern1x1.Remove(pattern);
-                            }
+                            GetNoDifferencePattern(fieldOfVision).Remove(pattern);
                         }
                     }
                 }
                 else
                 {
-                    // Für die Aktionen, die nicht sowieso schon eindeutig sind und bei dennen eine gewisse Anzahl von Versuchen statt gefunden hat
-                    // nun prüfen, ob es Kombinationen gibt, welche eindeutig zu NoDifferenze führen
-                    if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
+                    // Looking for pattern that probably show, that there is no effect by handling this action
+                    foreach (var pattern in SplitPattern(snapshot, 1))
                     {
-                        foreach (var pattern in SplitPattern(snapShotBefore, 1))
+                        bool patternFound = true;
+                        foreach (var unit in pattern.SensoryUnits)
                         {
-                            bool patternFound = true;
-                            foreach (var unit in pattern.SensoryUnits)
+                            if (!NoDifferentUnits.ContainsKey(unit))
                             {
-                                if (!NoDifferentUnits.ContainsKey(unit))
-                                {
-                                    patternFound = false;
-                                    break;
-                                }
+                                patternFound = false;
+                                break;
                             }
-                            if (patternFound)
+                        }
+                        if (patternFound)
+                        {
+                            if (!GetNoDifferencePattern(fieldOfVision).ContainsKey(pattern))
                             {
-                                if (!NoDifferencePattern1x1.ContainsKey(pattern))
-                                {
-                                    NoDifferencePattern1x1.Add(pattern, 0);
-                                }
-                                NoDifferencePattern1x1[pattern]++;
+                                GetNoDifferencePattern(fieldOfVision).Add(pattern, 0);
                             }
+                            GetNoDifferencePattern(fieldOfVision)[pattern]++;
                         }
                     }
                 }
-            }
-            else if (fieldOfVision.Equals(FieldOfVisionTypes.ThreeByThree))
-            {
-                if (isDifferent)
-                {
-                    // Hier werden die Pattern von NoDifference entfernt, welche in diesem Fall doch ein Difference haten
-                    if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
-                    {
-                        foreach (var pattern in SplitPattern(snapShotBefore, 1))
-                        {
-                            if (NoDifferencePattern3x3.ContainsKey(pattern))
-                            {
-                                NoDifferencePattern3x3.Remove(pattern);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // Für die Aktionen, die nicht sowieso schon eindeutig sind und bei dennen eine gewisse Anzahl von Versuchen statt gefunden hat
-                    // nun prüfen, ob es Kombinationen gibt, welche eindeutig zu NoDifferenze führen
-                    if (NoDifferenceCount > MINIMUM_CALL_COUNT && DifferenceCount > 0)
-                    {
-                        foreach (var pattern in SplitPattern(snapShotBefore, 1))
-                        {
-                            bool patternFound = true;
-                            foreach (var unit in pattern.SensoryUnits)
-                            {
-                                if (!NoDifferentUnits.ContainsKey(unit))
-                                {
-                                    patternFound = false;
-                                    break;
-                                }
-                            }
-                            if (patternFound)
-                            {
-                                if (!NoDifferencePattern3x3.ContainsKey(pattern))
-                                {
-                                    NoDifferencePattern3x3.Add(pattern, 0);
-                                }
-                                NoDifferencePattern3x3[pattern]++;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // ToDo: Handle other field of vision types also!
-                throw new NotImplementedException();
             }
         }
 
-        public void RememberFeedback(int feedbackValue, ISensationSnapshot snapShotBefore)
+        public double CheckForDifferencePattern(ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision)
         {
-            var singleUnits = SplitUnits(snapShotBefore);
+            // ToDo: Extract snapshot inside this method, depending on counter values
+
+            double result = 1.0;
+            foreach (var pattern in SplitPattern(snapshot, 1))
+            {
+                if (GetNoDifferencePattern(fieldOfVision).ContainsKey(pattern))
+                {
+                    double posibilityForDifference = 1.0 - (double)GetNoDifferencePattern(fieldOfVision)[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
+                    result = Math.Min(result, posibilityForDifference);
+                }
+            }
+            return result;
+        }
+
+        public void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot)
+        {
+            var singleUnits = SplitUnits(snapshot);
             if (feedbackValue < 0)
             {
                 NegativeFeedbackCount++;
@@ -208,7 +171,7 @@ namespace FillAPixRobot
                 if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT)
                 {
                     // memorize negative pattern for (a direction depending) partial snapshot
-                    var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapShotBefore, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
+                    var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
                     foreach (var pattern in SplitPattern(partialSnapShot, 1))
                     {
                         bool patternFound = true;
@@ -247,7 +210,7 @@ namespace FillAPixRobot
                 if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT)
                 {
                     // Entfernen der Pattern aus Negative
-                    foreach (var pattern in SplitPattern(snapShotBefore, 1))
+                    foreach (var pattern in SplitPattern(snapshot, 1))
                     {
                         if (NegativeFeedbackPattern.ContainsKey(pattern))
                         {
@@ -258,66 +221,10 @@ namespace FillAPixRobot
             }
         }
 
-        public double CheckForDifferencePattern(ISensationSnapshot sensationSnapshot, FieldOfVisionTypes fieldOfVision)
-        {
-            double result = 1.0;
-            if (fieldOfVision.Equals(FieldOfVisionTypes.Single))
-            {
-                foreach (var pattern in SplitPattern(sensationSnapshot, 1))
-                {
-                    if (NoDifferencePattern1x1.ContainsKey(pattern))
-                    {
-                        double posibilityForDifference = 1.0 - (double)NoDifferencePattern1x1[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
-                        result = Math.Min(result, posibilityForDifference);
-                    }
-                }
-                return result;
-            }
-            else if (fieldOfVision.Equals(FieldOfVisionTypes.ThreeByThree))
-            {
-                foreach (var pattern in SplitPattern(sensationSnapshot, 1))
-                {
-                    if (NoDifferencePattern3x3.ContainsKey(pattern))
-                    {
-                        double posibilityForDifference = 1.0 - (double)NoDifferencePattern3x3[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
-                        result = Math.Min(result, posibilityForDifference);
-                    }
-                }
-                return result;
-            }
-
-            // ToDo: Check for other field of vision types also and use more generic dictionary
-            throw new NotImplementedException();
-        }
-
-        public double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot)
-        {
-            double result = 1.0;
-            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
-            Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
-            foreach(var entry in NegativeFeedbackPattern)
-            {
-                if (entry.Value > LOWER_FEEDBACK_PATTERN_COUNT)
-                {
-                    reducedNegativeFeedbackPatternDict.Add(entry.Key, entry.Value);
-                }
-            }
-            int minimumCountForNegativePattern = Math.Max(MINIMUM_PATTERN_NO_DIFFERENT_COUNT, reducedNegativeFeedbackPatternDict.Count);
-            foreach (var pattern in SplitPattern(partialSnapShot, 1))
-            {
-                if (reducedNegativeFeedbackPatternDict.ContainsKey(pattern))
-                {
-                    double posibilityForPositiveFeedback = Math.Max(0.0, 1.0 - (double)reducedNegativeFeedbackPatternDict[pattern] / minimumCountForNegativePattern);
-                    result = Math.Min(result, posibilityForPositiveFeedback);
-                }
-            }
-            return result;
-        }
-
-        public double CheckForPositiveFeedback(ISensationSnapshot snapShotBefore)
+        public double CheckForPositiveFeedback(ISensationSnapshot snapshot)
         {
             double result = 0.0;
-            var singleUnits = SplitUnits(snapShotBefore);
+            var singleUnits = SplitUnits(snapshot);
             foreach (var unit in singleUnits)
             {
                 result = Math.Max(result, GetPositiveFeedbackPercentage(unit));
@@ -325,10 +232,10 @@ namespace FillAPixRobot
             return result;
         }
 
-        public double CheckForNegativeFeedback(ISensationSnapshot snapShotBefore)
+        public double CheckForNegativeFeedback(ISensationSnapshot snapshot)
         {
             double result = 0.0;
-            var singleUnits = SplitUnits(snapShotBefore);
+            var singleUnits = SplitUnits(snapshot);
             foreach (var unit in singleUnits)
             {
                 result = Math.Max(result, GetNegativeFeedbackPercentage(unit));
@@ -391,6 +298,32 @@ namespace FillAPixRobot
             }
         }
 
+        public double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot)
+        {
+            double result = 1.0;
+            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
+            Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
+            foreach (var entry in NegativeFeedbackPattern)
+            {
+                if (entry.Value > LOWER_FEEDBACK_PATTERN_COUNT)
+                {
+                    reducedNegativeFeedbackPatternDict.Add(entry.Key, entry.Value);
+                }
+            }
+            int minimumCountForNegativePattern = Math.Max(MINIMUM_PATTERN_NO_DIFFERENT_COUNT, reducedNegativeFeedbackPatternDict.Count);
+            foreach (var pattern in SplitPattern(partialSnapShot, 1))
+            {
+                if (reducedNegativeFeedbackPatternDict.ContainsKey(pattern))
+                {
+                    double posibilityForPositiveFeedback = Math.Max(0.0, 1.0 - (double)reducedNegativeFeedbackPatternDict[pattern] / minimumCountForNegativePattern);
+                    result = Math.Min(result, posibilityForPositiveFeedback);
+                }
+            }
+            return result;
+        }
+
+
+
         private double GetPositiveFeedbackPercentage(ISensoryUnit unit)
         {
             double negativeCount = NegativeFeedbackUnits.ContainsKey(unit) ? NegativeFeedbackUnits[unit] : 0;
@@ -413,11 +346,6 @@ namespace FillAPixRobot
                 return negativeCount / sum;
             }
             return -1.0;
-        }
-
-        public override string ToString()
-        {
-            return "{" + Action + ": " + CallCount + "=" + DifferenceCount + "+" + NoDifferenceCount + " -> " + NegProcentualNoDifference + "}";
         }
 
         private List<ISensoryPattern> SplitPattern(ISensationSnapshot snapShot, int unitSize)
@@ -467,12 +395,18 @@ namespace FillAPixRobot
 
         public string ToDebugString()
         {
-            string result = Action.ToString() + "\n";
+            var output = new StringBuilder();
+            output.Append(Action.ToString() + "\n");
             foreach (var negativeEntry in NegativeFeedbackUnits.OrderBy(x => x.Value))
             {
-                result += negativeEntry.Value + "\t->\t" + GetNegativeFeedbackPercentage(negativeEntry.Key).ToString("0.000") + "\t" + negativeEntry.Key + "\n";
+                output.Append(negativeEntry.Value + "\t->\t" + GetNegativeFeedbackPercentage(negativeEntry.Key).ToString("0.000") + "\t" + negativeEntry.Key + "\n");
             }
-            return result;
+            return output.ToString();
+        }
+
+        public override string ToString()
+        {
+            return $"{{{Action}: {CallCount}={DifferenceCount}+{NoDifferenceCount} -> {NegProcentualNoDifference}}}";
         }
     }
 }
