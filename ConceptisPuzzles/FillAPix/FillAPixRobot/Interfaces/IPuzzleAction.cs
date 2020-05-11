@@ -1,11 +1,11 @@
-﻿using System;
+﻿using FillAPixRobot.Enums;
 
 namespace FillAPixRobot.Interfaces
 {
     public interface IPuzzleAction
     {
         long Id { get; }
-        Enum ActionType { get; set; }
-        Enum DirectionType { get; set; }
+        ActionTypes Type { get; set; }
+        DirectionTypes Direction { get; set; }
     }
 }

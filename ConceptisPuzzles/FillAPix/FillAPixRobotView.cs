@@ -594,11 +594,11 @@ namespace ConceptisPuzzles.Robot
 
         private void RobotBrain_ActionWanted(object sender, ActionWantedEventArgs e)
         {
-            DirectionTypes directionType = (DirectionTypes)e.Action.DirectionType;
-            ActionTypes actionType = (ActionTypes)e.Action.ActionType;
-            if (_puzzleReferee.CheckAction(_robotBrain.Position, directionType, actionType))
+            DirectionTypes actionDirection = e.Action.Direction;
+            ActionTypes actionType = e.Action.Type;
+            if (_puzzleReferee.CheckAction(_robotBrain.Position, actionDirection, actionType))
             {
-                Point direction = PuzzleReferee.ConvertToPoint(directionType);
+                Point direction = PuzzleReferee.ConvertToPoint(actionDirection);
                 Point actionPosition = new Point(_robotBrain.Position.X + direction.X, _robotBrain.Position.Y + direction.Y);
                 int stateChangeCount = 0;
                 switch (actionType)

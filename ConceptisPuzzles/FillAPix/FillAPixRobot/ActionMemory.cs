@@ -58,7 +58,7 @@ namespace FillAPixRobot
             {
                 fieldOfVision = FieldOfVisionTypes.ThreeByThree;
             }
-            var partialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, (DirectionTypes)Action.DirectionType);
+            var partialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, Action.Direction);
 
             // Handles counter and single units
             if (isDifferent)
@@ -155,7 +155,7 @@ namespace FillAPixRobot
             double result = 1.0;
             foreach (var fieldOfVision in fieldOfVisions)
             {
-                var partialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, (DirectionTypes)Action.DirectionType);
+                var partialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, Action.Direction);
 
                 foreach (var pattern in SplitPattern(partialSnapshot, 1))
                 {
@@ -172,7 +172,7 @@ namespace FillAPixRobot
         public void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot)
         {
             // ToDo: Make the field of vision more generic ... depending on call count
-            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
+            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, Action.Direction);
 
             var singleUnits = SplitUnits(snapshot);
             if (feedbackValue < 0)
@@ -265,7 +265,7 @@ namespace FillAPixRobot
         {
             double result = 1.0;
             // ToDo: Make the field of vision more generic ... depending on call count
-            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, (DirectionTypes)Action.DirectionType);
+            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, Action.Direction);
             Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
             foreach (var entry in NegativeFeedbackPattern_3x3)
             {

@@ -6,49 +6,24 @@ namespace FillAPixRobot
 {
     public class PuzzleAction : IPuzzleAction, IComparable
     {
-        protected ActionTypes _actionType;
-        protected DirectionTypes _directionType;
-
         public PuzzleAction(IPuzzleAction action)
         {
             Id = action.Id;
-            ActionType = action.ActionType;
-            DirectionType = action.DirectionType;
+            Type = action.Type;
+            Direction = action.Direction;
         }
 
-        public PuzzleAction(ActionTypes actionType, DirectionTypes directionType)
+        public PuzzleAction(ActionTypes type, DirectionTypes direction)
         {
             Id = -1;
-            _actionType = actionType;
-            _directionType = directionType;
+            Type = type;
+            Direction = direction;
         }
 
         public long Id { get; protected set; }
-        public Enum ActionType
-        {
-            get { return _actionType; }
+        public ActionTypes Type { get; set; }
 
-            set
-            {
-                if (value is ActionTypes fillAPixActionType)
-                {
-                    _actionType = fillAPixActionType;
-                }
-            }
-        }
-
-        public Enum DirectionType
-        {
-            get { return _directionType; }
-
-            set
-            {
-                if (value is DirectionTypes directionType)
-                {
-                    _directionType = directionType;
-                }
-            }
-        }
+        public DirectionTypes Direction { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -58,12 +33,12 @@ namespace FillAPixRobot
                 return false;
             }
 
-            return DirectionType.Equals(fillAPixAction.DirectionType) && ActionType.Equals(fillAPixAction.ActionType);
+            return Direction.Equals(fillAPixAction.Direction) && Type.Equals(fillAPixAction.Type);
         }
 
         public override int GetHashCode()
         {
-            return ActionType.GetHashCode() + DirectionType.GetHashCode();
+            return Type.GetHashCode() + Direction.GetHashCode();
         }
 
         public int CompareTo(object obj)
@@ -78,19 +53,19 @@ namespace FillAPixRobot
                 return 0;
             }
 
-            if (ActionType.Equals(fillAPixAction.ActionType))
+            if (Type.Equals(fillAPixAction.Type))
             {
-                return DirectionType.CompareTo(fillAPixAction.DirectionType);
+                return Direction.CompareTo(fillAPixAction.Direction);
             }
             else
             {
-                return ActionType.CompareTo(fillAPixAction.ActionType);
+                return Type.CompareTo(fillAPixAction.Type);
             }
         }
 
         public override string ToString()
         {
-            return $"{{{ActionType}, {DirectionType}}}";
+            return $"{{{Type}, {Direction}}}";
         }
     }
 }
