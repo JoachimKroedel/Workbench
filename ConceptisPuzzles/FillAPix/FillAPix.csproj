@@ -84,7 +84,6 @@
     <EmbeddedResource Include="RobotBrainInfoForm.resx">
       <DependentUpon>RobotBrainInfoForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="3rdParty\System.Data.SQLite.dll.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -107,9 +106,6 @@
       <Project>{8eac0521-b25a-4882-a418-f6be1db7f027}</Project>
       <Name>FillAPixRobot</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="3rdParty\System.Data.SQLite.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

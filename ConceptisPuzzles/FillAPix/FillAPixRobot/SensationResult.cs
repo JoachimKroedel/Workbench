@@ -1,31 +1,10 @@
 ﻿using FillAPixRobot.Interfaces;
-using FillAPixRobot.Persistence;
 using System;
-using System.Collections.Generic;
 
 namespace FillAPixRobot
 {
-    public class SensationResult : SQLiteSensationResult, IComparable
+    public class SensationResult : ISensationResult, IComparable
     {
-        static private List<ISensationResult> sensationResults = null;
-
-        static public List<ISensationResult> SensationResults
-        {
-            get
-            {
-                if (sensationResults == null)
-                {
-                    sensationResults = new List<ISensationResult>();
-                    foreach (ISensationResult sensationResult in LoadAll())
-                    {
-                        sensationResults.Add(new SensationResult(sensationResult));
-                    }
-                    sensationResults.Sort();
-                }
-                return sensationResults;
-            }
-        }
-
         public SensationResult(ISensationResult sensationResult)
         {
             Id = sensationResult.Id;
@@ -36,14 +15,19 @@ namespace FillAPixRobot
         }
 
         public SensationResult(ISensationSnapshot before, IPuzzleAction action, ISensationSnapshot after, long feedbackValue, bool saveable = true)
-            : base(before, action, after, feedbackValue, saveable)
         {
-            if (!SensationResults.Contains(this))
-            {
-                SensationResults.Add(this);
-            }
+            Id = -1;
+            SnapshotBefore = before;
+            Action = action;
+            SnapshotAfter = after;
+            FeedbackValue = feedbackValue;
         }
 
+        public long Id { get; protected set; }
+        public ISensationSnapshot SnapshotBefore { get; protected set; }
+        public IPuzzleAction Action { get; protected set; }
+        public ISensationSnapshot SnapshotAfter { get; protected set; }
+        public long FeedbackValue { get; protected set; }
 
         public override bool Equals(object obj)
         {
@@ -98,7 +82,7 @@ namespace FillAPixRobot
 
         public override string ToString()
         {
-            var result = "[" + SnapshotBefore + "->" + Action + "->" + SnapshotAfter + ": " + FeedbackValue + "]";
+            var result = $"{{{SnapshotBefore} -> {Action} -> {SnapshotAfter}: {FeedbackValue}}}";
             return result;
         }
     }

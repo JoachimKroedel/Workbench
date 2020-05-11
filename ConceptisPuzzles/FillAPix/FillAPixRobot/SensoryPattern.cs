@@ -1,6 +1,5 @@
 ﻿using FillAPixRobot.Enums;
 using FillAPixRobot.Interfaces;
-using FillAPixRobot.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,26 +7,8 @@ using System.Text;
 
 namespace FillAPixRobot
 {
-    public class SensoryPattern : SQLiteSensoryPattern, IComparable
+    public class SensoryPattern : ISensoryPattern, IComparable
     {
-        static private List<ISensoryPattern> _sensoryPatterns = null;
-        static public List<ISensoryPattern> SensoryPatterns
-        {
-            get
-            {
-                if (_sensoryPatterns == null)
-                {
-                    _sensoryPatterns = new List<ISensoryPattern>();
-                    foreach (ISensoryPattern sqLiteSensoryPattern in LoadAll())
-                    {
-                        _sensoryPatterns.Add(new SensoryPattern(sqLiteSensoryPattern));
-                    }
-                    _sensoryPatterns.Sort();
-                }
-                return _sensoryPatterns;
-            }
-        }
-
         static public bool CheckIfOneSensoryPatternIncludesAnother(ISensoryPattern a, ISensoryPattern b)
         {
             foreach (var otherSensoryUnit in b.SensoryUnits)
@@ -101,33 +82,20 @@ namespace FillAPixRobot
             SensoryUnits = new List<ISensoryUnit>();
             foreach (ISensoryUnit sensoryUnit in sensoryPattern.SensoryUnits)
             {
-                if (sensoryUnit.Id > -1)
-                {
-                    SensoryUnits.Add(SensoryUnit.SensoryUnits.First(u => u.Id == sensoryUnit.Id));
-                }
-                else
-                {
-                    SensoryUnits.Add(new SensoryUnit(sensoryUnit));
-                }
-            }
-        }
-
-        public SensoryPattern(DirectionTypes directionType, List<ISensoryUnit> sensoryUnits) : base(directionType, sensoryUnits, true)
-        {
-            if (!SensoryPatterns.Contains(this))
-            {
-                SensoryPatterns.Add(this);
+                SensoryUnits.Add(new SensoryUnit(sensoryUnit));
             }
         }
 
         public SensoryPattern(DirectionTypes directionType, List<ISensoryUnit> sensoryUnits, bool saveable)
-            : base(directionType, sensoryUnits, saveable)
         {
-            if (saveable && !SensoryPatterns.Contains(this))
-            {
-                SensoryPatterns.Add(this);
-            }
+            Id = -1;
+            DirectionType = directionType;
+            SensoryUnits.AddRange(sensoryUnits);
         }
+
+        public long Id { get; protected set; }
+        public DirectionTypes DirectionType { get; set; }
+        public List<ISensoryUnit> SensoryUnits { get; } = new List<ISensoryUnit>();
 
         public bool EqualsSensoryUnits(SensoryPattern sensoryPattern)
         {
@@ -189,7 +157,7 @@ namespace FillAPixRobot
             {
                 result += sensoryUnit.GetHashCode();
             }
-            // ToDo: Check interger overflow ... how should this be handled?
+            // ToDo: Check integer overflow ... how should this be handled?
             return (int)result;
         }
 

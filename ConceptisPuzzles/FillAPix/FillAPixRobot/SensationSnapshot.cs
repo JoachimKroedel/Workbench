@@ -6,30 +6,11 @@ using System.Text;
 
 using FillAPixRobot.Enums;
 using FillAPixRobot.Interfaces;
-using FillAPixRobot.Persistence;
 
 namespace FillAPixRobot
 {
-    public class SensationSnapshot : SQLiteSensationSnapshot, IComparable
+    public class SensationSnapshot : ISensationSnapshot, IComparable
     {
-        static private List<ISensationSnapshot> _sensationSnapshots = null;
-        static public List<ISensationSnapshot> SensationSnapshots
-        {
-            get
-            {
-                if (_sensationSnapshots == null)
-                {
-                    _sensationSnapshots = new List<ISensationSnapshot>();
-                    foreach (ISensationSnapshot sqLiteSensationSnapshot in LoadAll())
-                    {
-                        _sensationSnapshots.Add(new SensationSnapshot(sqLiteSensationSnapshot));
-                    }
-                    _sensationSnapshots.Sort();
-                }
-                return _sensationSnapshots;
-            }
-        }
-
         static public ISensationSnapshot SplitPattern(ISensationSnapshot sensationSnapshot)
         {
             SensationSnapshot result = new SensationSnapshot(sensationSnapshot.Direction, sensationSnapshot.FieldOfVision, sensationSnapshot.SensoryPatterns, false);
@@ -164,25 +145,26 @@ namespace FillAPixRobot
             Id = sensationSnapshot.Id;
             foreach (ISensoryPattern sensoryPattern in sensationSnapshot.SensoryPatterns)
             {
-                if (sensationSnapshot.Id > -1)
-                {
-                    SensoryPatterns.Add(SensoryPattern.SensoryPatterns.First(u => u.Id == sensoryPattern.Id));
-                }
-                else
-                {
-                    SensoryPatterns.Add(new SensoryPattern(sensoryPattern));
-                }
+                SensoryPatterns.Add(new SensoryPattern(sensoryPattern));
             }
         }
 
         public SensationSnapshot(DirectionTypes directionType, FieldOfVisionTypes fieldOfVisionType, List<ISensoryPattern> sensoryPatterns, bool saveable = true)
-            : base(directionType, fieldOfVisionType, sensoryPatterns, saveable)
         {
-            if (saveable && !SensationSnapshots.Contains(this))
-            {
-                SensationSnapshots.Add(this);
-            }
+            Id = -1;
+            Direction = directionType;
+            FieldOfVision = fieldOfVisionType;
+            SensoryPatterns.AddRange(sensoryPatterns);
         }
+
+        public long Id { get; protected set; }
+
+        public DirectionTypes Direction { get; set; }
+
+        public FieldOfVisionTypes FieldOfVision { get; set; }
+
+        public List<ISensoryPattern> SensoryPatterns { get; } = new List<ISensoryPattern>();
+
 
         public override bool Equals(object obj)
         {
@@ -223,7 +205,7 @@ namespace FillAPixRobot
             {
                 result += sensoryPattern.GetHashCode();
             }
-            // ToDo: Check interger overflow ... how should this be handled?
+            // ToDo: Check integer overflow ... how should this be handled?
             return (int)result;
         }
 

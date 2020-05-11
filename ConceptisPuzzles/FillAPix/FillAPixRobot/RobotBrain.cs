@@ -81,8 +81,6 @@ namespace FillAPixRobot
                     ActionMemoryDictonary.Add(action, new ActionMemory(action));
                 }
             }
-
-            _kownSensoryUnits.AddRange(SensoryUnit.SensoryUnits);
         }
 
         public Rectangle Area { get; private set; }

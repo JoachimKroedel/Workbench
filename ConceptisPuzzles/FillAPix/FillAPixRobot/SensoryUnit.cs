@@ -1,33 +1,11 @@
 ﻿using FillAPixRobot.Enums;
 using FillAPixRobot.Interfaces;
-using FillAPixRobot.Persistence;
 using System;
-using System.Collections.Generic;
 
 namespace FillAPixRobot
 {
-    // Gibt die kleinste Einheit einer Wahrnehmung an: z.B. Nicht markiert, Wert 3, Feldposition 0, ...
-    public class SensoryUnit : SQLiteSensoryUnit, IComparable
+    public class SensoryUnit : ISensoryUnit, IComparable
     {
-        static private List<ISensoryUnit> _sensoryUnits = null;
-
-        static public List<ISensoryUnit> SensoryUnits
-        {
-            get
-            {
-                if (_sensoryUnits == null)
-                {
-                    _sensoryUnits = new List<ISensoryUnit>();
-                    foreach (ISensoryUnit sqLiteSensoryUnit in LoadAll())
-                    {
-                        _sensoryUnits.Add(new SensoryUnit(sqLiteSensoryUnit));
-                    }
-                    _sensoryUnits.Sort();
-                }
-                return _sensoryUnits;
-            }
-        }
-
         public SensoryUnit(ISensoryUnit sensoryUnit)
         {
             Id = sensoryUnit.Id;
@@ -36,13 +14,15 @@ namespace FillAPixRobot
         }
 
         public SensoryUnit(SensoryTypes senseType, string value, bool saveable = true)
-            : base(senseType, value, saveable)
         {
-            if (!SensoryUnits.Contains(this))
-            {
-                SensoryUnits.Add(this);
-            }
+            Id = -1;
+            Type = senseType;
+            Value = value;
         }
+
+        public long Id { get; protected set; }
+        public SensoryTypes Type { get; protected set; }
+        public string Value { get; protected set; }
 
         public override bool Equals(object obj)
         {

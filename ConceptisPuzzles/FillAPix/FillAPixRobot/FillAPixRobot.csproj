@@ -36,10 +36,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.112.1, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\3rdParty\System.Data.SQLite.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -69,12 +65,6 @@
     <Compile Include="SensoryPattern.cs" />
     <Compile Include="Enums\SensoryTypes.cs" />
     <Compile Include="SensoryUnit.cs" />
-    <Compile Include="Persistence\SQLitePuzzleAction.cs" />
-    <Compile Include="Persistence\SQLiteHelper.cs" />
-    <Compile Include="Persistence\SQLiteSensationResult.cs" />
-    <Compile Include="Persistence\SQLiteSensationSnapshot.cs" />
-    <Compile Include="Persistence\SQLiteSensoryPattern.cs" />
-    <Compile Include="Persistence\SQLiteSensoryUnit.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FillAPixEngine\FillAPixEngine.csproj">
@@ -83,7 +73,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\FillAPixRobotKnowledgeBase.db" />
     <None Include="Puzzles\2013-10-18 1.fap" />
     <None Include="Puzzles\2013-10-18 3.fap" />
     <None Include="Puzzles\2013-10-25 1.fap" />

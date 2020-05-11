@@ -1,31 +1,13 @@
 ﻿using FillAPixRobot.Enums;
 using FillAPixRobot.Interfaces;
-using FillAPixRobot.Persistence;
 using System;
-using System.Collections.Generic;
 
 namespace FillAPixRobot
 {
-    public class PuzzleAction : SQLitePuzzleAction, IComparable
+    public class PuzzleAction : IPuzzleAction, IComparable
     {
-        static private List<IPuzzleAction> _actions = null;
-
-        static public List<IPuzzleAction> Actions
-        {
-            get
-            {
-                if (_actions == null)
-                {
-                    _actions = new List<IPuzzleAction>();
-                    foreach (IPuzzleAction action in LoadAll())
-                    {
-                        _actions.Add(new PuzzleAction(action));
-                    }
-                    _actions.Sort();
-                }
-                return _actions;
-            }
-        }
+        protected ActionTypes _actionType;
+        protected DirectionTypes _directionType;
 
         public PuzzleAction(IPuzzleAction action)
         {
@@ -35,26 +17,36 @@ namespace FillAPixRobot
         }
 
         public PuzzleAction(ActionTypes actionType, DirectionTypes directionType)
-            : base(actionType, directionType)
         {
-            if (!Actions.Contains(this))
+            Id = -1;
+            _actionType = actionType;
+            _directionType = directionType;
+        }
+
+        public long Id { get; protected set; }
+        public Enum ActionType
+        {
+            get { return _actionType; }
+
+            set
             {
-                Actions.Add(this);
+                if (value is ActionTypes fillAPixActionType)
+                {
+                    _actionType = fillAPixActionType;
+                }
             }
         }
 
-        public IPuzzleAction Complement
+        public Enum DirectionType
         {
-            get
+            get { return _directionType; }
+
+            set
             {
-                switch (_actionType)
+                if (value is DirectionTypes directionType)
                 {
-                    case ActionTypes.MarkAsEmpty:
-                        return new PuzzleAction(ActionTypes.MarkAsFilled, _directionType);
-                    case ActionTypes.MarkAsFilled:
-                        return new PuzzleAction(ActionTypes.MarkAsEmpty, _directionType);
+                    _directionType = directionType;
                 }
-                return null;
             }
         }
 
@@ -98,7 +90,7 @@ namespace FillAPixRobot
 
         public override string ToString()
         {
-            return "[" + ActionType + ", " + DirectionType + "]";
+            return $"{{{ActionType}, {DirectionType}}}";
         }
     }
 }
