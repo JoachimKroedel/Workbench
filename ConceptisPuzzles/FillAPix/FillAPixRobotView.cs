@@ -56,7 +56,7 @@ namespace ConceptisPuzzles.Robot
         {
             DialogLoadPuzzle loadDialog = new DialogLoadPuzzle();
             // ToDo: Replace static hard coded folder reference with relative path
-            loadDialog.InitialDirectory = @"D:\Entwicklung\VS.Net\2019\Workbench\ConceptisPuzzles\FillAPix\FillAPixRobot\Puzzles";
+            loadDialog.InitialDirectory = @"..\..\FillAPixRobot\Puzzles";
             if (loadDialog.ShowDialog() == DialogResult.OK)
             {
                 _puzzleBoard = new PuzzleBoard(loadDialog.FileName);
