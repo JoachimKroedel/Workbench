@@ -76,18 +76,18 @@ namespace ConceptisPuzzles.Robot
                 if (_cbxShowNegativeFeedbackUnits.Checked)
                 {
                     infoText.Append("\t NegativeFeedbackUnits:\n");
-                    foreach (var entry in actionMemory.NegativeFeedbackUnits)
+                    foreach (var entry in actionMemory.NegativeFeedbackUnits.OrderByDescending(x => x.Value))
                     {
-                        infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
+                        infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {actionMemory.GetNegativeFeedbackPercentage(entry.Key)} \n");
                     }
                 }
 
                 if (_cbxShowPositveFeedbackUnits.Checked)
                 {
                     infoText.Append("\t PositveFeedbackUnits:\n");
-                    foreach (var entry in actionMemory.PositveFeedbackUnits)
+                    foreach (var entry in actionMemory.PositveFeedbackUnits.OrderByDescending(x => x.Value))
                     {
-                        infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
+                        infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {actionMemory.GetPositiveFeedbackPercentage(entry.Key)} \n");
                     }
                 }
 
@@ -107,6 +107,14 @@ namespace ConceptisPuzzles.Robot
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {factorReduced} \t {factorOverall} \n");
                     }
                 }
+            }
+            if (_cbxClearBefore.Checked)
+            {
+                _txtInfoOutput.Text = "";
+            }
+            else
+            {
+                _txtInfoOutput.Text += "=======================================================================\n";
             }
             _txtInfoOutput.Text += infoText.ToString();
         }

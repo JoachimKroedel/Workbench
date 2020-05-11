@@ -33,5 +33,9 @@ namespace FillAPixRobot.Interfaces
 
         double CheckForNegativeFeedback(ISensationSnapshot snapshot);
         double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot);
+
+        double GetPositiveFeedbackPercentage(ISensoryUnit unit);
+
+        double GetNegativeFeedbackPercentage(ISensoryUnit unit);
     }
 }

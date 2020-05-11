@@ -10,11 +10,11 @@ namespace FillAPixRobot
     public class ActionMemory : IActionMemory
     {
         public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_SINGLE = 10;
-        public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_THREE_BY_THREE = 50;
+        public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_THREE_BY_THREE = 20;
         public const int MINIMUM_FEEDBACK_COUNT = 10;
         public const int MINIMUM_FEEDBACK_COUNT_FOR_3X3 = 10;
         public const int MINIMUM_PATTERN_NO_DIFFERENT_COUNT = 10;
-        public const int LOWER_FEEDBACK_PATTERN_3X3_COUNT = 2;
+        public const int LOWER_FEEDBACK_PATTERN_3X3_COUNT = 1;
 
         private readonly Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>> _noDifferencePatternDictonary = new Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>>();
 
@@ -171,10 +171,9 @@ namespace FillAPixRobot
 
         public void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot)
         {
-            // ToDo: Make the field of vision more generic ... depending on call count
-            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, Action.Direction);
+            var partialSnapShot = GetActualPartialSnapshot(snapshot).Last();
 
-            var singleUnits = SplitUnits(snapshot);
+            var singleUnits = SplitUnits(partialSnapShot);
             if (feedbackValue < 0)
             {
                 NegativeFeedbackCount++;
@@ -227,7 +226,6 @@ namespace FillAPixRobot
 
                 if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_3X3)
                 {
-                    // Entfernen der Pattern aus Negative
                     foreach (var pattern in SplitPattern(partialSnapShot, 1))
                     {
                         if (NegativeFeedbackPattern_3x3.ContainsKey(pattern))
@@ -242,10 +240,13 @@ namespace FillAPixRobot
         public double CheckForPositiveFeedback(ISensationSnapshot snapshot)
         {
             double result = 0.0;
-            var singleUnits = SplitUnits(snapshot);
-            foreach (var unit in singleUnits)
+            foreach (ISensationSnapshot partialSnapShot in GetActualPartialSnapshot(snapshot))
             {
-                result = Math.Max(result, GetPositiveFeedbackPercentage(unit));
+                var singleUnits = SplitUnits(partialSnapShot);
+                foreach (var unit in singleUnits)
+                {
+                    result = Math.Max(result, GetPositiveFeedbackPercentage(unit));
+                }
             }
             return result;
         }
@@ -253,10 +254,13 @@ namespace FillAPixRobot
         public double CheckForNegativeFeedback(ISensationSnapshot snapshot)
         {
             double result = 0.0;
-            var singleUnits = SplitUnits(snapshot);
-            foreach (var unit in singleUnits)
+            foreach (ISensationSnapshot partialSnapShot in GetActualPartialSnapshot(snapshot))
             {
-                result = Math.Max(result, GetNegativeFeedbackPercentage(unit));
+                var singleUnits = SplitUnits(partialSnapShot);
+                foreach (var unit in singleUnits)
+                {
+                    result = Math.Max(result, GetNegativeFeedbackPercentage(unit));
+                }
             }
             return result;
         }
@@ -264,29 +268,30 @@ namespace FillAPixRobot
         public double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot)
         {
             double result = 1.0;
-            // ToDo: Make the field of vision more generic ... depending on call count
-            var partialSnapShot = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, Action.Direction);
-            Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
-            foreach (var entry in NegativeFeedbackPattern_3x3)
+            foreach (ISensationSnapshot partialSnapShot in GetActualPartialSnapshot(snapshot))
             {
-                if (entry.Value > LOWER_FEEDBACK_PATTERN_3X3_COUNT)
+                Dictionary<ISensoryPattern, int> reducedNegativeFeedbackPatternDict = new Dictionary<ISensoryPattern, int>();
+                foreach (var entry in NegativeFeedbackPattern_3x3)
                 {
-                    reducedNegativeFeedbackPatternDict.Add(entry.Key, entry.Value);
+                    if (entry.Value > LOWER_FEEDBACK_PATTERN_3X3_COUNT)
+                    {
+                        reducedNegativeFeedbackPatternDict.Add(entry.Key, entry.Value);
+                    }
                 }
-            }
-            int minimumCountForNegativePattern = Math.Max(MINIMUM_PATTERN_NO_DIFFERENT_COUNT, reducedNegativeFeedbackPatternDict.Count);
-            foreach (var pattern in SplitPattern(partialSnapShot, 1))
-            {
-                if (reducedNegativeFeedbackPatternDict.ContainsKey(pattern))
+                int minimumCountForNegativePattern = Math.Max(MINIMUM_PATTERN_NO_DIFFERENT_COUNT, reducedNegativeFeedbackPatternDict.Count);
+                foreach (var pattern in SplitPattern(partialSnapShot, 1))
                 {
-                    double posibilityForPositiveFeedback = Math.Max(0.0, 1.0 - (double)reducedNegativeFeedbackPatternDict[pattern] / minimumCountForNegativePattern);
-                    result = Math.Min(result, posibilityForPositiveFeedback);
+                    if (reducedNegativeFeedbackPatternDict.ContainsKey(pattern))
+                    {
+                        double posibilityForPositiveFeedback = Math.Max(0.0, 1.0 - (double)reducedNegativeFeedbackPatternDict[pattern] / minimumCountForNegativePattern);
+                        result = Math.Min(result, posibilityForPositiveFeedback);
+                    }
                 }
             }
             return result;
         }
 
-        private double GetPositiveFeedbackPercentage(ISensoryUnit unit)
+        public double GetPositiveFeedbackPercentage(ISensoryUnit unit)
         {
             double negativeCount = NegativeFeedbackUnits.ContainsKey(unit) ? NegativeFeedbackUnits[unit] : 0;
             double positivCount = PositveFeedbackUnits.ContainsKey(unit) ? PositveFeedbackUnits[unit] : 0;
@@ -298,7 +303,7 @@ namespace FillAPixRobot
             return -1.0;
         }
 
-        private double GetNegativeFeedbackPercentage(ISensoryUnit unit)
+        public double GetNegativeFeedbackPercentage(ISensoryUnit unit)
         {
             double negativeCount = NegativeFeedbackUnits.ContainsKey(unit) ? NegativeFeedbackUnits[unit] : 0;
             double positivCount = PositveFeedbackUnits.ContainsKey(unit) ? PositveFeedbackUnits[unit] : 0;
@@ -308,6 +313,14 @@ namespace FillAPixRobot
                 return negativeCount / sum;
             }
             return -1.0;
+        }
+
+        private List<ISensationSnapshot> GetActualPartialSnapshot(ISensationSnapshot snapshot)
+        {
+            var result = new List<ISensationSnapshot>();
+            // ToDo: Make the field of vision more generic ... depending on call count
+            result.Add(SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, Action.Direction));
+            return result;
         }
 
         private List<ISensoryPattern> SplitPattern(ISensationSnapshot snapShot, int unitSize)
