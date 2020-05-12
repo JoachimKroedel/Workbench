@@ -57,7 +57,7 @@ namespace ConceptisPuzzles.Robot
 
                 if (_cbxShowNoDifferencePattern1x1.Checked)
                 {
-                    infoText.Append("\t No Difference Pattern Single:\n");
+                    infoText.Append("\t No Difference Pattern 1x1:\n");
                     foreach (var entry in actionMemory.GetNoDifferencePattern(FieldOfVisionTypes.Single))
                     {
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
@@ -66,7 +66,7 @@ namespace ConceptisPuzzles.Robot
 
                 if (_cbxShowNoDifferencePattern3x3.Checked)
                 {
-                    infoText.Append("\t No Difference Pattern Three By Three:\n");
+                    infoText.Append("\t No Difference Pattern 3x3:\n");
                     foreach (var entry in actionMemory.GetNoDifferencePattern(FieldOfVisionTypes.ThreeByThree))
                     {
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \n");
@@ -93,12 +93,13 @@ namespace ConceptisPuzzles.Robot
 
                 if (_cbxShowNegativeFeedbackPattern3x3.Checked)
                 {
-                    var countPattern = actionMemory.NegativeFeedbackPattern_3x3.Count;
-                    var countReducedPattern = actionMemory.NegativeFeedbackPattern_3x3.Count(x => x.Value > ActionMemory.LOWER_FEEDBACK_PATTERN_3X3_COUNT);
-                    infoText.Append($"\t NegativeFeedbackPattern: \t ({countReducedPattern}/{countPattern}) \n");
-                    foreach (var entry in actionMemory.NegativeFeedbackPattern_3x3.OrderByDescending(x => x.Value))
+                    var negativeFeedbackPattern3x3 = actionMemory.GetNegativeFeedbackPattern(FieldOfVisionTypes.ThreeByThree);
+                    var countPattern = negativeFeedbackPattern3x3.Count;
+                    var countReducedPattern = negativeFeedbackPattern3x3.Count(x => x.Value > ActionMemory.LOWER_FEEDBACK_PATTERN_COUNT);
+                    infoText.Append($"\t NegativeFeedbackPattern 3x3: \t ({countReducedPattern}/{countPattern}) \n");
+                    foreach (var entry in negativeFeedbackPattern3x3.OrderByDescending(x => x.Value))
                     {
-                        if (entry.Value <= ActionMemory.LOWER_FEEDBACK_PATTERN_3X3_COUNT)
+                        if (entry.Value <= ActionMemory.LOWER_FEEDBACK_PATTERN_COUNT)
                         {
                             break;
                         }

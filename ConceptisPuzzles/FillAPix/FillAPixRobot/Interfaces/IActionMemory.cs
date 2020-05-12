@@ -22,12 +22,12 @@ namespace FillAPixRobot.Interfaces
 
         Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get; }
         Dictionary<ISensoryUnit, int> NegativeFeedbackUnits { get; }
-        Dictionary<ISensoryPattern, int> NegativeFeedbackPattern_3x3 { get; }
 
         Dictionary<ISensoryPattern, int> GetNoDifferencePattern(FieldOfVisionTypes fieldOfVision);
         void RememberDifference(bool isDifferent, ISensationSnapshot snapshot);
         double CheckForDifferencePattern(ISensationSnapshot snapshot);
 
+        Dictionary<ISensoryPattern, int> GetNegativeFeedbackPattern(FieldOfVisionTypes fieldOfVision);
         void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot);
         double CheckForPositiveFeedback(ISensationSnapshot snapshot);
 
