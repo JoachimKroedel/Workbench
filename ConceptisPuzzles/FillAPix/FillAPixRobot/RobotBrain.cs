@@ -42,27 +42,27 @@ namespace FillAPixRobot
 
             // ToDo: Only for testing it's allowed to reduce actions ... don't forget to release all possible actions again!
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.Center));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.North));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthEast));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.East));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.South));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthEast));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.West));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.North));
+            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthWest));
+            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthEast));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.East));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.South));
+            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthWest));
+            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthEast));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.West));
 
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.Center));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.North));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthEast));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.East));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.South));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthEast));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.West));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.North));
+            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthWest));
+            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthEast));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.East));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.South));
+            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthWest));
+            ////_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthEast));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.West));
 
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.RemoveMarker, DirectionTypes.Center));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.Center));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.RemoveMarker, DirectionTypes.Center));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.Center));
 
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.North));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.East));
@@ -215,7 +215,7 @@ namespace FillAPixRobot
             RaiseExperienceWanted();
             ISensationSnapshot sensationSnapshotAfterAction = _lastSensationSnapshot;
 
-            var difference = SensationSnapshot.GetDifferenceSensoryPatterns(sensationSnapshotBeforeAction, sensationSnapshotAfterAction);
+            var difference = SensationSnapshot.GetDifferencePatterns(sensationSnapshotBeforeAction, sensationSnapshotAfterAction);
             var actionMemory = ActionMemoryDictonary[action];
             bool isDifferent = difference.SensoryPatterns.Any();
             actionMemory.RememberDifference(isDifferent, sensationSnapshotBeforeAction);

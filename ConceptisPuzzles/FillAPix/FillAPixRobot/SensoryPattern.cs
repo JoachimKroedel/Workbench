@@ -9,7 +9,7 @@ namespace FillAPixRobot
 {
     public class SensoryPattern : ISensoryPattern, IComparable
     {
-        static public bool CheckIfOneSensoryPatternIncludesAnother(ISensoryPattern a, ISensoryPattern b)
+        static public bool CheckIfOnePatternIncludesAnother(ISensoryPattern a, ISensoryPattern b)
         {
             foreach (var otherSensoryUnit in b.SensoryUnits)
             {

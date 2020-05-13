@@ -11,20 +11,6 @@ namespace FillAPixRobot
 {
     public class SensationSnapshot : ISensationSnapshot, IComparable
     {
-        static public ISensationSnapshot SplitPattern(ISensationSnapshot sensationSnapshot)
-        {
-            SensationSnapshot result = new SensationSnapshot(sensationSnapshot.Direction, sensationSnapshot.FieldOfVision, sensationSnapshot.SensoryPatterns, false);
-            foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
-            {
-                foreach (ISensoryPattern splitedPattern in SensoryPattern.Split(pattern))
-                {
-                    result.SensoryPatterns.Add(splitedPattern);
-                }
-            }
-            result.SensoryPatterns.Sort();
-            return result;
-        }
-
         static public ISensationSnapshot ExtractSnapshot(ISensationSnapshot sensationSnapshot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction)
         {
             if (fieldOfVision == FieldOfVisionTypes.Single)
@@ -89,7 +75,42 @@ namespace FillAPixRobot
             throw new NotImplementedException();
         }
 
-        static public ISensationSnapshot GetDifferenceSensoryPatterns(ISensationSnapshot a, ISensationSnapshot b)
+        static public bool CheckIfOneSnapshotIncludesAnother(ISensationSnapshot a, ISensationSnapshot b)
+        {
+            foreach (var otherSensoryPattern in b.SensoryPatterns)
+            {
+                bool matchFound = false;
+                foreach (var sensoryPatternToCompareWith in a.SensoryPatterns)
+                {
+                    if (SensoryPattern.CheckIfOnePatternIncludesAnother(sensoryPatternToCompareWith, otherSensoryPattern))
+                    {
+                        matchFound = true;
+                        break;
+                    }
+                }
+                if (!matchFound)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static public ISensationSnapshot SplitPattern(ISensationSnapshot sensationSnapshot)
+        {
+            SensationSnapshot result = new SensationSnapshot(sensationSnapshot.Direction, sensationSnapshot.FieldOfVision, sensationSnapshot.SensoryPatterns, false);
+            foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
+            {
+                foreach (ISensoryPattern splitedPattern in SensoryPattern.Split(pattern))
+                {
+                    result.SensoryPatterns.Add(splitedPattern);
+                }
+            }
+            result.SensoryPatterns.Sort();
+            return result;
+        }
+
+        static public ISensationSnapshot GetDifferencePatterns(ISensationSnapshot a, ISensationSnapshot b)
         {
             var result = new SensationSnapshot(a.Direction, a.FieldOfVision, a.SensoryPatterns, false);
 
@@ -104,7 +125,7 @@ namespace FillAPixRobot
             return result;
         }
 
-        static public ISensationSnapshot GetOverlapOfSensoryPatterns(ISensationSnapshot a, ISensationSnapshot b)
+        static public ISensationSnapshot GetOverlapOfPatterns(ISensationSnapshot a, ISensationSnapshot b)
         {
             var result = new SensationSnapshot(a.Direction, a.FieldOfVision, a.SensoryPatterns, false);
 
@@ -119,25 +140,21 @@ namespace FillAPixRobot
             return result;
         }
 
-        static public bool CheckIfOneSensationSnapshotIncludesAnother(ISensationSnapshot a, ISensationSnapshot b)
+        static public Dictionary<ISensoryUnit, int> CountUnits(ISensationSnapshot snapshot)
         {
-            foreach (var otherSensoryPattern in b.SensoryPatterns)
+            var result = new Dictionary<ISensoryUnit, int>();
+            foreach (var pattern in snapshot.SensoryPatterns)
             {
-                bool matchFound = false;
-                foreach (var sensoryPatternToCompareWith in a.SensoryPatterns)
+                foreach(var unit in pattern.SensoryUnits)
                 {
-                    if (SensoryPattern.CheckIfOneSensoryPatternIncludesAnother(sensoryPatternToCompareWith, otherSensoryPattern))
+                    if (!result.ContainsKey(unit))
                     {
-                        matchFound = true;
-                        break;
+                        result.Add(unit, 0);
                     }
-                }
-                if (!matchFound)
-                {
-                    return false;
+                    result[unit]++;
                 }
             }
-            return true;
+            return result;
         }
 
         public SensationSnapshot(ISensationSnapshot sensationSnapshot)

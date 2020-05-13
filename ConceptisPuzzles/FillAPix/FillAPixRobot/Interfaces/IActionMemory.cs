@@ -23,6 +23,9 @@ namespace FillAPixRobot.Interfaces
         Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get; }
         Dictionary<ISensoryUnit, int> NegativeFeedbackUnits { get; }
 
+        Dictionary<ISensationSnapshot, SensoryUnitCountContainer> NegativeUnitCountContainerDictonary { get; }
+        Dictionary<ISensationSnapshot, SensoryUnitCountContainer> PositiveUnitCountContainerDictonary { get; }
+
         Dictionary<ISensoryPattern, int> GetNoDifferencePattern(FieldOfVisionTypes fieldOfVision);
         void RememberDifference(bool isDifferent, ISensationSnapshot snapshot);
         double CheckForDifferencePattern(ISensationSnapshot snapshot);

@@ -215,17 +215,23 @@ namespace ConceptisPuzzles.Robot
             Point position = new Point(posX, posY);
             using (Graphics graphics = Graphics.FromImage(_backGroundImage))
             {
-                if (_robotBrain.Position.X == posX && _robotBrain.Position.Y == posY)
+                lock (_robotBrain.LastPositions)
                 {
-                    Pen robotPen = new Pen(Color.Blue, 3);
-                    graphics.DrawEllipse(robotPen, drawX + 2, drawY + 2, _cellSize - 4, _cellSize - 4);
-                }
-                else if (_robotBrain.LastPositions.Contains(position))
-                {
-                    int index = _robotBrain.LastPositions.IndexOf(position);
-                    int grayColor = 255 / _robotBrain.LastPositions.Count * index;
-                    Pen robotPositionPen = new Pen(Color.FromArgb(grayColor, grayColor, grayColor), 2);
-                    graphics.DrawEllipse(robotPositionPen, drawX, drawY, _cellSize, _cellSize);
+                    if (_robotBrain.Position.X == posX && _robotBrain.Position.Y == posY)
+                    {
+                        Pen robotPen = new Pen(Color.Blue, 3);
+                        graphics.DrawEllipse(robotPen, drawX + 2, drawY + 2, _cellSize - 4, _cellSize - 4);
+                    }
+                    else if (_robotBrain.LastPositions.Contains(position))
+                    {
+                        int index = _robotBrain.LastPositions.IndexOf(position);
+                        if (index > -1)
+                        {
+                            int grayColor = 255 / _robotBrain.LastPositions.Count * index;
+                            Pen robotPositionPen = new Pen(Color.FromArgb(grayColor, grayColor, grayColor), 2);
+                            graphics.DrawEllipse(robotPositionPen, drawX, drawY, _cellSize, _cellSize);
+                        }
+                    }
                 }
             }
         }

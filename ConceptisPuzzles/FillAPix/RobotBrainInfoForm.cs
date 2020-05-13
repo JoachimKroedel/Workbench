@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using FillAPixRobot.Enums;
+using System.Collections.Generic;
 
 namespace ConceptisPuzzles.Robot
 {
@@ -106,6 +107,24 @@ namespace ConceptisPuzzles.Robot
                         double factorReduced = (double)entry.Value / countReducedPattern;
                         double factorOverall = (double)entry.Value / countPattern;
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {factorReduced} \t {factorOverall} \n");
+                    }
+                }
+
+                if (_cbxShowNegativeFeedbackUnitsCount.Checked)
+                {
+                    infoText.Append($"--------------------------\n\t NegativeUnitCountContainerDictonary: \t ({actionMemory.NegativeUnitCountContainerDictonary.Count}) \n");
+                    foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.NegativeUnitCountContainerDictonary)
+                    {
+                        infoText.Append($"{entry} \n");
+                    }
+                }
+
+                if (_cbxShowPositveFeedbackUnitsCount.Checked)
+                {
+                    infoText.Append($"+++++++++++++++++\n\t PositiveUnitCountContainerDictonary: \t ({actionMemory.PositiveUnitCountContainerDictonary.Count}) \n");
+                    foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.PositiveUnitCountContainerDictonary)
+                    {
+                        infoText.Append($"{entry} \n");
                     }
                 }
             }
