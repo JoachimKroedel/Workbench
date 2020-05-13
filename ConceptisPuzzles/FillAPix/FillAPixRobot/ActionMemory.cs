@@ -23,7 +23,7 @@ namespace FillAPixRobot
         private readonly Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>> _negativeFeedbackPatternDictonary = new Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>>();
 
         public Dictionary<ISensationSnapshot, SensoryUnitCountContainer> NegativeUnitCountContainerDictonary { get; } = new Dictionary<ISensationSnapshot, SensoryUnitCountContainer>();
-        public Dictionary<ISensationSnapshot, SensoryUnitCountContainer> PositiveUnitCountContainerDictonary { get; } = new Dictionary<ISensationSnapshot, SensoryUnitCountContainer>();
+        public Dictionary<ISensationSnapshot, SensoryUnitCountContainer> RemovedNegativeUnitCountContainerDictonary { get; } = new Dictionary<ISensationSnapshot, SensoryUnitCountContainer>();
 
         public ActionMemory(IPuzzleAction action)
         {
@@ -235,19 +235,32 @@ namespace FillAPixRobot
                     else
                     {
                         // ToDo: Loop all unitCounts and degrees those how are greater than existing OR add if not included already
-                        SensoryUnitCountContainer testContainer = NegativeUnitCountContainerDictonary[keySnapshot];
+                        SensoryUnitCountContainer negativeUnitCountContainer = NegativeUnitCountContainerDictonary[keySnapshot];
                         foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
                         {
-                            if (!testContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                            // Check if unit with higher or equals unit-count is removed a iteration before ... if yes, do not add it again.
+                            if (RemovedNegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                             {
-                                testContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                                SensoryUnitCountContainer removedNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
+                                if (removedNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                                {
+                                    int removedExistingUnitCount = removedNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
+                                    if (entry.Value <= removedExistingUnitCount)
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                            if (!negativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                            {
+                                negativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
                             }
                             else
                             {
                                 // If entry for unit already exists, use the higher unit count and degrease the call count
-                                int existingUnitCount = testContainer.UnitCountDictonary[entry.Key].Item1;
-                                int existingCallCount = testContainer.UnitCountDictonary[entry.Key].Item2;
-                                testContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
+                                int existingUnitCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
+                                int existingCallCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
+                                negativeUnitCountContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
                             }
                         }
                     }
@@ -288,52 +301,47 @@ namespace FillAPixRobot
                     if (NegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                     {
                         // Loop all unitCounts and remove those how are less or equal than one with positive
-                        SensoryUnitCountContainer testContainer = NegativeUnitCountContainerDictonary[keySnapshot];
+                        SensoryUnitCountContainer negativeUnitCountContainer = NegativeUnitCountContainerDictonary[keySnapshot];
                         foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
                         {
-                            if (testContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                            if (negativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
                             {
-                                int existingUnitCount = testContainer.UnitCountDictonary[entry.Key].Item1;
+                                int existingUnitCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
                                 if (existingUnitCount <= entry.Value)
                                 {
-                                    testContainer.UnitCountDictonary.Remove(entry.Key);
+                                    negativeUnitCountContainer.UnitCountDictonary.Remove(entry.Key);
+
+                                    // --------------------------------------
+                                    // Remember unit counts for positive feedback
+                                    // ToDo: Think about if it's enough to store only witch unit-count, not how many times 
+                                    if (!RemovedNegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
+                                    {
+                                        Dictionary<ISensoryUnit, Tuple<int, int>> unitsCount = new Dictionary<ISensoryUnit, Tuple<int, int>>();
+                                        unitsCount.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                                        RemovedNegativeUnitCountContainerDictonary.Add(keySnapshot, new SensoryUnitCountContainer(unitsCount));
+                                    }
+                                    else
+                                    {
+                                        // ToDo: Loop all unitCounts and degrees those how are greater than existing OR add if not included already
+                                        SensoryUnitCountContainer notNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
+                                        {
+                                            if (!notNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                                            {
+                                                notNegativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                                            }
+                                            else
+                                            {
+                                                // If entry for unit already exists, use the higher unit count and degrease the call count
+                                                int existingCallCount = notNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
+                                                notNegativeUnitCountContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
+                                            }
+                                        }
+                                    }
+                                    // -------------------------------------
                                 }
                             }
                         }
                     }
-
-
-                    // Remember unit counts for positive feedback
-                    // ToDo: Think about if it's enough to store only witch unit-count, not how many times 
-                    if (!PositiveUnitCountContainerDictonary.ContainsKey(keySnapshot))
-                    {
-                        Dictionary<ISensoryUnit, Tuple<int, int>> unitsCount = new Dictionary<ISensoryUnit, Tuple<int, int>>();
-                        foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
-                        {
-                            unitsCount.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
-                        }
-                        PositiveUnitCountContainerDictonary.Add(keySnapshot, new SensoryUnitCountContainer(unitsCount));
-                    }
-                    else
-                    {
-                        // ToDo: Loop all unitCounts and degrees those how are greater than existing OR add if not included already
-                        SensoryUnitCountContainer testContainer = PositiveUnitCountContainerDictonary[keySnapshot];
-                        foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
-                        {
-                            if (!testContainer.UnitCountDictonary.ContainsKey(entry.Key))
-                            {
-                                testContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
-                            }
-                            else
-                            {
-                                // If entry for unit already exists, use the higher unit count and degrease the call count
-                                int existingUnitCount = testContainer.UnitCountDictonary[entry.Key].Item1;
-                                int existingCallCount = testContainer.UnitCountDictonary[entry.Key].Item2;
-                                testContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
-                            }
-                        }
-                    }
-
                 }
             }
         }
