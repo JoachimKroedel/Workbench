@@ -148,13 +148,11 @@
             // _cbxShowPositveFeedbackUnitsCount
             // 
             this._cbxShowPositveFeedbackUnitsCount.AutoSize = true;
-            this._cbxShowPositveFeedbackUnitsCount.Checked = true;
-            this._cbxShowPositveFeedbackUnitsCount.CheckState = System.Windows.Forms.CheckState.Checked;
             this._cbxShowPositveFeedbackUnitsCount.Location = new System.Drawing.Point(773, 39);
             this._cbxShowPositveFeedbackUnitsCount.Name = "_cbxShowPositveFeedbackUnitsCount";
-            this._cbxShowPositveFeedbackUnitsCount.Size = new System.Drawing.Size(170, 17);
+            this._cbxShowPositveFeedbackUnitsCount.Size = new System.Drawing.Size(171, 17);
             this._cbxShowPositveFeedbackUnitsCount.TabIndex = 11;
-            this._cbxShowPositveFeedbackUnitsCount.Text = "Positve Feedback Units Count";
+            this._cbxShowPositveFeedbackUnitsCount.Text = "Removed Negative Unit Count";
             this._cbxShowPositveFeedbackUnitsCount.UseVisualStyleBackColor = true;
             // 
             // _cbxShowNegativeFeedbackUnitsCount

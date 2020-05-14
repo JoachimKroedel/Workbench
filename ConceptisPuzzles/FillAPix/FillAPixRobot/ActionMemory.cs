@@ -14,10 +14,16 @@ namespace FillAPixRobot
         public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_3X3 = 20;
         public const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_5X5 = 40;
 
+        public const int MINIMUM_FEEDBACK_COUNT_FOR_UNITS = 10;
+        public const int MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS = 10;
+
         public const int LOWER_FEEDBACK_PATTERN_COUNT = 1;
         public const int MINIMUM_FEEDBACK_COUNT_FOR_PATTERN = 10;
         public const int MINIMUM_FEEDBACK_COUNT_FOR_3X3 = 20;
         public const int MINIMUM_FEEDBACK_COUNT_FOR_5X5 = 40;
+
+        public const int MINIMUM_FEEDBACK_COUNT_FOR_UNITCOUNT = 20;
+        public const int MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITCOUNT = 10;
 
         private readonly Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>> _noDifferencePatternDictonary = new Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>>();
         private readonly Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>> _negativeFeedbackPatternDictonary = new Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>>();
@@ -180,6 +186,7 @@ namespace FillAPixRobot
             if (feedbackValue < 0)
             {
                 NegativeFeedbackCount++;
+                // ########### only units #############
                 foreach (var unit in singleUnits)
                 {
                     if (!NegativeFeedbackUnits.ContainsKey(unit))
@@ -189,6 +196,7 @@ namespace FillAPixRobot
                     NegativeFeedbackUnits[unit]++;
                 }
 
+                // ########### pattern ###################
                 if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_PATTERN)
                 {
                     // memorize negative pattern for (a direction depending) partial snapshot
@@ -215,8 +223,8 @@ namespace FillAPixRobot
                     }
                 }
 
-                // ToDo: Find a better reason than TRUE to enter next section for NEGATIVE
-                if(true)
+                // ################ unit count with partial snapshot ########################
+                if(NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_UNITCOUNT)
                 {
                     ISensationSnapshot countUnitSnapshot3x3ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, DirectionTypes.Center);
                     ISensationSnapshot dependingPatternSnapshot1x1ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.Single, DirectionTypes.Center);
@@ -234,7 +242,7 @@ namespace FillAPixRobot
                     }
                     else
                     {
-                        // ToDo: Loop all unitCounts and degrees those how are greater than existing OR add if not included already
+                        // Loop all unitCounts and degrees those how are greater than existing OR add if not included already
                         SensoryUnitCountContainer negativeUnitCountContainer = NegativeUnitCountContainerDictonary[keySnapshot];
                         foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
                         {
@@ -269,6 +277,7 @@ namespace FillAPixRobot
             else if (feedbackValue > 0)
             {
                 PositiveFeedbackCount++;
+                // ############# only units ####################
                 foreach (var unit in singleUnits)
                 {
                     if (!PositveFeedbackUnits.ContainsKey(unit))
@@ -278,6 +287,7 @@ namespace FillAPixRobot
                     PositveFeedbackUnits[unit]++;
                 }
 
+                // ############# pattern ######################
                 if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_PATTERN)
                 {
                     foreach (var pattern in SplitPattern(partialSnapShot, 1))
@@ -289,10 +299,9 @@ namespace FillAPixRobot
                     }
                 }
 
-                // ToDo: Find a better reason than TRUE to enter next section
-                if (true)
+                // ################ unit count with partial snapshot ########################
+                if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_UNITCOUNT)
                 {
-                    // ToDo: Count units in that snapshot
                     ISensationSnapshot countUnitSnapshot3x3ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, DirectionTypes.Center);
                     ISensationSnapshot dependingPatternSnapshot1x1ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.Single, DirectionTypes.Center);
                     Dictionary<ISensoryUnit, int> unitsDictonary = SensationSnapshot.CountUnits(countUnitSnapshot3x3ForCenter);
@@ -311,9 +320,6 @@ namespace FillAPixRobot
                                 {
                                     negativeUnitCountContainer.UnitCountDictonary.Remove(entry.Key);
 
-                                    // --------------------------------------
-                                    // Remember unit counts for positive feedback
-                                    // ToDo: Think about if it's enough to store only witch unit-count, not how many times 
                                     if (!RemovedNegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                                     {
                                         Dictionary<ISensoryUnit, Tuple<int, int>> unitsCount = new Dictionary<ISensoryUnit, Tuple<int, int>>();
@@ -322,22 +328,17 @@ namespace FillAPixRobot
                                     }
                                     else
                                     {
-                                        // ToDo: Loop all unitCounts and degrees those how are greater than existing OR add if not included already
                                         SensoryUnitCountContainer notNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
+                                        if (!notNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
                                         {
-                                            if (!notNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
-                                            {
-                                                notNegativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
-                                            }
-                                            else
-                                            {
-                                                // If entry for unit already exists, use the higher unit count and degrease the call count
-                                                int existingCallCount = notNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
-                                                notNegativeUnitCountContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
-                                            }
+                                            notNegativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                                        }
+                                        else
+                                        {
+                                            int existingCallCount = notNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
+                                            notNegativeUnitCountContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
                                         }
                                     }
-                                    // -------------------------------------
                                 }
                             }
                         }
@@ -401,11 +402,38 @@ namespace FillAPixRobot
             return result;
         }
 
+        public double CheckForNotNegativeFeedbackUnitCount(ISensationSnapshot snapshot)
+        {
+            double result = 1.0;
+
+            ISensationSnapshot countUnitSnapshot3x3ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, DirectionTypes.Center);
+            ISensationSnapshot dependingPatternSnapshot1x1ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.Single, DirectionTypes.Center);
+            List<ISensoryPattern> dependingPattern = SplitPattern(dependingPatternSnapshot1x1ForCenter, 1);
+            ISensationSnapshot keySnapshot = new SensationSnapshot(DirectionTypes.Center, FieldOfVisionTypes.Single, dependingPattern);
+            if (NegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
+            {
+                SensoryUnitCountContainer countContainer = NegativeUnitCountContainerDictonary[keySnapshot];
+                Dictionary<ISensoryUnit, int> unitsDictonary = SensationSnapshot.CountUnits(countUnitSnapshot3x3ForCenter);
+                foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
+                {
+                    if (countContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                    {
+                        Tuple<int, int> xxx = countContainer.UnitCountDictonary[entry.Key];
+                        double negativePercentage = (double)xxx.Item2 / MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITCOUNT;
+                        result = Math.Min(result, Math.Max(0.0, 1.0 - negativePercentage));
+                    }
+                }
+
+            }
+
+            return result;
+        }
+
         public double GetPositiveFeedbackPercentage(ISensoryUnit unit)
         {
             double negativeCount = NegativeFeedbackUnits.ContainsKey(unit) ? NegativeFeedbackUnits[unit] : 0;
             double positivCount = PositveFeedbackUnits.ContainsKey(unit) ? PositveFeedbackUnits[unit] : 0;
-            double sum = Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_PATTERN, positivCount + negativeCount);
+            double sum = Math.Max(MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS, positivCount + negativeCount);
             if (sum > 0)
             {
                 return positivCount / sum;
@@ -417,7 +445,7 @@ namespace FillAPixRobot
         {
             double negativeCount = NegativeFeedbackUnits.ContainsKey(unit) ? NegativeFeedbackUnits[unit] : 0;
             double positivCount = PositveFeedbackUnits.ContainsKey(unit) ? PositveFeedbackUnits[unit] : 0;
-            double sum = Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_PATTERN, positivCount + negativeCount);
+            double sum = Math.Max(MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS, positivCount + negativeCount);
             if (sum > 0)
             {
                 return negativeCount / sum;

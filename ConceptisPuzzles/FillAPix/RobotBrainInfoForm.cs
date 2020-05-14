@@ -112,7 +112,7 @@ namespace ConceptisPuzzles.Robot
 
                 if (_cbxShowNegativeFeedbackUnitsCount.Checked)
                 {
-                    infoText.Append($"--------------------------\n\t NegativeUnitCountContainerDictonary: \t ({actionMemory.NegativeUnitCountContainerDictonary.Count}) \n");
+                    infoText.Append($"--------------------------\t NegativeUnitCountContainerDictonary: \t {actionMemory.NegativeUnitCountContainerDictonary.Count} \n");
                     foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.NegativeUnitCountContainerDictonary)
                     {
                         infoText.Append($"{entry} \n");
@@ -121,7 +121,7 @@ namespace ConceptisPuzzles.Robot
 
                 if (_cbxShowPositveFeedbackUnitsCount.Checked)
                 {
-                    infoText.Append($"+++++++++++++++++\n\t RemovedNegativeUnitCountContainerDictonary: \t ({actionMemory.RemovedNegativeUnitCountContainerDictonary.Count}) \n");
+                    infoText.Append($"+++++++++++++++++\t RemovedNegativeUnitCountContainerDictonary: \t {actionMemory.RemovedNegativeUnitCountContainerDictonary.Count} \n");
                     foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.RemovedNegativeUnitCountContainerDictonary)
                     {
                         infoText.Append($"{entry} \n");
