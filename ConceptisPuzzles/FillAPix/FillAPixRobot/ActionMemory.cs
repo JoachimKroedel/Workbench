@@ -229,46 +229,49 @@ namespace FillAPixRobot
                     ISensationSnapshot countUnitSnapshot3x3ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, DirectionTypes.Center);
                     ISensationSnapshot dependingPatternSnapshot1x1ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.Single, DirectionTypes.Center);
                     Dictionary<ISensoryUnit, int> unitsDictonary = SensationSnapshot.CountUnits(countUnitSnapshot3x3ForCenter);
-                    List<ISensoryPattern> dependingPattern = SplitPattern(dependingPatternSnapshot1x1ForCenter, 1);
-                    ISensationSnapshot keySnapshot = new SensationSnapshot(DirectionTypes.Center, FieldOfVisionTypes.Single, dependingPattern);
-                    if (!NegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
+                    List<ISensoryPattern> dependingPatterns = SplitPattern(dependingPatternSnapshot1x1ForCenter, 1);
+                    foreach (ISensoryPattern dependingPattern in dependingPatterns)
                     {
-                        Dictionary<ISensoryUnit, Tuple<int, int>> unitsCount = new Dictionary<ISensoryUnit, Tuple<int, int>>();
-                        foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
+                        ISensationSnapshot keySnapshot = new SensationSnapshot(DirectionTypes.Center, FieldOfVisionTypes.Single, new List<ISensoryPattern> { dependingPattern });
+                        if (!NegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                         {
-                            unitsCount.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
-                        }
-                        NegativeUnitCountContainerDictonary.Add(keySnapshot, new SensoryUnitCountContainer(unitsCount));
-                    }
-                    else
-                    {
-                        // Loop all unitCounts and degrees those how are greater than existing OR add if not included already
-                        SensoryUnitCountContainer negativeUnitCountContainer = NegativeUnitCountContainerDictonary[keySnapshot];
-                        foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
-                        {
-                            // Check if unit with higher or equals unit-count is removed a iteration before ... if yes, do not add it again.
-                            if (RemovedNegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
+                            Dictionary<ISensoryUnit, Tuple<int, int>> unitsCount = new Dictionary<ISensoryUnit, Tuple<int, int>>();
+                            foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
                             {
-                                SensoryUnitCountContainer removedNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
-                                if (removedNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                                unitsCount.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                            }
+                            NegativeUnitCountContainerDictonary.Add(keySnapshot, new SensoryUnitCountContainer(unitsCount));
+                        }
+                        else
+                        {
+                            // Loop all unitCounts and degrees those how are greater than existing OR add if not included already
+                            SensoryUnitCountContainer negativeUnitCountContainer = NegativeUnitCountContainerDictonary[keySnapshot];
+                            foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
+                            {
+                                // Check if unit with higher or equals unit-count is removed a iteration before ... if yes, do not add it again.
+                                if (RemovedNegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                                 {
-                                    int removedExistingUnitCount = removedNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
-                                    if (entry.Value <= removedExistingUnitCount)
+                                    SensoryUnitCountContainer removedNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
+                                    if (removedNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
                                     {
-                                        continue;
+                                        int removedExistingUnitCount = removedNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
+                                        if (entry.Value <= removedExistingUnitCount)
+                                        {
+                                            continue;
+                                        }
                                     }
                                 }
-                            }
-                            if (!negativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
-                            {
-                                negativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
-                            }
-                            else
-                            {
-                                // If entry for unit already exists, use the higher unit count and degrease the call count
-                                int existingUnitCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
-                                int existingCallCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
-                                negativeUnitCountContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
+                                if (!negativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                                {
+                                    negativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                                }
+                                else
+                                {
+                                    // If entry for unit already exists, use the higher unit count and degrease the call count
+                                    int existingUnitCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
+                                    int existingCallCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
+                                    negativeUnitCountContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
+                                }
                             }
                         }
                     }
@@ -305,38 +308,41 @@ namespace FillAPixRobot
                     ISensationSnapshot countUnitSnapshot3x3ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, DirectionTypes.Center);
                     ISensationSnapshot dependingPatternSnapshot1x1ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.Single, DirectionTypes.Center);
                     Dictionary<ISensoryUnit, int> unitsDictonary = SensationSnapshot.CountUnits(countUnitSnapshot3x3ForCenter);
-                    List<ISensoryPattern> dependingPattern = SplitPattern(dependingPatternSnapshot1x1ForCenter, 1);
-                    ISensationSnapshot keySnapshot = new SensationSnapshot(DirectionTypes.Center, FieldOfVisionTypes.Single, dependingPattern);
-                    if (NegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
+                    List<ISensoryPattern> dependingPatterns = SplitPattern(dependingPatternSnapshot1x1ForCenter, 1);
+                    foreach (ISensoryPattern dependingPattern in dependingPatterns)
                     {
-                        // Loop all unitCounts and remove those how are less or equal than one with positive
-                        SensoryUnitCountContainer negativeUnitCountContainer = NegativeUnitCountContainerDictonary[keySnapshot];
-                        foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
+                        ISensationSnapshot keySnapshot = new SensationSnapshot(DirectionTypes.Center, FieldOfVisionTypes.Single, new List<ISensoryPattern> { dependingPattern });
+                        if (NegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                         {
-                            if (negativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                            // Loop all unitCounts and remove those how are less or equal than one with positive
+                            SensoryUnitCountContainer negativeUnitCountContainer = NegativeUnitCountContainerDictonary[keySnapshot];
+                            foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
                             {
-                                int existingUnitCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
-                                if (existingUnitCount <= entry.Value)
+                                if (negativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
                                 {
-                                    negativeUnitCountContainer.UnitCountDictonary.Remove(entry.Key);
+                                    int existingUnitCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
+                                    if (existingUnitCount <= entry.Value)
+                                    {
+                                        negativeUnitCountContainer.UnitCountDictonary.Remove(entry.Key);
 
-                                    if (!RemovedNegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
-                                    {
-                                        Dictionary<ISensoryUnit, Tuple<int, int>> unitsCount = new Dictionary<ISensoryUnit, Tuple<int, int>>();
-                                        unitsCount.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
-                                        RemovedNegativeUnitCountContainerDictonary.Add(keySnapshot, new SensoryUnitCountContainer(unitsCount));
-                                    }
-                                    else
-                                    {
-                                        SensoryUnitCountContainer notNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
-                                        if (!notNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                                        if (!RemovedNegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                                         {
-                                            notNegativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                                            Dictionary<ISensoryUnit, Tuple<int, int>> unitsCount = new Dictionary<ISensoryUnit, Tuple<int, int>>();
+                                            unitsCount.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                                            RemovedNegativeUnitCountContainerDictonary.Add(keySnapshot, new SensoryUnitCountContainer(unitsCount));
                                         }
                                         else
                                         {
-                                            int existingCallCount = notNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
-                                            notNegativeUnitCountContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
+                                            SensoryUnitCountContainer notNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
+                                            if (!notNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                                            {
+                                                notNegativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, new Tuple<int, int>(entry.Value, 1));
+                                            }
+                                            else
+                                            {
+                                                int existingCallCount = notNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
+                                                notNegativeUnitCountContainer.UnitCountDictonary[entry.Key] = new Tuple<int, int>(Math.Max(existingUnitCount, entry.Value), existingCallCount + 1);
+                                            }
                                         }
                                     }
                                 }
@@ -408,22 +414,24 @@ namespace FillAPixRobot
 
             ISensationSnapshot countUnitSnapshot3x3ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, DirectionTypes.Center);
             ISensationSnapshot dependingPatternSnapshot1x1ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.Single, DirectionTypes.Center);
-            List<ISensoryPattern> dependingPattern = SplitPattern(dependingPatternSnapshot1x1ForCenter, 1);
-            ISensationSnapshot keySnapshot = new SensationSnapshot(DirectionTypes.Center, FieldOfVisionTypes.Single, dependingPattern);
-            if (NegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
+            List<ISensoryPattern> dependingPatterns = SplitPattern(dependingPatternSnapshot1x1ForCenter, 1);
+            foreach (ISensoryPattern dependingPattern in dependingPatterns)
             {
-                SensoryUnitCountContainer countContainer = NegativeUnitCountContainerDictonary[keySnapshot];
-                Dictionary<ISensoryUnit, int> unitsDictonary = SensationSnapshot.CountUnits(countUnitSnapshot3x3ForCenter);
-                foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
+                ISensationSnapshot keySnapshot = new SensationSnapshot(DirectionTypes.Center, FieldOfVisionTypes.Single, new List<ISensoryPattern> { dependingPattern });
+                if (NegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                 {
-                    if (countContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                    SensoryUnitCountContainer countContainer = NegativeUnitCountContainerDictonary[keySnapshot];
+                    Dictionary<ISensoryUnit, int> unitsDictonary = SensationSnapshot.CountUnits(countUnitSnapshot3x3ForCenter);
+                    foreach (KeyValuePair<ISensoryUnit, int> entry in unitsDictonary)
                     {
-                        Tuple<int, int> xxx = countContainer.UnitCountDictonary[entry.Key];
-                        double negativePercentage = (double)xxx.Item2 / MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITCOUNT;
-                        result = Math.Min(result, Math.Max(0.0, 1.0 - negativePercentage));
+                        if (countContainer.UnitCountDictonary.ContainsKey(entry.Key))
+                        {
+                            Tuple<int, int> xxx = countContainer.UnitCountDictonary[entry.Key];
+                            double negativePercentage = (double)xxx.Item2 / MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITCOUNT;
+                            result = Math.Min(result, Math.Max(0.0, 1.0 - negativePercentage));
+                        }
                     }
                 }
-
             }
 
             return result;
