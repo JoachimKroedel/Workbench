@@ -119,10 +119,19 @@ namespace ConceptisPuzzles.Robot
                     }
                 }
 
-                if (_cbxShowPositveFeedbackUnitsCount.Checked)
+                if (_cbxShowRemovedNegativeUnitCount.Checked)
                 {
                     infoText.Append($"+++++++++++++++++\t RemovedNegativeUnitCountContainerDictonary: \t {actionMemory.RemovedNegativeUnitCountContainerDictonary.Count} \n");
                     foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.RemovedNegativeUnitCountContainerDictonary)
+                    {
+                        infoText.Append($"{entry} \n");
+                    }
+                }
+
+                if (_cbxShowPositiveFeedbackUnitsCount.Checked)
+                {
+                    infoText.Append($"--------------------------\t PositiveUnitCountContainerDictonary: \t {actionMemory.PositiveUnitCountContainerDictonary.Count} \n");
+                    foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.PositiveUnitCountContainerDictonary)
                     {
                         infoText.Append($"{entry} \n");
                     }

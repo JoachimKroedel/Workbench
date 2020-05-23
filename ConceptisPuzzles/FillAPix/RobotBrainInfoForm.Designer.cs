@@ -38,8 +38,9 @@
             this._cbxShowNoDifferencePattern1x1 = new System.Windows.Forms.CheckBox();
             this._cbxShowNoDifferentUnits = new System.Windows.Forms.CheckBox();
             this._cbxClearBefore = new System.Windows.Forms.CheckBox();
-            this._cbxShowPositveFeedbackUnitsCount = new System.Windows.Forms.CheckBox();
+            this._cbxShowRemovedNegativeUnitCount = new System.Windows.Forms.CheckBox();
             this._cbxShowNegativeFeedbackUnitsCount = new System.Windows.Forms.CheckBox();
+            this._cbxShowPositiveFeedbackUnitsCount = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // _btnShowActionMemory
@@ -59,7 +60,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this._txtInfoOutput.Location = new System.Drawing.Point(4, 62);
             this._txtInfoOutput.Name = "_txtInfoOutput";
-            this._txtInfoOutput.Size = new System.Drawing.Size(1073, 394);
+            this._txtInfoOutput.Size = new System.Drawing.Size(1208, 394);
             this._txtInfoOutput.TabIndex = 1;
             this._txtInfoOutput.Text = "";
             // 
@@ -145,15 +146,15 @@
             this._cbxClearBefore.Text = "Clear before";
             this._cbxClearBefore.UseVisualStyleBackColor = true;
             // 
-            // _cbxShowPositveFeedbackUnitsCount
+            // _cbxShowRemovedNegativeUnitCount
             // 
-            this._cbxShowPositveFeedbackUnitsCount.AutoSize = true;
-            this._cbxShowPositveFeedbackUnitsCount.Location = new System.Drawing.Point(773, 39);
-            this._cbxShowPositveFeedbackUnitsCount.Name = "_cbxShowPositveFeedbackUnitsCount";
-            this._cbxShowPositveFeedbackUnitsCount.Size = new System.Drawing.Size(171, 17);
-            this._cbxShowPositveFeedbackUnitsCount.TabIndex = 11;
-            this._cbxShowPositveFeedbackUnitsCount.Text = "Removed Negative Unit Count";
-            this._cbxShowPositveFeedbackUnitsCount.UseVisualStyleBackColor = true;
+            this._cbxShowRemovedNegativeUnitCount.AutoSize = true;
+            this._cbxShowRemovedNegativeUnitCount.Location = new System.Drawing.Point(968, 16);
+            this._cbxShowRemovedNegativeUnitCount.Name = "_cbxShowRemovedNegativeUnitCount";
+            this._cbxShowRemovedNegativeUnitCount.Size = new System.Drawing.Size(171, 17);
+            this._cbxShowRemovedNegativeUnitCount.TabIndex = 11;
+            this._cbxShowRemovedNegativeUnitCount.Text = "Removed Negative Unit Count";
+            this._cbxShowRemovedNegativeUnitCount.UseVisualStyleBackColor = true;
             // 
             // _cbxShowNegativeFeedbackUnitsCount
             // 
@@ -167,12 +168,25 @@
             this._cbxShowNegativeFeedbackUnitsCount.Text = "Negative Feedback Units Count";
             this._cbxShowNegativeFeedbackUnitsCount.UseVisualStyleBackColor = true;
             // 
+            // _cbxShowPositiveFeedbackUnitsCount
+            // 
+            this._cbxShowPositiveFeedbackUnitsCount.AutoSize = true;
+            this._cbxShowPositiveFeedbackUnitsCount.Checked = true;
+            this._cbxShowPositiveFeedbackUnitsCount.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._cbxShowPositiveFeedbackUnitsCount.Location = new System.Drawing.Point(773, 39);
+            this._cbxShowPositiveFeedbackUnitsCount.Name = "_cbxShowPositiveFeedbackUnitsCount";
+            this._cbxShowPositiveFeedbackUnitsCount.Size = new System.Drawing.Size(172, 17);
+            this._cbxShowPositiveFeedbackUnitsCount.TabIndex = 12;
+            this._cbxShowPositiveFeedbackUnitsCount.Text = "Positive Feedback Units Count";
+            this._cbxShowPositiveFeedbackUnitsCount.UseVisualStyleBackColor = true;
+            // 
             // RobotBrainInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1079, 461);
-            this.Controls.Add(this._cbxShowPositveFeedbackUnitsCount);
+            this.ClientSize = new System.Drawing.Size(1214, 461);
+            this.Controls.Add(this._cbxShowPositiveFeedbackUnitsCount);
+            this.Controls.Add(this._cbxShowRemovedNegativeUnitCount);
             this.Controls.Add(this._cbxShowNegativeFeedbackUnitsCount);
             this.Controls.Add(this._cbxClearBefore);
             this.Controls.Add(this._cbxShowNoDifferentUnits);
@@ -204,7 +218,8 @@
         private System.Windows.Forms.CheckBox _cbxShowNoDifferencePattern1x1;
         private System.Windows.Forms.CheckBox _cbxShowNoDifferentUnits;
         private System.Windows.Forms.CheckBox _cbxClearBefore;
-        private System.Windows.Forms.CheckBox _cbxShowPositveFeedbackUnitsCount;
+        private System.Windows.Forms.CheckBox _cbxShowRemovedNegativeUnitCount;
         private System.Windows.Forms.CheckBox _cbxShowNegativeFeedbackUnitsCount;
+        private System.Windows.Forms.CheckBox _cbxShowPositiveFeedbackUnitsCount;
     }
 }

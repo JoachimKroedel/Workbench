@@ -247,13 +247,15 @@ namespace FillAPixRobot
 
                 if (posibilityForDifference > 0.0)
                 {
-                    double posibilityFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
+                    double positiveFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
                     // ToDo: Überlegen, ob man nicht auch allgemein bei einer Aktion von positivem Feedback ausgehen sollte (ähnlich wie bei Difference)
-                    posibilityFeedback = Math.Min(actionMemory.NegProcentualNegativeFeedback, posibilityFeedback);
-                    if (posibilityFeedback > 0.0)
+                    positiveFeedback = Math.Min(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
+                    double positiveFeedbackByUnitCount = Math.Min(1.0, actionMemory.CheckForPositiveFeedbackUnitCount(snapshot));
+                    positiveFeedback = Math.Min(positiveFeedback, positiveFeedbackByUnitCount);
+                    if (positiveFeedback > 0.0)
                     {
-                        sumeOfPosibilityForPositiveFeedback += posibilityFeedback;
-                        posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, posibilityFeedback);
+                        sumeOfPosibilityForPositiveFeedback += positiveFeedback;
+                        posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFeedback);
                     }
 
                     double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
