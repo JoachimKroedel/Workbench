@@ -258,9 +258,11 @@ namespace FillAPixRobot
                                     SensoryUnitCountContainer removedNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
                                     if (removedNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
                                     {
-                                        int removedExistingUnitCount = removedNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
+                                        (int UnitCount, int Negative, int Positive) counterEntry = removedNegativeUnitCountContainer.UnitCountDictonary[entry.Key];
+                                        int removedExistingUnitCount = counterEntry.UnitCount;
                                         if (entry.Value <= removedExistingUnitCount)
                                         {
+                                            removedNegativeUnitCountContainer.UnitCountDictonary[entry.Key] = (counterEntry.UnitCount, counterEntry.Negative + 1, counterEntry.Positive);
                                             continue;
                                         }
                                     }
@@ -324,16 +326,16 @@ namespace FillAPixRobot
                             {
                                 if (negativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
                                 {
-                                    int existingUnitCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Item1;
+                                    int existingUnitCount = negativeUnitCountContainer.UnitCountDictonary[entry.Key].UnitCount;
+                                    int negativeValue = negativeUnitCountContainer.UnitCountDictonary[entry.Key].Negative;
                                     if (existingUnitCount <= entry.Value)
                                     {
                                         negativeUnitCountContainer.UnitCountDictonary.Remove(entry.Key);
 
                                         if (!RemovedNegativeUnitCountContainerDictonary.ContainsKey(keySnapshot))
                                         {
-                                            // ToDo: Hirer sollte nichtder negative Wert hoch gezählt werden, sondern der positive ... und der negative übernommen
                                             var unitsCount = new Dictionary<ISensoryUnit, (int UnitCount, int Negative, int Positive)>();
-                                            unitsCount.Add(entry.Key, (UnitCount: entry.Value, Negative: 1, Positive: 0));
+                                            unitsCount.Add(entry.Key, (UnitCount: entry.Value, Negative: negativeValue, Positive: 1));
                                             RemovedNegativeUnitCountContainerDictonary.Add(keySnapshot, new SensoryUnitCountContainer(unitsCount));
                                         }
                                         else
@@ -341,12 +343,12 @@ namespace FillAPixRobot
                                             SensoryUnitCountContainer notNegativeUnitCountContainer = RemovedNegativeUnitCountContainerDictonary[keySnapshot];
                                             if (!notNegativeUnitCountContainer.UnitCountDictonary.ContainsKey(entry.Key))
                                             {
-                                                notNegativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, (UnitCount: entry.Value, Negative: 1, Positive: 0));
+                                                notNegativeUnitCountContainer.UnitCountDictonary.Add(entry.Key, (UnitCount: entry.Value, Negative: negativeValue, Positive: 1));
                                             }
                                             else
                                             {
-                                                int existingCallCount = notNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Item2;
-                                                notNegativeUnitCountContainer.UnitCountDictonary[entry.Key] = (UnitCount: Math.Max(existingUnitCount, entry.Value), Negative: existingCallCount + 1, Positive:0);
+                                                int existingCallCount = notNegativeUnitCountContainer.UnitCountDictonary[entry.Key].Positive;
+                                                notNegativeUnitCountContainer.UnitCountDictonary[entry.Key] = (UnitCount: Math.Max(existingUnitCount, entry.Value), Negative: negativeValue, Positive: existingCallCount + 1);
                                             }
                                         }
                                     }
