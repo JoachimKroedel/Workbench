@@ -249,9 +249,9 @@ namespace FillAPixRobot
                 {
                     double positiveFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
                     // ToDo: Überlegen, ob man nicht auch allgemein bei einer Aktion von positivem Feedback ausgehen sollte (ähnlich wie bei Difference)
-                    positiveFeedback = Math.Min(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
+                    positiveFeedback = Math.Max(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
                     double positiveFeedbackByUnitCount = Math.Min(1.0, actionMemory.CheckForPositiveFeedbackUnitCount(snapshot));
-                    positiveFeedback = Math.Min(positiveFeedback, positiveFeedbackByUnitCount);
+                    positiveFeedback = Math.Max(positiveFeedback, positiveFeedbackByUnitCount);
                     if (positiveFeedback > 0.0)
                     {
                         sumeOfPosibilityForPositiveFeedback += positiveFeedback;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using FillAPixRobot.Interfaces;
 
@@ -17,7 +18,7 @@ namespace FillAPixRobot
         {
             var output = new StringBuilder();
             output.Append("{ UnitsDictonary: \n[\n");
-            foreach(var entry in UnitCountDictonary)
+            foreach(var entry in UnitCountDictonary.OrderBy(e => e.Value.Negative + e.Value.Positive))
             {
                 output.Append($"\t{entry.Key} \t UnitCount: \t {entry.Value.UnitCount} \t Negative: \t {entry.Value.Negative} \t Positive: \t {entry.Value.Positive} \n");
             }
