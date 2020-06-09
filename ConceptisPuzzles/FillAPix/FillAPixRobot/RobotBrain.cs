@@ -33,7 +33,6 @@ namespace FillAPixRobot
         public event EventHandler<ActionWantedEventArgs> ActionWanted;
 
         private readonly List<IPuzzleAction> _allPossibleActions = new List<IPuzzleAction>();
-        public Dictionary<IPuzzleAction, IActionMemory> ActionMemoryDictonary { get; } = new Dictionary<IPuzzleAction, IActionMemory>();
 
         public RobotBrain()
         {
@@ -83,6 +82,8 @@ namespace FillAPixRobot
             }
         }
 
+        public Dictionary<IPuzzleAction, IActionMemory> ActionMemoryDictonary { get; } = new Dictionary<IPuzzleAction, IActionMemory>();
+
         public Rectangle Area { get; private set; }
 
         public Point Position
@@ -105,31 +106,13 @@ namespace FillAPixRobot
 
         public ObservableCollection<Point> LastPositions { get; } = new ObservableCollection<Point>();
 
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public int ActionFeedback { get; set; }
 
         public bool Activate(Point startPosition, Rectangle area)
         {
             Position = startPosition;
             Area = area;
             return true;
-        }
-
-        private ISensoryUnit GetOrCreateSensoryUnit(SensoryTypes senseType, string value)
-        {
-            ISensoryUnit result = new SensoryUnit(senseType, value, IS_SAVEABLE_UNIT);
-            if (_kownSensoryUnits.Contains(result))
-            {
-                result = _kownSensoryUnits[_kownSensoryUnits.IndexOf(result)];
-            }
-            else
-            {
-                _kownSensoryUnits.Add(result);
-                _kownSensoryUnits.Sort();
-            }
-            return result;
         }
 
         public void Experience(FieldOfVisionTypes fieldOfVisionType, PuzzleBoard partialBoard)
@@ -187,17 +170,7 @@ namespace FillAPixRobot
             _lastSensationSnapshot = new SensationSnapshot(DirectionTypes.Center, fieldOfVisionType, sensoryPatterns, IS_SAVEABLE_SNAPSHOT);
         }
 
-        private void RaiseExperienceWanted()
-        {
-            ExperienceWanted?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void RaiseActionWanted(IPuzzleAction action)
-        {
-            ActionWanted?.Invoke(this, new ActionWantedEventArgs(action));
-        }
-
-        public void DoSomething(bool isInLearningMode)
+        public void DoSomething()
         {
             ActionFeedback = 0;
             // Zuerst mal die Lage erkunden
@@ -248,14 +221,15 @@ namespace FillAPixRobot
                 if (posibilityForDifference > 0.0)
                 {
                     double positiveFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
-                    // ToDo: Überlegen, ob man nicht auch allgemein bei einer Aktion von positivem Feedback ausgehen sollte (ähnlich wie bei Difference)
                     positiveFeedback = Math.Max(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
                     double positiveFeedbackByUnitCount = Math.Min(1.0, actionMemory.CheckForPositiveFeedbackUnitCount(snapshot));
                     positiveFeedback = Math.Max(positiveFeedback, positiveFeedbackByUnitCount);
-                    if (positiveFeedback > 0.0)
+                    double positiveFuzzyDegree = GetFuzzyDegreeByPositiveFeedback(positiveFeedback);
+
+                    if (positiveFuzzyDegree > 0.0)
                     {
-                        sumeOfPosibilityForPositiveFeedback += positiveFeedback;
-                        posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFeedback);
+                        sumeOfPosibilityForPositiveFeedback += positiveFuzzyDegree;
+                        posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFuzzyDegree);
                     }
 
                     double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
@@ -264,10 +238,12 @@ namespace FillAPixRobot
                     double negativeFeedbackByUnitCount = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackUnitCount(snapshot));
                     negativeFeedback = Math.Max(negativeFeedback, negativeFeedbackByUnitCount);
 
-                    if (negativeFeedback > 0.0)
+                    double negativeFuzzyDegree = GetFuzzyDegreeByNegativeFeedback(negativeFeedback);
+
+                    if (negativeFuzzyDegree > 0.0)
                     {
-                        sumeOfPosibilityForNegativeFeedback += negativeFeedback;
-                        posibilityForNegativeFeedbackByAction.Add(actionMemory.Action, negativeFeedback);
+                        sumeOfPosibilityForNegativeFeedback += negativeFuzzyDegree;
+                        posibilityForNegativeFeedbackByAction.Add(actionMemory.Action, negativeFuzzyDegree);
                     }
                 }
             }
@@ -324,6 +300,47 @@ namespace FillAPixRobot
             return null;
         }
 
-        public int ActionFeedback { get; set; }
+        private double GetFuzzyDegreeByPositiveFeedback(double positiveFeedback)
+        {
+            // ToDo: Implement fuzzy logic interface
+            return positiveFeedback;
+        }
+
+        private double GetFuzzyDegreeByNegativeFeedback(double negativeFeedback)
+        {
+            // ToDo: Implement fuzzy logic interface
+            return negativeFeedback;
+        }
+
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private ISensoryUnit GetOrCreateSensoryUnit(SensoryTypes senseType, string value)
+        {
+            ISensoryUnit result = new SensoryUnit(senseType, value, IS_SAVEABLE_UNIT);
+            if (_kownSensoryUnits.Contains(result))
+            {
+                result = _kownSensoryUnits[_kownSensoryUnits.IndexOf(result)];
+            }
+            else
+            {
+                _kownSensoryUnits.Add(result);
+                _kownSensoryUnits.Sort();
+            }
+            return result;
+        }
+
+        private void RaiseExperienceWanted()
+        {
+            ExperienceWanted?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void RaiseActionWanted(IPuzzleAction action)
+        {
+            ActionWanted?.Invoke(this, new ActionWantedEventArgs(action));
+        }
+
     }
 }

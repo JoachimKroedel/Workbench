@@ -43,12 +43,16 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionMemory.cs" />
     <Compile Include="ActionWantedEventArgs.cs" />
     <Compile Include="Enums\DirectionTypes.cs" />
     <Compile Include="Enums\FieldOfVisionTypes.cs" />
+    <Compile Include="Enums\FuzzyFeedbackCountTypes.cs" />
+    <Compile Include="Enums\FuzzyFeedbackTypes.cs" />
+    <Compile Include="FillAPixFuzzyLogic.cs" />
     <Compile Include="PuzzleAction.cs" />
     <Compile Include="Enums\ActionTypes.cs" />
     <Compile Include="PuzzleReferee.cs" />
@@ -68,6 +72,10 @@
     <Compile Include="SensoryUnitCountContainer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\FuzzyLogic\FuzzyLogic.csproj">
+      <Project>{c87622a4-3cc1-4c2f-8cc5-0efd69554d4d}</Project>
+      <Name>FuzzyLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FillAPixEngine\FillAPixEngine.csproj">
       <Project>{28127183-3003-4116-aead-0f796ad91916}</Project>
       <Name>FillAPixEngine</Name>

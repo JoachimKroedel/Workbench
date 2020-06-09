@@ -709,7 +709,7 @@ namespace ConceptisPuzzles.Robot
                     RecreateCells();
                 }
             }
-            _robotBrain.DoSomething(_cbxIsInLearningMode.Checked);
+            _robotBrain.DoSomething();
         }
 
         private void BtnStatisticForm_Click(object sender, EventArgs e)

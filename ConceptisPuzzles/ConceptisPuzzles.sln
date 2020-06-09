@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FillAPixRobot", "FillAPix\F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FillAPix", "FillAPix\FillAPix.csproj", "{19BD0647-700A-4417-BFCE-AE437757BA73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuzzyLogic", "FuzzyLogic\FuzzyLogic.csproj", "{C87622A4-3CC1-4C2F-8CC5-0EFD69554D4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{19BD0647-700A-4417-BFCE-AE437757BA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19BD0647-700A-4417-BFCE-AE437757BA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19BD0647-700A-4417-BFCE-AE437757BA73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C87622A4-3CC1-4C2F-8CC5-0EFD69554D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C87622A4-3CC1-4C2F-8CC5-0EFD69554D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C87622A4-3CC1-4C2F-8CC5-0EFD69554D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C87622A4-3CC1-4C2F-8CC5-0EFD69554D4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -516,7 +516,6 @@ namespace FillAPixRobot
 
         public double CheckForPositiveFeedbackUnitCount(ISensationSnapshot snapshot)
         {
-            // ToDo: Hier sollten ähnlich wir bei GetPositiveFeedbackPercentage(unit) geprüft werden wie oft ein positives und wie oft ein negatives oder neutrales feddback kam
             double result = 0.0;
             ISensationSnapshot countUnitSnapshot3x3ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.ThreeByThree, DirectionTypes.Center);
             ISensationSnapshot dependingPatternSnapshot1x1ForCenter = SensationSnapshot.ExtractSnapshot(snapshot, FieldOfVisionTypes.Single, DirectionTypes.Center);

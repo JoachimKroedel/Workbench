@@ -34,12 +34,12 @@
             this._nudZoomFactor = new System.Windows.Forms.NumericUpDown();
             this._gbxRobot = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
+            this._btnStatisticForm = new System.Windows.Forms.Button();
             this._cbxTypeOfRobot = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this._cbxBehaviourOnError = new System.Windows.Forms.ComboBox();
             this._cbxRunInterations = new System.Windows.Forms.CheckBox();
             this._nudRemainigIterationCount = new System.Windows.Forms.NumericUpDown();
-            this._cbxIsInLearningMode = new System.Windows.Forms.CheckBox();
             this._btnMove = new System.Windows.Forms.Button();
             this._cbxDirectionTypes = new System.Windows.Forms.ComboBox();
             this._btnMarkAsNotMarked = new System.Windows.Forms.Button();
@@ -61,7 +61,6 @@
             this._ddbFieldOfVisionTypes = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this._pbxLookResult = new System.Windows.Forms.PictureBox();
-            this._btnStatisticForm = new System.Windows.Forms.Button();
             this._btnRunInBackground = new System.Windows.Forms.Button();
             this._cbxHighlightErrors = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -165,6 +164,17 @@
             this.label1.TabIndex = 27;
             this.label1.Text = "Type of Robot:";
             // 
+            // _btnStatisticForm
+            // 
+            this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._btnStatisticForm.Location = new System.Drawing.Point(0, 363);
+            this._btnStatisticForm.Name = "_btnStatisticForm";
+            this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
+            this._btnStatisticForm.TabIndex = 26;
+            this._btnStatisticForm.Text = "Statistic Form";
+            this._btnStatisticForm.UseVisualStyleBackColor = true;
+            this._btnStatisticForm.Click += new System.EventHandler(this.BtnStatisticForm_Click);
+            // 
             // _cbxTypeOfRobot
             // 
             this._cbxTypeOfRobot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -188,7 +198,6 @@
             this.groupBox4.Controls.Add(this._cbxBehaviourOnError);
             this.groupBox4.Controls.Add(this._cbxRunInterations);
             this.groupBox4.Controls.Add(this._nudRemainigIterationCount);
-            this.groupBox4.Controls.Add(this._cbxIsInLearningMode);
             this.groupBox4.Controls.Add(this._btnMove);
             this.groupBox4.Controls.Add(this._cbxDirectionTypes);
             this.groupBox4.Controls.Add(this._btnMarkAsNotMarked);
@@ -246,18 +255,6 @@
             0,
             0,
             0});
-            // 
-            // _cbxIsInLearningMode
-            // 
-            this._cbxIsInLearningMode.AutoSize = true;
-            this._cbxIsInLearningMode.Checked = true;
-            this._cbxIsInLearningMode.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._cbxIsInLearningMode.Location = new System.Drawing.Point(9, 69);
-            this._cbxIsInLearningMode.Name = "_cbxIsInLearningMode";
-            this._cbxIsInLearningMode.Size = new System.Drawing.Size(114, 17);
-            this._cbxIsInLearningMode.TabIndex = 15;
-            this._cbxIsInLearningMode.Text = "Is in learning mode";
-            this._cbxIsInLearningMode.UseVisualStyleBackColor = true;
             // 
             // _btnMove
             // 
@@ -491,17 +488,6 @@
             this._pbxLookResult.TabIndex = 5;
             this._pbxLookResult.TabStop = false;
             // 
-            // _btnStatisticForm
-            // 
-            this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._btnStatisticForm.Location = new System.Drawing.Point(0, 363);
-            this._btnStatisticForm.Name = "_btnStatisticForm";
-            this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
-            this._btnStatisticForm.TabIndex = 26;
-            this._btnStatisticForm.Text = "Statistic Form";
-            this._btnStatisticForm.UseVisualStyleBackColor = true;
-            this._btnStatisticForm.Click += new System.EventHandler(this.BtnStatisticForm_Click);
-            // 
             // _btnRunInBackground
             // 
             this._btnRunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -669,7 +655,6 @@
         private System.Windows.Forms.Button _btnMove;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox _cbxTypeOfRobot;
-        private System.Windows.Forms.CheckBox _cbxIsInLearningMode;
         private System.Windows.Forms.CheckBox _cbxRunInterations;
         private System.Windows.Forms.NumericUpDown _nudRemainigIterationCount;
         private System.Windows.Forms.CheckBox _cbxAutoRefreshPlayground;
