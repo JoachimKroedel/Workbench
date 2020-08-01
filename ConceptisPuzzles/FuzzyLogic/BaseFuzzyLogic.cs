@@ -5,9 +5,11 @@ using System.Windows;
 
 namespace FuzzyLogic
 {
-    public abstract class BaseLogic : IFuzzyLogic
+    public abstract class BaseFuzzyLogic : IFuzzyLogic
     {
         protected readonly Dictionary<Enum, IList<Point>> _fuzzyCurvePoints = new Dictionary<Enum, IList<Point>>();
+        protected readonly Dictionary<Type, double> _realValues = new Dictionary<Type, double>();
+        protected readonly Dictionary<Enum, double> _fuzzyDegrees = new Dictionary<Enum, double>();
 
         public FuzzyObject<Enum> If(Enum value)
         {
@@ -22,8 +24,28 @@ namespace FuzzyLogic
             Defuzzification();
         }
 
+        public void SetValue<T>(double value) where T : Enum
+        {
+            Type typeOfEnum = typeof(T);
+            if (_fuzzyCurvePoints.Any(p => p.Key.GetType() == typeOfEnum))
+            {
+                if (!_realValues.ContainsKey(typeOfEnum))
+                {
+                    _realValues.Add(typeOfEnum, value);
+                }
+                else
+                {
+                    _realValues[typeOfEnum] = value;
+                }
+            }
+        }
+
         public virtual double GetDegree(Enum enumType)
         {
+            if (_fuzzyDegrees.ContainsKey(enumType))
+            {
+                return _fuzzyDegrees[enumType];
+            }
             return 0.0;
         }
 
@@ -37,9 +59,34 @@ namespace FuzzyLogic
             return Math.Min(degreeA, degreeB);
         }
 
+        public double GetOrDegree(Enum enumTypeA, Enum enumTypeB)
+        {
+            return GetOrDegree(GetDegree(enumTypeA), GetDegree(enumTypeB));
+        }
+
+
+        public double GetOrDegree(double degreeA, double degreeB)
+        {
+            return Math.Max(degreeA, degreeB);
+        }
+
+        public double GetValueByFuzzyDegree<T>(T learningModeType, double degree) where T : Enum
+        {
+            KeyValuePair<Enum, IList<Point>> pointsOfEnum = _fuzzyCurvePoints.FirstOrDefault(p => p.Key.Equals(learningModeType));
+            return GetValueByFuzzyDegree(pointsOfEnum.Value, degree);
+        }
+
         protected virtual void Fuzzification()
         {
-            throw new NotImplementedException();
+            foreach (KeyValuePair<Type, double> entry in _realValues)
+            {
+                var typedCurvePoints = _fuzzyCurvePoints.Where(p => p.Key.GetType() == entry.Key);
+                foreach (KeyValuePair<Enum, IList<Point>> enumCurvePoints in typedCurvePoints)
+                {
+                    var degree = GetFuzzyDegreeByValue(enumCurvePoints.Value, entry.Value);
+                    AddDegree(enumCurvePoints.Key, degree);
+                }
+            }
         }
 
         protected virtual void Implication()
@@ -127,6 +174,18 @@ namespace FuzzyLogic
             }
             // In the last case value is right outside the curve definition.
             return leftPoint.Y;
+        }
+
+        public void AddDegree(Enum key, double degree)
+        {
+            if (_fuzzyDegrees.ContainsKey(key))
+            {
+                _fuzzyDegrees[key] = degree;
+            }
+            else
+            {
+                _fuzzyDegrees.Add(key, degree);
+            }
         }
     }
 }

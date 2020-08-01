@@ -709,6 +709,11 @@ namespace ConceptisPuzzles.Robot
                     RecreateCells();
                 }
             }
+            else if(_puzzleBoard.IsComplete())
+            {
+                _cbxRunInterations.Checked = false;
+                MessageBox.Show("Puzzle solved!!!", "Robot");
+            }
             _robotBrain.DoSomething();
         }
 

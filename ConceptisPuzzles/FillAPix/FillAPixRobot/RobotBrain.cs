@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using FillAPixEngine;
 using FillAPixRobot.Enums;
 using FillAPixRobot.Interfaces;
+using FuzzyLogic;
 
 namespace FillAPixRobot
 {
@@ -20,12 +21,14 @@ namespace FillAPixRobot
         private const bool IS_SAVEABLE_UNIT = false;
 
         private const int MAX_MEMORY_FOR_POSITIONS = 10;
+        private const int MAX_ACTION_FEEDBACK_HISTORY_COUNT = 1000;
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
 
         private Point _position;
         private ISensationSnapshot _lastSensationSnapshot;
         private readonly List<ISensoryUnit> _kownSensoryUnits = new List<ISensoryUnit>();
         private readonly List<ISensoryPattern> _kownSensoryPatterns = new List<ISensoryPattern>();
+        private readonly List<int> _actionFeedbackHistory = new List<int>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -33,6 +36,8 @@ namespace FillAPixRobot
         public event EventHandler<ActionWantedEventArgs> ActionWanted;
 
         private readonly List<IPuzzleAction> _allPossibleActions = new List<IPuzzleAction>();
+
+        private readonly IFuzzyLogic _fillAPixFuzzyLogic = new FillAPixFuzzyLogic();
 
         public RobotBrain()
         {
@@ -173,6 +178,7 @@ namespace FillAPixRobot
         public void DoSomething()
         {
             ActionFeedback = 0;
+
             // Zuerst mal die Lage erkunden
             RaiseExperienceWanted();
             ISensationSnapshot sensationSnapshotBeforeAction = _lastSensationSnapshot;
@@ -192,13 +198,22 @@ namespace FillAPixRobot
             var actionMemory = ActionMemoryDictonary[action];
             bool isDifferent = difference.SensoryPatterns.Any();
             actionMemory.RememberDifference(isDifferent, sensationSnapshotBeforeAction);
-            if (isDifferent && actionFeedback != 0)
+            if (isDifferent)
             {
-                if (actionFeedback < 0)
+                if (actionFeedback != 0)
                 {
-                    Console.WriteLine("Error occurred!");
+                    if (actionFeedback < 0)
+                    {
+                        Console.WriteLine("Error occurred!");
+                    }
+                    actionMemory.RememberFeedback(actionFeedback, sensationSnapshotBeforeAction);
                 }
-                actionMemory.RememberFeedback(actionFeedback, sensationSnapshotBeforeAction);
+
+                _actionFeedbackHistory.Add(actionFeedback);
+                while (_actionFeedbackHistory.Count > MAX_ACTION_FEEDBACK_HISTORY_COUNT)
+                {
+                    _actionFeedbackHistory.RemoveAt(0);
+                }
             }
         }
 
@@ -210,6 +225,33 @@ namespace FillAPixRobot
             Dictionary<IPuzzleAction, double> posibilityForDifferencesByAction = new Dictionary<IPuzzleAction, double>();
             Dictionary<IPuzzleAction, double> posibilityForPositiveFeedbackByAction = new Dictionary<IPuzzleAction, double>();
             Dictionary<IPuzzleAction, double> posibilityForNegativeFeedbackByAction = new Dictionary<IPuzzleAction, double>();
+
+            // FUZZY-Logic: Entscheiden welcher Modus aktiv sein sollte
+            if (_actionFeedbackHistory.Any())
+            {
+                var percentagePositive = (double)_actionFeedbackHistory.Count(e => e > 0) / _actionFeedbackHistory.Count;
+                var percentageNegative = (double)_actionFeedbackHistory.Count(e => e < 0) / _actionFeedbackHistory.Count;
+                var percentageNeutral = (double)_actionFeedbackHistory.Count(e => e == 0) / _actionFeedbackHistory.Count;
+                Console.WriteLine($"percentagePositive={percentagePositive}, percentageNegative={percentageNegative}, percentageNeutral={percentageNeutral}");
+
+                _fillAPixFuzzyLogic.SetValue<FuzzyPositiveFeedbackTypes>(percentagePositive);
+                _fillAPixFuzzyLogic.SetValue<FuzzyErrorFeedbackTypes>(percentageNegative);
+                _fillAPixFuzzyLogic.SetValue<FuzzyNeutralFeedbackTypes>(percentageNeutral);
+
+                _fillAPixFuzzyLogic.CalculateOutput();
+                // ToDo: Use result of fuzzy logic!!!
+                double a = _fillAPixFuzzyLogic.GetDegree(FuzzyLearningModeTypes.On);
+                double b = _fillAPixFuzzyLogic.GetDegree(FuzzyLearningModeTypes.Off);
+                double ab = a + b;
+                Console.WriteLine($"a={a}, b={b}, ab={ab}");
+                if (ab > 0)
+                {
+                    double x = a / ab * 100;
+                    double y = b / ab * 100;
+                    Console.WriteLine($"x={x}%, y={y}%");
+                }
+            }
+
 
             foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
             {
@@ -302,13 +344,13 @@ namespace FillAPixRobot
 
         private double GetFuzzyDegreeByPositiveFeedback(double positiveFeedback)
         {
-            // ToDo: Implement fuzzy logic interface
+            // ToDo: Implement fuzzy logic interface ... use _actionFeedbackHistory
             return positiveFeedback;
         }
 
         private double GetFuzzyDegreeByNegativeFeedback(double negativeFeedback)
         {
-            // ToDo: Implement fuzzy logic interface
+            // ToDo: Implement fuzzy logic interface ... use _actionFeedbackHistory
             return negativeFeedback;
         }
 

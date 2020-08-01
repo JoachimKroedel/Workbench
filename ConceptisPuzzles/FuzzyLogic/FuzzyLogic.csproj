@@ -42,7 +42,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseLogic.cs" />
+    <Compile Include="BaseFuzzyLogic.cs" />
     <Compile Include="FuzzyObject.cs" />
     <Compile Include="IFuzzyLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

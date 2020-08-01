@@ -38,6 +38,17 @@ namespace FuzzyLogic
             return new FuzzyObject<Enum>(Value, andDegree, _fuzzyLogic);
         }
 
+        public FuzzyObject<Enum> Or(Enum value)
+        {
+            if (_fuzzyLogic == null)
+            {
+                return new FuzzyObject<Enum>();
+            }
+            double otherDegree = _fuzzyLogic.GetDegree(value);
+            double andDegree = _fuzzyLogic.GetOrDegree(Degree, otherDegree);
+            return new FuzzyObject<Enum>(Value, andDegree, _fuzzyLogic);
+        }
+
         public override string ToString()
         {
             return $"{{{Value}, {Degree}}}";
