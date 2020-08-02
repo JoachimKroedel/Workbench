@@ -49,6 +49,11 @@ namespace FuzzyLogic
             return new FuzzyObject<Enum>(Value, andDegree, _fuzzyLogic);
         }
 
+        public FuzzyObject<Enum> NeutralType()
+        {
+            return new FuzzyObject<Enum>(Value, Degree, _fuzzyLogic);
+        }
+
         public override string ToString()
         {
             return $"{{{Value}, {Degree}}}";

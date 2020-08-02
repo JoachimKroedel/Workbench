@@ -9,7 +9,9 @@ namespace FuzzyLogic
     {
         protected readonly Dictionary<Enum, IList<Point>> _fuzzyCurvePoints = new Dictionary<Enum, IList<Point>>();
         protected readonly Dictionary<Type, double> _realValues = new Dictionary<Type, double>();
+        protected readonly Dictionary<Enum, double> _realEnumValues = new Dictionary<Enum, double>();
         protected readonly Dictionary<Enum, double> _fuzzyDegrees = new Dictionary<Enum, double>();
+        protected readonly List<FuzzyObject<Enum>> _conditionResults = new List<FuzzyObject<Enum>>();
 
         public FuzzyObject<Enum> If(Enum value)
         {
@@ -27,6 +29,11 @@ namespace FuzzyLogic
         public void SetValue<T>(double value) where T : Enum
         {
             Type typeOfEnum = typeof(T);
+            SetValue(typeOfEnum, value);
+        }
+
+        public void SetValue(Type typeOfEnum, double value)
+        {
             if (_fuzzyCurvePoints.Any(p => p.Key.GetType() == typeOfEnum))
             {
                 if (!_realValues.ContainsKey(typeOfEnum))
@@ -91,12 +98,23 @@ namespace FuzzyLogic
 
         protected virtual void Implication()
         {
-            throw new NotImplementedException();
+            _conditionResults.Clear();
         }
 
         protected virtual void Defuzzification()
         {
-            throw new NotImplementedException();
+            foreach (var conditionResult in _conditionResults)
+            {
+                double value = GetValueByFuzzyDegree(conditionResult.Value, conditionResult.Degree);
+                if (!_realEnumValues.ContainsKey(conditionResult.Value))
+                {
+                    _realEnumValues.Add(conditionResult.Value, value);
+                }
+                else
+                {
+                    _realEnumValues[conditionResult.Value] = value;
+                }
+            }
         }
 
         protected virtual double GetValueByFuzzyDegree(IList<Point> curvePoints, double degree)

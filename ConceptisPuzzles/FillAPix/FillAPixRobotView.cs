@@ -574,10 +574,13 @@ namespace ConceptisPuzzles.Robot
             }
             switch (e.PropertyName)
             {
-                case "Position":
+                case nameof(_robotBrain.Position):
                     _nudPositionX.Value = _robotBrain.Position.X;
                     _nudPositionY.Value = _robotBrain.Position.Y;
                     DrawFieldOfVision((FieldOfVisionTypes)_ddbFieldOfVisionTypes.SelectedItem, _robotBrain.Position);
+                    break;
+                case nameof(_robotBrain.PercentageSolving):
+                    _tbrSolvingPercentage.Value = (int)_robotBrain.PercentageSolving;
                     break;
             }
             if (_cbxAutoRefreshPlayground.Checked)
@@ -744,7 +747,7 @@ namespace ConceptisPuzzles.Robot
             {
                 return;
             }
-
+            _cbxRunInterations.Checked = false;
             _gbxRobot.Enabled = false;
             _timer.Interval = 1000;
             _timer.Enabled = true;

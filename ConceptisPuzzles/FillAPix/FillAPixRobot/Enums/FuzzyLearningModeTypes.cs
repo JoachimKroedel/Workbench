@@ -2,7 +2,7 @@
 {
     public enum FuzzyLearningModeTypes
     {
-        On,
-        Off
+        Learning,
+        Solving
     }
 }

@@ -68,7 +68,11 @@
             this._panelPlayground = new System.Windows.Forms.Panel();
             this._pbxPlayGround = new System.Windows.Forms.PictureBox();
             this._timer = new System.Windows.Forms.Timer(this.components);
+            this._tbrSolvingPercentage = new System.Windows.Forms.TrackBar();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.fillAPixRobotBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this._nudZoomFactor)).BeginInit();
             this._gbxRobot.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -85,6 +89,7 @@
             this.splitContainer1.SuspendLayout();
             this._panelPlayground.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._pbxPlayGround)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._tbrSolvingPercentage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fillAPixRobotBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -150,7 +155,7 @@
             this._gbxRobot.Enabled = false;
             this._gbxRobot.Location = new System.Drawing.Point(3, 3);
             this._gbxRobot.Name = "_gbxRobot";
-            this._gbxRobot.Size = new System.Drawing.Size(343, 392);
+            this._gbxRobot.Size = new System.Drawing.Size(343, 468);
             this._gbxRobot.TabIndex = 19;
             this._gbxRobot.TabStop = false;
             this._gbxRobot.Text = "Robot";
@@ -166,8 +171,8 @@
             // 
             // _btnStatisticForm
             // 
-            this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._btnStatisticForm.Location = new System.Drawing.Point(0, 363);
+            this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._btnStatisticForm.Location = new System.Drawing.Point(0, 439);
             this._btnStatisticForm.Name = "_btnStatisticForm";
             this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
             this._btnStatisticForm.TabIndex = 26;
@@ -195,8 +200,12 @@
             // 
             this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.label7);
             this.groupBox4.Controls.Add(this._cbxBehaviourOnError);
+            this.groupBox4.Controls.Add(this.label2);
             this.groupBox4.Controls.Add(this._cbxRunInterations);
+            this.groupBox4.Controls.Add(this._tbrSolvingPercentage);
             this.groupBox4.Controls.Add(this._nudRemainigIterationCount);
             this.groupBox4.Controls.Add(this._btnMove);
             this.groupBox4.Controls.Add(this._cbxDirectionTypes);
@@ -206,7 +215,7 @@
             this.groupBox4.Controls.Add(this._btnMarkAsFilled);
             this.groupBox4.Location = new System.Drawing.Point(9, 232);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(317, 126);
+            this.groupBox4.Size = new System.Drawing.Size(317, 202);
             this.groupBox4.TabIndex = 16;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Action";
@@ -491,7 +500,7 @@
             // _btnRunInBackground
             // 
             this._btnRunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._btnRunInBackground.Location = new System.Drawing.Point(220, 401);
+            this._btnRunInBackground.Location = new System.Drawing.Point(222, 477);
             this._btnRunInBackground.Name = "_btnRunInBackground";
             this._btnRunInBackground.Size = new System.Drawing.Size(124, 21);
             this._btnRunInBackground.TabIndex = 28;
@@ -580,9 +589,46 @@
             // 
             this._timer.Tick += new System.EventHandler(this.Timer_Tick);
             // 
+            // _tbrSolvingPercentage
+            // 
+            this._tbrSolvingPercentage.Location = new System.Drawing.Point(9, 122);
+            this._tbrSolvingPercentage.Maximum = 100;
+            this._tbrSolvingPercentage.Name = "_tbrSolvingPercentage";
+            this._tbrSolvingPercentage.Size = new System.Drawing.Size(302, 45);
+            this._tbrSolvingPercentage.SmallChange = 10;
+            this._tbrSolvingPercentage.TabIndex = 29;
+            this._tbrSolvingPercentage.TickFrequency = 10;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 154);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(34, 13);
+            this.label2.TabIndex = 30;
+            this.label2.Text = "Learn";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(278, 154);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(34, 13);
+            this.label7.TabIndex = 33;
+            this.label7.Text = "Solve";
+            // 
             // fillAPixRobotBindingSource
             // 
             this.fillAPixRobotBindingSource.DataSource = typeof(FillAPixRobot.RobotBrain);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(149, 154);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(27, 13);
+            this.label5.TabIndex = 34;
+            this.label5.Text = "50%";
             // 
             // FillAPixRobotView
             // 
@@ -614,6 +660,7 @@
             this.splitContainer1.ResumeLayout(false);
             this._panelPlayground.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._pbxPlayGround)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._tbrSolvingPercentage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fillAPixRobotBindingSource)).EndInit();
             this.ResumeLayout(false);
 
@@ -661,5 +708,9 @@
         private System.Windows.Forms.Button _btnStatisticForm;
         private System.Windows.Forms.ComboBox _cbxBehaviourOnError;
         private System.Windows.Forms.Button _btnRunInBackground;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TrackBar _tbrSolvingPercentage;
+        private System.Windows.Forms.Label label5;
     }
 }

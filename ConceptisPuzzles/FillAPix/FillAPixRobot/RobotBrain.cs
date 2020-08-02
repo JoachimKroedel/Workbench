@@ -25,6 +25,7 @@ namespace FillAPixRobot
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
 
         private Point _position;
+        private double _percentageSolving;
         private ISensationSnapshot _lastSensationSnapshot;
         private readonly List<ISensoryUnit> _kownSensoryUnits = new List<ISensoryUnit>();
         private readonly List<ISensoryPattern> _kownSensoryPatterns = new List<ISensoryPattern>();
@@ -104,6 +105,19 @@ namespace FillAPixRobot
                         LastPositions.RemoveAt(MAX_MEMORY_FOR_POSITIONS);
                     }
                     _position = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double PercentageSolving
+        {
+            get { return _percentageSolving; }
+            set
+            {
+                if (_percentageSolving != value)
+                {
+                    _percentageSolving = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -240,15 +254,13 @@ namespace FillAPixRobot
 
                 _fillAPixFuzzyLogic.CalculateOutput();
                 // ToDo: Use result of fuzzy logic!!!
-                double a = _fillAPixFuzzyLogic.GetDegree(FuzzyLearningModeTypes.On);
-                double b = _fillAPixFuzzyLogic.GetDegree(FuzzyLearningModeTypes.Off);
-                double ab = a + b;
-                Console.WriteLine($"a={a}, b={b}, ab={ab}");
-                if (ab > 0)
+                double learningDegree = _fillAPixFuzzyLogic.GetDegree(FuzzyLearningModeTypes.Learning);
+                double solvingDegree = _fillAPixFuzzyLogic.GetDegree(FuzzyLearningModeTypes.Solving);
+                double hundredPercent = learningDegree + solvingDegree;
+                Console.WriteLine($"learningDegree={learningDegree}, solvingDegree={solvingDegree}, hundredPercent={hundredPercent}");
+                if (hundredPercent > 0)
                 {
-                    double x = a / ab * 100;
-                    double y = b / ab * 100;
-                    Console.WriteLine($"x={x}%, y={y}%");
+                    PercentageSolving = solvingDegree / hundredPercent * 100;
                 }
             }
 

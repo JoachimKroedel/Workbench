@@ -11,34 +11,39 @@ namespace FillAPixRobot
 
         public FillAPixFuzzyLogic()
         {
-            _fuzzyCurvePoints.Add(FuzzyErrorFeedbackTypes.NoErrors,   new List<Point>() { new Point( 0.0, 1.0), new Point( 1.0, 0.0)});
-            _fuzzyCurvePoints.Add(FuzzyErrorFeedbackTypes.MuchErrors, new List<Point>() { new Point( 0.0, 0.0), new Point( 1.0, 1.0)});
+            _fuzzyCurvePoints.Add(FuzzyErrorFeedbackTypes.NoErrors,   new List<Point>() { new Point( 0.0, 1.0), new Point( 0.1, 0.0)});
+            _fuzzyCurvePoints.Add(FuzzyErrorFeedbackTypes.MuchErrors, new List<Point>() { new Point( 0.0, 0.0), new Point( 0.1, 1.0)});
 
             _fuzzyCurvePoints.Add(FuzzyPositiveFeedbackTypes.NoPositives,   new List<Point>() { new Point(0.0, 1.0), new Point(1.0, 0.0) });
             _fuzzyCurvePoints.Add(FuzzyPositiveFeedbackTypes.MuchPositives, new List<Point>() { new Point(0.0, 0.0), new Point(1.0, 1.0) });
 
-            _fuzzyCurvePoints.Add(FuzzyNeutralFeedbackTypes.NoNeutrals,   new List<Point>() { new Point(0.0, 1.0), new Point(1.0, 0.0) });
-            _fuzzyCurvePoints.Add(FuzzyNeutralFeedbackTypes.MuchNeutrals, new List<Point>() { new Point(0.0, 0.0), new Point(1.0, 1.0) });
+            _fuzzyCurvePoints.Add(FuzzyNeutralFeedbackTypes.NoNeutrals,   new List<Point>() { new Point(0.0, 1.0), new Point(0.2, 0.0) });
+            _fuzzyCurvePoints.Add(FuzzyNeutralFeedbackTypes.MuchNeutrals, new List<Point>() { new Point(0.0, 0.4), new Point(1.0, 1.0) });
 
-            _fuzzyCurvePoints.Add(FuzzyLearningModeTypes.Off, new List<Point>() { new Point(0.0, 1.0), new Point(1.0, 0.0) });
-            _fuzzyCurvePoints.Add(FuzzyLearningModeTypes.On,  new List<Point>() { new Point(0.0, 0.0), new Point(1.0, 1.0) });
+            _fuzzyCurvePoints.Add(FuzzyLearningModeTypes.Solving, new List<Point>() { new Point(0.0, 1.0), new Point(1.0, 0.0) });
+            _fuzzyCurvePoints.Add(FuzzyLearningModeTypes.Learning,  new List<Point>() { new Point(0.0, 0.0), new Point(1.0, 1.0) });
         }
 
         protected override void Implication()
         {
+            base.Implication();
             _learningModeConditionResults.Clear();
 
             FuzzyObject<FuzzyLearningModeTypes> resultOfNoErrorsAndMuchPositves =
                 If(FuzzyErrorFeedbackTypes.NoErrors)
                     .And(FuzzyPositiveFeedbackTypes.MuchPositives)
-                        .Then(FuzzyLearningModeTypes.Off);
+                        .Then(FuzzyLearningModeTypes.Solving);
 
             FuzzyObject<FuzzyLearningModeTypes> resultOfMuchErrorsOrNoPositivesOrMuchNeutrals =
                 If(FuzzyErrorFeedbackTypes.MuchErrors)
                     .Or(FuzzyPositiveFeedbackTypes.NoPositives)
                         .Or(FuzzyNeutralFeedbackTypes.MuchNeutrals)
-                            .Then(FuzzyLearningModeTypes.On);
+                            .Then(FuzzyLearningModeTypes.Learning);
 
+
+            // ToDo: Think about moving that stuff to base class and use a method like AddConditionResult(...)
+            _conditionResults.Add(resultOfNoErrorsAndMuchPositves.NeutralType());
+            _conditionResults.Add(resultOfMuchErrorsOrNoPositivesOrMuchNeutrals.NeutralType());
 
             _learningModeConditionResults.Add(resultOfNoErrorsAndMuchPositves);
             _learningModeConditionResults.Add(resultOfMuchErrorsOrNoPositivesOrMuchNeutrals);
@@ -50,6 +55,7 @@ namespace FillAPixRobot
 
         protected override void Defuzzification()
         {
+            base.Defuzzification();
             double result = 0.0;
             int count = 0;
             foreach (FuzzyObject<FuzzyLearningModeTypes> conditionResult in _learningModeConditionResults)
