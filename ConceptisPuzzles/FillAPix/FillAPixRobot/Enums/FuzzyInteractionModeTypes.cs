@@ -1,6 +1,6 @@
 ﻿namespace FillAPixRobot.Enums
 {
-    public enum FuzzyLearningModeTypes
+    public enum FuzzyInteractionModeTypes
     {
         Learning,
         Solving

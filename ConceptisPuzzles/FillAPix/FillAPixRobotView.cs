@@ -63,7 +63,8 @@ namespace ConceptisPuzzles.Robot
                 _robotBrain.Activate(new Point(0, 0), new Rectangle(new Point(0, 0), _puzzleBoard.Size));
                 _puzzleReferee = new PuzzleReferee(_puzzleBoard);
             }
-            _gbxRobot.Enabled = (_puzzleBoard != null);
+            _gbxRobot.Enabled = _puzzleBoard != null;
+            _btnRunInBackground.Enabled = _puzzleBoard != null;
             RefreshRobotSettings();
             RefreshPlayGround();
             RecreateCells();
@@ -677,6 +678,7 @@ namespace ConceptisPuzzles.Robot
             if (_simulationRunsInBackground)
             {
                 _nudRemainigIterationCount.Value = _backgroundIterations;
+                _tbrSolvingPercentage.Value = (int)_robotBrain.PercentageSolving;
                 RefreshPlayGround();
                 RecreateCells();
             }

@@ -1,6 +1,6 @@
 ﻿namespace FillAPixRobot.Enums
 {
-    public enum FuzzyErrorFeedbackTypes
+    public enum FuzzyErrorHistoryTypes
     {
         MuchErrors,
         NoErrors

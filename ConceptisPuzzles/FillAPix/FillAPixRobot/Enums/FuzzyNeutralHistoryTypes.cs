@@ -1,6 +1,6 @@
 ﻿namespace FillAPixRobot.Enums
 {
-    public enum FuzzyNeutralFeedbackTypes
+    public enum FuzzyNeutralHistoryTypes
     {
         MuchNeutrals,
         NoNeutrals

@@ -11,8 +11,11 @@ namespace FuzzyLogic
         void AddDegree(Enum key, double degree);
 
         double GetDegree(Enum enumType);
+        double GetNotDegree(Enum enumType);
+        double GetAndDegree(FuzzyObject<Enum> objectA, FuzzyObject<Enum> objectB);
         double GetAndDegree(Enum enumTypeA, Enum enumTypeB);
         double GetAndDegree(double degreeA, double degreeB);
+        double GetOrDegree(FuzzyObject<Enum> objectA, FuzzyObject<Enum> objectB);
         double GetOrDegree(Enum enumTypeA, Enum enumTypeB);
         double GetOrDegree(double degreeA, double degreeB);
     }

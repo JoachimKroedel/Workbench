@@ -19,6 +19,12 @@ namespace FuzzyLogic
             return new FuzzyObject<Enum>(value, degree, this);
         }
 
+        public FuzzyObject<RT> Not<RT>(RT value) where RT : Enum
+        { 
+            double notDegree = GetNotDegree(value);
+            return new FuzzyObject<RT>(value, notDegree, this);
+        }
+
         public void CalculateOutput()
         {
             Fuzzification();
@@ -56,6 +62,20 @@ namespace FuzzyLogic
             return 0.0;
         }
 
+        public virtual double GetNotDegree(Enum enumType)
+        {
+            if (_fuzzyDegrees.ContainsKey(enumType))
+            {
+                return 1.0 - _fuzzyDegrees[enumType];
+            }
+            return 1.0;
+        }
+
+        public double GetAndDegree(FuzzyObject<Enum> objectA, FuzzyObject<Enum> objectB)
+        {
+            return Math.Min(objectA.Degree, objectB.Degree);
+        }
+
         public double GetAndDegree(Enum enumTypeA, Enum enumTypeB)
         {
             return GetAndDegree(GetDegree(enumTypeA), GetDegree(enumTypeB));
@@ -66,11 +86,15 @@ namespace FuzzyLogic
             return Math.Min(degreeA, degreeB);
         }
 
+        public double GetOrDegree(FuzzyObject<Enum> objectA, FuzzyObject<Enum> objectB)
+        {
+            return Math.Max(objectA.Degree, objectB.Degree);
+        }
+
         public double GetOrDegree(Enum enumTypeA, Enum enumTypeB)
         {
             return GetOrDegree(GetDegree(enumTypeA), GetDegree(enumTypeB));
         }
-
 
         public double GetOrDegree(double degreeA, double degreeB)
         {
@@ -155,13 +179,6 @@ namespace FuzzyLogic
                 leftPoint = rightPoint;
             }
             return (hitCount > 0) ? (result / hitCount) : double.NaN;
-        }
-
-        protected virtual FuzzyObject<FT> Create<FT>(FT fuzzyValue, double realValue) where FT : Enum
-        {
-            // ToDo: Make this part more generic by calling a generic GetFuzzyDegreeByValue
-            double fuzzyDegree = 0.0;
-            return new FuzzyObject<FT>(fuzzyValue, fuzzyDegree, this);
         }
 
         protected virtual double GetFuzzyDegreeByValue(IList<Point> curvePoints, double value)

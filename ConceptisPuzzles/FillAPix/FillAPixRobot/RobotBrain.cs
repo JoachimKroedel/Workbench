@@ -246,18 +246,18 @@ namespace FillAPixRobot
                 var percentagePositive = (double)_actionFeedbackHistory.Count(e => e > 0) / _actionFeedbackHistory.Count;
                 var percentageNegative = (double)_actionFeedbackHistory.Count(e => e < 0) / _actionFeedbackHistory.Count;
                 var percentageNeutral = (double)_actionFeedbackHistory.Count(e => e == 0) / _actionFeedbackHistory.Count;
-                Console.WriteLine($"percentagePositive={percentagePositive}, percentageNegative={percentageNegative}, percentageNeutral={percentageNeutral}");
+                //Console.WriteLine($"percentagePositive={percentagePositive}, percentageNegative={percentageNegative}, percentageNeutral={percentageNeutral}");
 
-                _fillAPixFuzzyLogic.SetValue<FuzzyPositiveFeedbackTypes>(percentagePositive);
-                _fillAPixFuzzyLogic.SetValue<FuzzyErrorFeedbackTypes>(percentageNegative);
-                _fillAPixFuzzyLogic.SetValue<FuzzyNeutralFeedbackTypes>(percentageNeutral);
+                _fillAPixFuzzyLogic.SetValue<FuzzyPositiveHistoryTypes>(percentagePositive);
+                _fillAPixFuzzyLogic.SetValue<FuzzyErrorHistoryTypes>(percentageNegative);
+                _fillAPixFuzzyLogic.SetValue<FuzzyNeutralHistoryTypes>(percentageNeutral);
 
                 _fillAPixFuzzyLogic.CalculateOutput();
                 // ToDo: Use result of fuzzy logic!!!
-                double learningDegree = _fillAPixFuzzyLogic.GetDegree(FuzzyLearningModeTypes.Learning);
-                double solvingDegree = _fillAPixFuzzyLogic.GetDegree(FuzzyLearningModeTypes.Solving);
+                double learningDegree = _fillAPixFuzzyLogic.GetDegree(FuzzyInteractionModeTypes.Learning);
+                double solvingDegree = _fillAPixFuzzyLogic.GetDegree(FuzzyInteractionModeTypes.Solving);
                 double hundredPercent = learningDegree + solvingDegree;
-                Console.WriteLine($"learningDegree={learningDegree}, solvingDegree={solvingDegree}, hundredPercent={hundredPercent}");
+                //Console.WriteLine($"learningDegree={learningDegree}, solvingDegree={solvingDegree}, hundredPercent={hundredPercent}");
                 if (hundredPercent > 0)
                 {
                     PercentageSolving = solvingDegree / hundredPercent * 100;
@@ -356,14 +356,18 @@ namespace FillAPixRobot
 
         private double GetFuzzyDegreeByPositiveFeedback(double positiveFeedback)
         {
-            // ToDo: Implement fuzzy logic interface ... use _actionFeedbackHistory
-            return positiveFeedback;
+            _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfPositiveFeedbackTypes>(positiveFeedback);
+            _fillAPixFuzzyLogic.CalculateOutput();
+            double expectationPositiveFactor = _fillAPixFuzzyLogic.GetDegree(FuzzyExpectationFactorTypes.PositiveFeedback);
+            return expectationPositiveFactor;
         }
 
         private double GetFuzzyDegreeByNegativeFeedback(double negativeFeedback)
         {
-            // ToDo: Implement fuzzy logic interface ... use _actionFeedbackHistory
-            return negativeFeedback;
+            _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfNegativeFeedbackTypes>(negativeFeedback);
+            _fillAPixFuzzyLogic.CalculateOutput();
+            double expectationNegativeFactor = _fillAPixFuzzyLogic.GetDegree(FuzzyExpectationFactorTypes.NegativeFeedback);
+            return expectationNegativeFactor;
         }
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")

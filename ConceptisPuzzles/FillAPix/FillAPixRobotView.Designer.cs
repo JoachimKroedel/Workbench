@@ -37,8 +37,12 @@
             this._btnStatisticForm = new System.Windows.Forms.Button();
             this._cbxTypeOfRobot = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this._cbxBehaviourOnError = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this._cbxRunInterations = new System.Windows.Forms.CheckBox();
+            this._tbrSolvingPercentage = new System.Windows.Forms.TrackBar();
             this._nudRemainigIterationCount = new System.Windows.Forms.NumericUpDown();
             this._btnMove = new System.Windows.Forms.Button();
             this._cbxDirectionTypes = new System.Windows.Forms.ComboBox();
@@ -68,14 +72,11 @@
             this._panelPlayground = new System.Windows.Forms.Panel();
             this._pbxPlayGround = new System.Windows.Forms.PictureBox();
             this._timer = new System.Windows.Forms.Timer(this.components);
-            this._tbrSolvingPercentage = new System.Windows.Forms.TrackBar();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.fillAPixRobotBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this._nudZoomFactor)).BeginInit();
             this._gbxRobot.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._tbrSolvingPercentage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._nudRemainigIterationCount)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._nudPositionY)).BeginInit();
@@ -89,7 +90,6 @@
             this.splitContainer1.SuspendLayout();
             this._panelPlayground.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._pbxPlayGround)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this._tbrSolvingPercentage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fillAPixRobotBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -220,6 +220,24 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Action";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(149, 154);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(27, 13);
+            this.label5.TabIndex = 34;
+            this.label5.Text = "50%";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(278, 154);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(34, 13);
+            this.label7.TabIndex = 33;
+            this.label7.Text = "Solve";
+            // 
             // _cbxBehaviourOnError
             // 
             this._cbxBehaviourOnError.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -233,6 +251,15 @@
             this._cbxBehaviourOnError.Size = new System.Drawing.Size(148, 21);
             this._cbxBehaviourOnError.TabIndex = 18;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 154);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(34, 13);
+            this.label2.TabIndex = 30;
+            this.label2.Text = "Learn";
+            // 
             // _cbxRunInterations
             // 
             this._cbxRunInterations.Appearance = System.Windows.Forms.Appearance.Button;
@@ -245,6 +272,16 @@
             this._cbxRunInterations.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this._cbxRunInterations.UseVisualStyleBackColor = true;
             this._cbxRunInterations.CheckedChanged += new System.EventHandler(this.ChbRunInterations_CheckedChanged);
+            // 
+            // _tbrSolvingPercentage
+            // 
+            this._tbrSolvingPercentage.Location = new System.Drawing.Point(9, 122);
+            this._tbrSolvingPercentage.Maximum = 100;
+            this._tbrSolvingPercentage.Name = "_tbrSolvingPercentage";
+            this._tbrSolvingPercentage.Size = new System.Drawing.Size(302, 45);
+            this._tbrSolvingPercentage.SmallChange = 10;
+            this._tbrSolvingPercentage.TabIndex = 29;
+            this._tbrSolvingPercentage.TickFrequency = 10;
             // 
             // _nudRemainigIterationCount
             // 
@@ -500,6 +537,7 @@
             // _btnRunInBackground
             // 
             this._btnRunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._btnRunInBackground.Enabled = false;
             this._btnRunInBackground.Location = new System.Drawing.Point(222, 477);
             this._btnRunInBackground.Name = "_btnRunInBackground";
             this._btnRunInBackground.Size = new System.Drawing.Size(124, 21);
@@ -589,46 +627,9 @@
             // 
             this._timer.Tick += new System.EventHandler(this.Timer_Tick);
             // 
-            // _tbrSolvingPercentage
-            // 
-            this._tbrSolvingPercentage.Location = new System.Drawing.Point(9, 122);
-            this._tbrSolvingPercentage.Maximum = 100;
-            this._tbrSolvingPercentage.Name = "_tbrSolvingPercentage";
-            this._tbrSolvingPercentage.Size = new System.Drawing.Size(302, 45);
-            this._tbrSolvingPercentage.SmallChange = 10;
-            this._tbrSolvingPercentage.TabIndex = 29;
-            this._tbrSolvingPercentage.TickFrequency = 10;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 154);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(34, 13);
-            this.label2.TabIndex = 30;
-            this.label2.Text = "Learn";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(278, 154);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(34, 13);
-            this.label7.TabIndex = 33;
-            this.label7.Text = "Solve";
-            // 
             // fillAPixRobotBindingSource
             // 
             this.fillAPixRobotBindingSource.DataSource = typeof(FillAPixRobot.RobotBrain);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(149, 154);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(27, 13);
-            this.label5.TabIndex = 34;
-            this.label5.Text = "50%";
             // 
             // FillAPixRobotView
             // 
@@ -645,6 +646,7 @@
             this._gbxRobot.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._tbrSolvingPercentage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._nudRemainigIterationCount)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -660,7 +662,6 @@
             this.splitContainer1.ResumeLayout(false);
             this._panelPlayground.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._pbxPlayGround)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this._tbrSolvingPercentage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fillAPixRobotBindingSource)).EndInit();
             this.ResumeLayout(false);
 
