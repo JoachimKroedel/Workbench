@@ -101,6 +101,21 @@ namespace FuzzyLogic
             return Math.Max(degreeA, degreeB);
         }
 
+        public double GetFactorDegree(double degreeA, double degreeB)
+        {
+            if (double.IsNaN(degreeA) || double.IsNaN(degreeB))
+            {
+                return double.NaN;
+            }
+
+            if (double.IsInfinity(degreeA) || double.IsInfinity(degreeB))
+            {
+                return double.PositiveInfinity;
+            }
+
+            return degreeA * degreeB;
+        }
+
         public double GetValueByFuzzyDegree<T>(T learningModeType, double degree) where T : Enum
         {
             KeyValuePair<Enum, IList<Point>> pointsOfEnum = _fuzzyCurvePoints.FirstOrDefault(p => p.Key.Equals(learningModeType));

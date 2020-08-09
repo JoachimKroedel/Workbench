@@ -69,22 +69,22 @@ namespace FillAPixRobot
 
             FuzzyObject<FuzzyExpectationFactorTypes> resultOfPositiveLearningPlausibility =
                 If(FuzzyPlausibilityOfPositiveFeedbackTypes.LearningPlausibility)
-                    .And(Not(FuzzyInteractionModeTypes.Solving))
+                    .Factor(FuzzyInteractionModeTypes.Learning)
                         .Then(FuzzyExpectationFactorTypes.PositiveFeedback);
 
             FuzzyObject<FuzzyExpectationFactorTypes> resultOfPositiveSolvingPlausibility =
                 If(FuzzyPlausibilityOfPositiveFeedbackTypes.SolvingPlausibility)
-                    .And(Not(FuzzyInteractionModeTypes.Learning))
+                    .Factor(Not(FuzzyInteractionModeTypes.Learning))
                         .Then(FuzzyExpectationFactorTypes.PositiveFeedback);
 
             FuzzyObject<FuzzyExpectationFactorTypes> resultOfNegativeLearningPlausibility =
                 If(FuzzyPlausibilityOfNegativeFeedbackTypes.LearningPlausibility)
-                    .And(Not(FuzzyInteractionModeTypes.Solving))
+                    .Factor(FuzzyInteractionModeTypes.Learning)
                         .Then(FuzzyExpectationFactorTypes.NegativeFeedback);
 
             FuzzyObject<FuzzyExpectationFactorTypes> resultOfNegativeSolvingPlausibility =
                 If(FuzzyPlausibilityOfNegativeFeedbackTypes.SolvingPlausibility)
-                    .And(Not(FuzzyInteractionModeTypes.Learning))
+                    .Factor(Not(FuzzyInteractionModeTypes.Learning))
                         .Then(FuzzyExpectationFactorTypes.NegativeFeedback);
 
             _expectionFactorConditionResults.Clear();
@@ -98,11 +98,6 @@ namespace FillAPixRobot
             _conditionResults.Add(resultOfPositiveSolvingPlausibility.NeutralType());
             _conditionResults.Add(resultOfNegativeLearningPlausibility.NeutralType());
             _conditionResults.Add(resultOfNegativeSolvingPlausibility.NeutralType());
-
-            //AddDegree(resultOfPositiveLearningPlausibility.Value, resultOfPositiveLearningPlausibility.Degree);
-            //AddDegree(resultOfPositiveSolvingPlausibility.Value, resultOfPositiveSolvingPlausibility.Degree);
-            //AddDegree(resultOfNegativeLearningPlausibility.Value, resultOfNegativeLearningPlausibility.Degree);
-            //AddDegree(resultOfNegativeSolvingPlausibility.Value, resultOfNegativeSolvingPlausibility.Degree);
 
             // -------------------------------------------------------------------------------------
 
@@ -132,31 +127,22 @@ namespace FillAPixRobot
             // -------------------------------------------------------------------------------------
 
             var degreesOfType = new Dictionary<FuzzyExpectationFactorTypes, double>();
-            //var countsOfType = new Dictionary<FuzzyExpectationFactorTypes, int>();
             foreach (FuzzyObject<FuzzyExpectationFactorTypes> conditionResult in _expectionFactorConditionResults)
             {
                 double degree = conditionResult.Degree;
                 if (degreesOfType.ContainsKey(conditionResult.Value))
                 {
-                    degreesOfType[conditionResult.Value] = Math.Max(degreesOfType[conditionResult.Value], degree);
-                    //countsOfType[conditionResult.Value]++;
+                    degreesOfType[conditionResult.Value] += degree;
                 }
                 else
                 {
                     degreesOfType.Add(conditionResult.Value, degree);
-                    //countsOfType.Add(conditionResult.Value, 1);
                 }
             }
             foreach(var degreeOfType in degreesOfType)
             {
-                var degree = degreeOfType.Value /*/ countsOfType[degreeOfType.Key]*/;
+                var degree = degreeOfType.Value;
                 AddDegree(degreeOfType.Key, degree);
-                double value = GetValueByFuzzyDegree(degreeOfType.Key, degree);
-                if (double.IsNaN(value))
-                {
-                    continue;
-                }
-                SetValue<FuzzyExpectationFactorTypes>(result);
             }
         }
     }

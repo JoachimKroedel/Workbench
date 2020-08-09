@@ -246,18 +246,15 @@ namespace FillAPixRobot
                 var percentagePositive = (double)_actionFeedbackHistory.Count(e => e > 0) / _actionFeedbackHistory.Count;
                 var percentageNegative = (double)_actionFeedbackHistory.Count(e => e < 0) / _actionFeedbackHistory.Count;
                 var percentageNeutral = (double)_actionFeedbackHistory.Count(e => e == 0) / _actionFeedbackHistory.Count;
-                //Console.WriteLine($"percentagePositive={percentagePositive}, percentageNegative={percentageNegative}, percentageNeutral={percentageNeutral}");
 
                 _fillAPixFuzzyLogic.SetValue<FuzzyPositiveHistoryTypes>(percentagePositive);
                 _fillAPixFuzzyLogic.SetValue<FuzzyErrorHistoryTypes>(percentageNegative);
                 _fillAPixFuzzyLogic.SetValue<FuzzyNeutralHistoryTypes>(percentageNeutral);
 
                 _fillAPixFuzzyLogic.CalculateOutput();
-                // ToDo: Use result of fuzzy logic!!!
                 double learningDegree = _fillAPixFuzzyLogic.GetDegree(FuzzyInteractionModeTypes.Learning);
                 double solvingDegree = _fillAPixFuzzyLogic.GetDegree(FuzzyInteractionModeTypes.Solving);
                 double hundredPercent = learningDegree + solvingDegree;
-                //Console.WriteLine($"learningDegree={learningDegree}, solvingDegree={solvingDegree}, hundredPercent={hundredPercent}");
                 if (hundredPercent > 0)
                 {
                     PercentageSolving = solvingDegree / hundredPercent * 100;
@@ -358,7 +355,13 @@ namespace FillAPixRobot
         {
             _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfPositiveFeedbackTypes>(positiveFeedback);
             _fillAPixFuzzyLogic.CalculateOutput();
+            // ToDo Add GetValue() instead of GetDegree(). Needs additional implementation in Defuzzification 
             double expectationPositiveFactor = _fillAPixFuzzyLogic.GetDegree(FuzzyExpectationFactorTypes.PositiveFeedback);
+            double diff = expectationPositiveFactor - positiveFeedback;
+            if (Math.Abs(diff) > 0.001)
+            {
+                Console.WriteLine("Positive --> GetFuzzyDegreeByPositiveFeedback different input output! " + diff);
+            }
             return expectationPositiveFactor;
         }
 
@@ -366,7 +369,13 @@ namespace FillAPixRobot
         {
             _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfNegativeFeedbackTypes>(negativeFeedback);
             _fillAPixFuzzyLogic.CalculateOutput();
+            // ToDo Add GetValue() instead of GetDegree(). Needs additional implementation in Defuzzification 
             double expectationNegativeFactor = _fillAPixFuzzyLogic.GetDegree(FuzzyExpectationFactorTypes.NegativeFeedback);
+            double diff = expectationNegativeFactor - negativeFeedback;
+            if (Math.Abs(diff) > 0.001)
+            {
+                Console.WriteLine("Negative --> GetFuzzyDegreeByPositiveFeedback different input output! " + diff);
+            }
             return expectationNegativeFactor;
         }
 
@@ -399,6 +408,5 @@ namespace FillAPixRobot
         {
             ActionWanted?.Invoke(this, new ActionWantedEventArgs(action));
         }
-
     }
 }

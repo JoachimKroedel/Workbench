@@ -18,5 +18,6 @@ namespace FuzzyLogic
         double GetOrDegree(FuzzyObject<Enum> objectA, FuzzyObject<Enum> objectB);
         double GetOrDegree(Enum enumTypeA, Enum enumTypeB);
         double GetOrDegree(double degreeA, double degreeB);
+        double GetFactorDegree(double degreeA, double degreeB);
     }
 }

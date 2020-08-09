@@ -33,8 +33,8 @@ namespace FuzzyLogic
                 return new FuzzyObject<Enum>();
             }
             double otherDegree = fuzzyObject.Degree;
-            double andDegree = _fuzzyLogic.GetAndDegree(Degree, otherDegree);
-            return new FuzzyObject<Enum>(Value, andDegree, _fuzzyLogic);
+            double resultDegree = _fuzzyLogic.GetAndDegree(Degree, otherDegree);
+            return new FuzzyObject<Enum>(Value, resultDegree, _fuzzyLogic);
         }
 
         public FuzzyObject<Enum> And(Enum value)
@@ -44,8 +44,8 @@ namespace FuzzyLogic
                 return new FuzzyObject<Enum>();
             }
             double otherDegree = _fuzzyLogic.GetDegree(value);
-            double andDegree = _fuzzyLogic.GetAndDegree(Degree, otherDegree);
-            return new FuzzyObject<Enum>(Value, andDegree, _fuzzyLogic);
+            double resultDegree = _fuzzyLogic.GetAndDegree(Degree, otherDegree);
+            return new FuzzyObject<Enum>(Value, resultDegree, _fuzzyLogic);
         }
 
         public FuzzyObject<Enum> Or<RT>(FuzzyObject<RT> fuzzyObject) where RT : Enum
@@ -55,8 +55,8 @@ namespace FuzzyLogic
                 return new FuzzyObject<Enum>();
             }
             double otherDegree = fuzzyObject.Degree;
-            double orDegree = _fuzzyLogic.GetOrDegree(Degree, otherDegree);
-            return new FuzzyObject<Enum>(Value, orDegree, _fuzzyLogic);
+            double resultDegree = _fuzzyLogic.GetOrDegree(Degree, otherDegree);
+            return new FuzzyObject<Enum>(Value, resultDegree, _fuzzyLogic);
         }
 
         public FuzzyObject<Enum> Or(Enum value)
@@ -66,8 +66,30 @@ namespace FuzzyLogic
                 return new FuzzyObject<Enum>();
             }
             double otherDegree = _fuzzyLogic.GetDegree(value);
-            double orDegree = _fuzzyLogic.GetOrDegree(Degree, otherDegree);
-            return new FuzzyObject<Enum>(Value, orDegree, _fuzzyLogic);
+            double resultDegree = _fuzzyLogic.GetOrDegree(Degree, otherDegree);
+            return new FuzzyObject<Enum>(Value, resultDegree, _fuzzyLogic);
+        }
+
+        public FuzzyObject<Enum> Factor<RT>(FuzzyObject<RT> fuzzyObject) where RT : Enum
+        {
+            if (_fuzzyLogic == null)
+            {
+                return new FuzzyObject<Enum>();
+            }
+            double otherDegree = fuzzyObject.Degree;
+            double resultDegree = _fuzzyLogic.GetFactorDegree(Degree, otherDegree);
+            return new FuzzyObject<Enum>(Value, resultDegree, _fuzzyLogic);
+        }
+
+        public FuzzyObject<Enum> Factor(Enum value)
+        {
+            if (_fuzzyLogic == null)
+            {
+                return new FuzzyObject<Enum>();
+            }
+            double otherDegree = _fuzzyLogic.GetDegree(value);
+            double resultDegree = _fuzzyLogic.GetFactorDegree(Degree, otherDegree);
+            return new FuzzyObject<Enum>(Value, resultDegree, _fuzzyLogic);
         }
 
         public FuzzyObject<Enum> NeutralType()
