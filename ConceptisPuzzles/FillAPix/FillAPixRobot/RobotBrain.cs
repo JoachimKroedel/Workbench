@@ -355,8 +355,7 @@ namespace FillAPixRobot
         {
             _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfPositiveFeedbackTypes>(positiveFeedback);
             _fillAPixFuzzyLogic.CalculateOutput();
-            // ToDo Add GetValue() instead of GetDegree(). Needs additional implementation in Defuzzification 
-            double expectationPositiveFactor = _fillAPixFuzzyLogic.GetDegree(FuzzyExpectationFactorTypes.PositiveFeedback);
+            double expectationPositiveFactor = _fillAPixFuzzyLogic.GetValue(FuzzyExpectationFactorTypes.PositiveFeedback);
             double diff = expectationPositiveFactor - positiveFeedback;
             if (Math.Abs(diff) > 0.001)
             {
@@ -369,8 +368,7 @@ namespace FillAPixRobot
         {
             _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfNegativeFeedbackTypes>(negativeFeedback);
             _fillAPixFuzzyLogic.CalculateOutput();
-            // ToDo Add GetValue() instead of GetDegree(). Needs additional implementation in Defuzzification 
-            double expectationNegativeFactor = _fillAPixFuzzyLogic.GetDegree(FuzzyExpectationFactorTypes.NegativeFeedback);
+            double expectationNegativeFactor = _fillAPixFuzzyLogic.GetValue(FuzzyExpectationFactorTypes.NegativeFeedback);
             double diff = expectationNegativeFactor - negativeFeedback;
             if (Math.Abs(diff) > 0.001)
             {

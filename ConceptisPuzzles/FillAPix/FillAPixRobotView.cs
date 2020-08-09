@@ -569,6 +569,12 @@ namespace ConceptisPuzzles.Robot
 
         private void RobotBrain_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (InvokeRequired)
+            {
+                MethodInvoker del = delegate {RobotBrain_PropertyChanged(this, e);};
+                Invoke(del);
+                return;
+            }
             if (_simulationRunsInBackground)
             {
                 return;
@@ -716,6 +722,13 @@ namespace ConceptisPuzzles.Robot
             }
             else if(_puzzleBoard.IsComplete())
             {
+                if (_simulationRunsInBackground || _timer.Enabled)
+                {
+                    _timer.Enabled = false;
+                    _cancellationTokenSource.Cancel();
+                    _simulationRunsInBackground = false;
+                }
+
                 _cbxRunInterations.Checked = false;
                 MessageBox.Show("Puzzle solved!!!", "Robot");
             }

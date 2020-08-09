@@ -7,6 +7,8 @@ namespace FuzzyLogic
         void CalculateOutput();
 
         void SetValue<T>(double value) where T : Enum;
+        void SetValue(Type typeOfEnum, double value);
+        double GetValue(Enum enumType);
 
         void AddDegree(Enum key, double degree);
 

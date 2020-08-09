@@ -53,6 +53,16 @@ namespace FuzzyLogic
             }
         }
 
+        public double GetValue(Enum enumType)
+        {
+            double degree = GetDegree(enumType);
+            if (double.IsNaN(degree))
+            {
+                return 0.0;
+            }
+            return GetValueByFuzzyDegree(enumType, degree);
+        }
+
         public virtual double GetDegree(Enum enumType)
         {
             if (_fuzzyDegrees.ContainsKey(enumType))
@@ -116,9 +126,9 @@ namespace FuzzyLogic
             return degreeA * degreeB;
         }
 
-        public double GetValueByFuzzyDegree<T>(T learningModeType, double degree) where T : Enum
+        public double GetValueByFuzzyDegree<T>(T enumType, double degree) where T : Enum
         {
-            KeyValuePair<Enum, IList<Point>> pointsOfEnum = _fuzzyCurvePoints.FirstOrDefault(p => p.Key.Equals(learningModeType));
+            KeyValuePair<Enum, IList<Point>> pointsOfEnum = _fuzzyCurvePoints.FirstOrDefault(p => p.Key.Equals(enumType));
             return GetValueByFuzzyDegree(pointsOfEnum.Value, degree);
         }
 
