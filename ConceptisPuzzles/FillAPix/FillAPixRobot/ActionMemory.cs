@@ -50,11 +50,27 @@ namespace FillAPixRobot
         public int CallCount { get { return DifferenceCount + NoDifferenceCount; } }
         public int DifferenceCount { get; private set; }
         public int NoDifferenceCount { get; private set; }
-        public double NegProcentualNoDifference { get { return 1.0 - (double)NoDifferenceCount / Math.Max(MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN, CallCount); } }
+        public double NegProcentualNoDifference 
+        { 
+            get 
+            { 
+                return 1.0 - (double)NoDifferenceCount / Math.Max(MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN, CallCount); 
+            } 
+        }
 
         public int PositiveFeedbackCount { get; private set; }
         public int NegativeFeedbackCount { get; private set; }
-        public double NegProcentualNegativeFeedback { get { return 1.0 - (double)NegativeFeedbackCount / Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_PATTERN, PositiveFeedbackCount + NegativeFeedbackCount); } }
+        public double NegProcentualNegativeFeedback 
+        { 
+            get
+            { 
+                if (PositiveFeedbackCount + NegativeFeedbackCount == 0)
+                {
+                    return 0;
+                }
+                return 1.0 - (double)NegativeFeedbackCount / Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_PATTERN, PositiveFeedbackCount + NegativeFeedbackCount); 
+            } 
+        }
 
         public Dictionary<ISensoryUnit, int> DifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
         public Dictionary<ISensoryUnit, int> NoDifferentUnits { get; } = new Dictionary<ISensoryUnit, int>();
@@ -168,6 +184,9 @@ namespace FillAPixRobot
                 {
                     if (GetNoDifferencePattern(fieldOfVision).ContainsKey(pattern))
                     {
+                        var xxx = GetNoDifferencePattern(fieldOfVision);
+                        var yyy = xxx[pattern];
+                        var zzz = (double)yyy / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
                         double posibilityForDifference = 1.0 - (double)GetNoDifferencePattern(fieldOfVision)[pattern] / MINIMUM_PATTERN_NO_DIFFERENT_COUNT;
                         result = Math.Min(result, posibilityForDifference);
                     }

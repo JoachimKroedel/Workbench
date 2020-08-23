@@ -37,6 +37,7 @@
             this._btnStatisticForm = new System.Windows.Forms.Button();
             this._cbxTypeOfRobot = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this._cbxFindBest = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this._cbxBehaviourOnError = new System.Windows.Forms.ComboBox();
@@ -155,7 +156,7 @@
             this._gbxRobot.Enabled = false;
             this._gbxRobot.Location = new System.Drawing.Point(3, 3);
             this._gbxRobot.Name = "_gbxRobot";
-            this._gbxRobot.Size = new System.Drawing.Size(343, 468);
+            this._gbxRobot.Size = new System.Drawing.Size(343, 452);
             this._gbxRobot.TabIndex = 19;
             this._gbxRobot.TabStop = false;
             this._gbxRobot.Text = "Robot";
@@ -172,7 +173,7 @@
             // _btnStatisticForm
             // 
             this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._btnStatisticForm.Location = new System.Drawing.Point(0, 439);
+            this._btnStatisticForm.Location = new System.Drawing.Point(0, 422);
             this._btnStatisticForm.Name = "_btnStatisticForm";
             this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
             this._btnStatisticForm.TabIndex = 26;
@@ -200,6 +201,7 @@
             // 
             this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this._cbxFindBest);
             this.groupBox4.Controls.Add(this.label5);
             this.groupBox4.Controls.Add(this.label7);
             this.groupBox4.Controls.Add(this._cbxBehaviourOnError);
@@ -215,15 +217,28 @@
             this.groupBox4.Controls.Add(this._btnMarkAsFilled);
             this.groupBox4.Location = new System.Drawing.Point(9, 232);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(317, 202);
+            this.groupBox4.Size = new System.Drawing.Size(317, 184);
             this.groupBox4.TabIndex = 16;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Action";
             // 
+            // _cbxFindBest
+            // 
+            this._cbxFindBest.Appearance = System.Windows.Forms.Appearance.Button;
+            this._cbxFindBest.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this._cbxFindBest.Location = new System.Drawing.Point(210, 100);
+            this._cbxFindBest.Name = "_cbxFindBest";
+            this._cbxFindBest.Size = new System.Drawing.Size(100, 23);
+            this._cbxFindBest.TabIndex = 35;
+            this._cbxFindBest.Text = "Find Best";
+            this._cbxFindBest.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this._cbxFindBest.UseVisualStyleBackColor = true;
+            this._cbxFindBest.CheckedChanged += new System.EventHandler(this.CbxFindBest_CheckedChanged);
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(149, 154);
+            this.label5.Location = new System.Drawing.Point(149, 161);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(27, 13);
             this.label5.TabIndex = 34;
@@ -232,7 +247,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(278, 154);
+            this.label7.Location = new System.Drawing.Point(278, 161);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(34, 13);
             this.label7.TabIndex = 33;
@@ -246,15 +261,15 @@
             "Nothing",
             "Undo",
             "Reset"});
-            this._cbxBehaviourOnError.Location = new System.Drawing.Point(163, 69);
+            this._cbxBehaviourOnError.Location = new System.Drawing.Point(188, 69);
             this._cbxBehaviourOnError.Name = "_cbxBehaviourOnError";
-            this._cbxBehaviourOnError.Size = new System.Drawing.Size(148, 21);
+            this._cbxBehaviourOnError.Size = new System.Drawing.Size(123, 21);
             this._cbxBehaviourOnError.TabIndex = 18;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 154);
+            this.label2.Location = new System.Drawing.Point(6, 161);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(34, 13);
             this.label2.TabIndex = 30;
@@ -264,18 +279,18 @@
             // 
             this._cbxRunInterations.Appearance = System.Windows.Forms.Appearance.Button;
             this._cbxRunInterations.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this._cbxRunInterations.Location = new System.Drawing.Point(81, 96);
+            this._cbxRunInterations.Location = new System.Drawing.Point(91, 100);
             this._cbxRunInterations.Name = "_cbxRunInterations";
-            this._cbxRunInterations.Size = new System.Drawing.Size(100, 20);
+            this._cbxRunInterations.Size = new System.Drawing.Size(100, 23);
             this._cbxRunInterations.TabIndex = 17;
-            this._cbxRunInterations.Text = "Play Simulation";
+            this._cbxRunInterations.Text = "Learning";
             this._cbxRunInterations.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this._cbxRunInterations.UseVisualStyleBackColor = true;
             this._cbxRunInterations.CheckedChanged += new System.EventHandler(this.ChbRunInterations_CheckedChanged);
             // 
             // _tbrSolvingPercentage
             // 
-            this._tbrSolvingPercentage.Location = new System.Drawing.Point(9, 122);
+            this._tbrSolvingPercentage.Location = new System.Drawing.Point(9, 129);
             this._tbrSolvingPercentage.Maximum = 100;
             this._tbrSolvingPercentage.Name = "_tbrSolvingPercentage";
             this._tbrSolvingPercentage.Size = new System.Drawing.Size(302, 45);
@@ -285,7 +300,7 @@
             // 
             // _nudRemainigIterationCount
             // 
-            this._nudRemainigIterationCount.Location = new System.Drawing.Point(9, 96);
+            this._nudRemainigIterationCount.Location = new System.Drawing.Point(9, 103);
             this._nudRemainigIterationCount.Maximum = new decimal(new int[] {
             500000,
             0,
@@ -713,5 +728,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TrackBar _tbrSolvingPercentage;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox _cbxFindBest;
     }
 }

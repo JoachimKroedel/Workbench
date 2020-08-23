@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
-
 using FillAPixEngine;
 using FillAPixRobot.Enums;
 using FillAPixRobot.Interfaces;
@@ -189,7 +188,7 @@ namespace FillAPixRobot
             _lastSensationSnapshot = new SensationSnapshot(DirectionTypes.Center, fieldOfVisionType, sensoryPatterns, IS_SAVEABLE_SNAPSHOT);
         }
 
-        public void DoSomething()
+        public void TryToLearn()
         {
             ActionFeedback = 0;
 
@@ -231,7 +230,34 @@ namespace FillAPixRobot
             }
         }
 
-        private IPuzzleAction GetDecisionByMemory(ISensationSnapshot snapshot)
+        public IActionMemoryQuartet FindBestActionMemoryQuartet(Point position)
+        {
+            Position = position;
+            // Look around at special position
+            RaiseExperienceWanted();
+            ISensationSnapshot sensationSnapshotBeforeAction = _lastSensationSnapshot;
+
+            IActionMemoryQuartet bestActionMemoryQuartet = GetBestActionMemoryQuartet(position, sensationSnapshotBeforeAction);
+            return bestActionMemoryQuartet;
+        }
+
+        private IActionMemoryQuartet GetBestActionMemoryQuartet(Point position, ISensationSnapshot snapshot)
+        {
+            // ToDo JK: Find all possible actions for that snapshot
+            Dictionary<IPuzzleAction, IActionMemoryQuartet> rangeOfActions = GetRangeOfActions(position, snapshot);
+
+            if (rangeOfActions.Any())
+            {
+                // ToDo JK: Use FUZZY to choose the best action???
+                var orderdByStepSizeActions = rangeOfActions.OrderBy(s => s.Value.StepSize);
+                KeyValuePair<IPuzzleAction, IActionMemoryQuartet> bestEntry = orderdByStepSizeActions.LastOrDefault();
+                return bestEntry.Value;
+            }
+
+            return null;
+        }
+
+        private Dictionary<IPuzzleAction, IActionMemoryQuartet> GetRangeOfActions(Point position, ISensationSnapshot snapshot)
         {
             double sumeOfPosibilityForDifference = 0.0;
             double sumeOfPosibilityForPositiveFeedback = 0.0;
@@ -240,6 +266,105 @@ namespace FillAPixRobot
             Dictionary<IPuzzleAction, double> posibilityForPositiveFeedbackByAction = new Dictionary<IPuzzleAction, double>();
             Dictionary<IPuzzleAction, double> posibilityForNegativeFeedbackByAction = new Dictionary<IPuzzleAction, double>();
 
+            foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
+            {
+                if (actionMemory.Action.Type.Equals(ActionTypes.Move))
+                {
+
+                }
+                if (position.Equals(new Point(0,8)))
+                {
+
+                }
+                var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(snapshot);
+                double posibilityForDifference = Math.Min(actionMemory.NegProcentualNoDifference, percentageForDifferenceByActualSnapshot);
+                sumeOfPosibilityForDifference += posibilityForDifference;
+                posibilityForDifferencesByAction.Add(actionMemory.Action, posibilityForDifference);
+
+                if (posibilityForDifference > 0.0)
+                {
+                    //if (actionMemory.PositiveFeedbackCount > 0)
+                    {
+                        double positiveFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
+                        positiveFeedback = Math.Max(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
+                        double positiveFeedbackByUnitCount = Math.Min(1.0, actionMemory.CheckForPositiveFeedbackUnitCount(snapshot));
+                        positiveFeedback = Math.Max(positiveFeedback, positiveFeedbackByUnitCount);
+                        double positiveFuzzyDegree = GetFuzzyDegreeByPositiveFeedback(positiveFeedback);
+
+                        //if (positiveFuzzyDegree > 0.0)
+                        {
+                            sumeOfPosibilityForPositiveFeedback += positiveFuzzyDegree;
+                            posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFuzzyDegree);
+                        }
+                    }
+
+                    //if (actionMemory.NegativeFeedbackCount > 0)
+                    {
+                        double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
+                        double negativeFeedbackByPattern = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(snapshot));
+                        negativeFeedback = Math.Max(negativeFeedback, negativeFeedbackByPattern);
+                        double negativeFeedbackByUnitCount = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackUnitCount(snapshot));
+                        negativeFeedback = Math.Max(negativeFeedback, negativeFeedbackByUnitCount);
+
+                        double negativeFuzzyDegree = GetFuzzyDegreeByNegativeFeedback(negativeFeedback);
+
+                        //if (negativeFuzzyDegree > 0.0)
+                        {
+                            sumeOfPosibilityForNegativeFeedback += negativeFuzzyDegree;
+                            posibilityForNegativeFeedbackByAction.Add(actionMemory.Action, negativeFuzzyDegree);
+                        }
+                    }
+                }
+            }
+
+            var rangeOfActions = new Dictionary<IPuzzleAction, IActionMemoryQuartet>();
+            double rangeSize = 0.0;
+
+            foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
+            {
+                IPuzzleAction action = actionMemory.Action;
+                IActionMemoryQuartet memoryQuartet = new ActionMemoryQuartet(action);
+                if (posibilityForDifferencesByAction.ContainsKey(action))
+                {
+                    memoryQuartet.Difference = posibilityForDifferencesByAction[action];
+                }
+                if (posibilityForPositiveFeedbackByAction.ContainsKey(action))
+                {
+                    memoryQuartet.PositiveFeedback = posibilityForPositiveFeedbackByAction[action];
+                }
+                if (posibilityForNegativeFeedbackByAction.ContainsKey(action))
+                {
+                    memoryQuartet.NegativeFeedback = posibilityForNegativeFeedbackByAction[action];
+                }
+                var xxx = Math.Min(memoryQuartet.PositiveFeedback, 1.0 - memoryQuartet.NegativeFeedback);
+                var stepSize = memoryQuartet.StepSize;
+                if (stepSize > 0.0)
+                {
+                    rangeSize += stepSize;
+                    rangeOfActions.Add(action, memoryQuartet);
+                }
+            }
+
+            if (!rangeOfActions.Any())
+            {
+                rangeSize = sumeOfPosibilityForDifference;
+                foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
+                {
+                    IActionMemoryQuartet memoryQuartet = new ActionMemoryQuartet(actionMemory.Action);
+                    memoryQuartet.Difference = posibilityForDifferencesByAction[actionMemory.Action];
+                    rangeOfActions.Add(actionMemory.Action, memoryQuartet);
+                }
+            }
+
+            foreach (var sizeInRange in rangeOfActions)
+            {
+                sizeInRange.Value.RangeSize = rangeSize;
+            }
+            return rangeOfActions;
+        }
+
+        private IPuzzleAction GetDecisionByMemory(ISensationSnapshot snapshot)
+        {
             // FUZZY-Logic: Entscheiden welcher Modus aktiv sein sollte
             if (_actionFeedbackHistory.Any())
             {
@@ -261,90 +386,14 @@ namespace FillAPixRobot
                 }
             }
 
-
-            foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
-            {
-                var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(snapshot);
-                double posibilityForDifference = Math.Min(actionMemory.NegProcentualNoDifference, percentageForDifferenceByActualSnapshot);
-                sumeOfPosibilityForDifference += posibilityForDifference;
-                posibilityForDifferencesByAction.Add(actionMemory.Action, posibilityForDifference);
-
-                if (posibilityForDifference > 0.0)
-                {
-                    double positiveFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
-                    positiveFeedback = Math.Max(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
-                    double positiveFeedbackByUnitCount = Math.Min(1.0, actionMemory.CheckForPositiveFeedbackUnitCount(snapshot));
-                    positiveFeedback = Math.Max(positiveFeedback, positiveFeedbackByUnitCount);
-                    double positiveFuzzyDegree = GetFuzzyDegreeByPositiveFeedback(positiveFeedback);
-
-                    if (positiveFuzzyDegree > 0.0)
-                    {
-                        sumeOfPosibilityForPositiveFeedback += positiveFuzzyDegree;
-                        posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFuzzyDegree);
-                    }
-
-                    double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
-                    double negativeFeedbackByPattern = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(snapshot));
-                    negativeFeedback = Math.Max(negativeFeedback, negativeFeedbackByPattern);
-                    double negativeFeedbackByUnitCount = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackUnitCount(snapshot));
-                    negativeFeedback = Math.Max(negativeFeedback, negativeFeedbackByUnitCount);
-
-                    double negativeFuzzyDegree = GetFuzzyDegreeByNegativeFeedback(negativeFeedback);
-
-                    if (negativeFuzzyDegree > 0.0)
-                    {
-                        sumeOfPosibilityForNegativeFeedback += negativeFuzzyDegree;
-                        posibilityForNegativeFeedbackByAction.Add(actionMemory.Action, negativeFuzzyDegree);
-                    }
-                }
-            }
-
             double positionInRangeByRandom = _random.NextDouble();
-            Dictionary<IPuzzleAction, double> rangeOfActions = new Dictionary<IPuzzleAction, double>();
-            double rangeSize = 0.0;
-
-            foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
+            Dictionary<IPuzzleAction, IActionMemoryQuartet> rangeOfActions = GetRangeOfActions(Position, snapshot);
+            foreach (var rangeOfAction in rangeOfActions)
             {
-                double posibilityOfDifference = 1.0;
-                if (posibilityForDifferencesByAction.ContainsKey(actionMemory.Action))
+                var stepSize = rangeOfAction.Value.StepSize;
+                if (stepSize  >= positionInRangeByRandom)
                 {
-                    posibilityOfDifference = posibilityForDifferencesByAction[actionMemory.Action];
-                }
-                double positiveFeedback = 0.0;
-                if (posibilityForPositiveFeedbackByAction.ContainsKey(actionMemory.Action))
-                {
-                    positiveFeedback = posibilityForPositiveFeedbackByAction[actionMemory.Action];
-                }
-                double negativeFeedback = 0.0;
-                if (posibilityForNegativeFeedbackByAction.ContainsKey(actionMemory.Action))
-                {
-                    negativeFeedback = posibilityForNegativeFeedbackByAction[actionMemory.Action];
-                }
-                double stepSize = posibilityOfDifference * (1.0 + positiveFeedback) * (1.0 - negativeFeedback);
-
-                if (stepSize > 0.0)
-                {
-                    rangeSize += stepSize;
-                    rangeOfActions.Add(actionMemory.Action, stepSize);
-                }
-            }
-
-            if (!rangeOfActions.Any())
-            {
-                rangeSize = sumeOfPosibilityForDifference;
-                foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
-                {
-                    double posibilityForDifference = posibilityForDifferencesByAction[actionMemory.Action];
-                    rangeOfActions.Add(actionMemory.Action, posibilityForDifference);
-                }
-            }
-
-            foreach (var sizeInRange in rangeOfActions)
-            {
-                double stepSize = sizeInRange.Value / rangeSize;
-                if (stepSize >= positionInRangeByRandom)
-                {
-                    return sizeInRange.Key;
+                    return rangeOfAction.Key;
                 }
                 positionInRangeByRandom -= stepSize;
             }
@@ -353,6 +402,8 @@ namespace FillAPixRobot
 
         private double GetFuzzyDegreeByPositiveFeedback(double positiveFeedback)
         {
+            // ToDo Deactivate FUZZY if useful
+            return positiveFeedback;
             _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfPositiveFeedbackTypes>(positiveFeedback);
             _fillAPixFuzzyLogic.CalculateOutput();
             double expectationPositiveFactor = _fillAPixFuzzyLogic.GetValue(FuzzyExpectationFactorTypes.PositiveFeedback);
@@ -366,6 +417,8 @@ namespace FillAPixRobot
 
         private double GetFuzzyDegreeByNegativeFeedback(double negativeFeedback)
         {
+            // ToDo Deactivate FUZZY if useful
+            return negativeFeedback;
             _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfNegativeFeedbackTypes>(negativeFeedback);
             _fillAPixFuzzyLogic.CalculateOutput();
             double expectationNegativeFactor = _fillAPixFuzzyLogic.GetValue(FuzzyExpectationFactorTypes.NegativeFeedback);

@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionMemory.cs" />
+    <Compile Include="ActionMemoryQuartet.cs" />
     <Compile Include="ActionWantedEventArgs.cs" />
     <Compile Include="Enums\DirectionTypes.cs" />
     <Compile Include="Enums\FieldOfVisionTypes.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Enums\FuzzyPlausibilityOfOositiveFeedbackTypes.cs" />
     <Compile Include="Enums\FuzzyPositiveHistoryTypes.cs" />
     <Compile Include="FillAPixFuzzyLogic.cs" />
+    <Compile Include="IActionMemoryQuartet.cs" />
     <Compile Include="PuzzleAction.cs" />
     <Compile Include="Enums\ActionTypes.cs" />
     <Compile Include="PuzzleReferee.cs" />

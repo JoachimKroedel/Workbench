@@ -22,7 +22,7 @@ namespace FillAPixRobot
             _fuzzyCurvePoints.Add(FuzzyNeutralHistoryTypes.NoNeutrals,   new List<Point>() { new Point(0.0, 1.0), new Point(0.2, 0.0) });
             _fuzzyCurvePoints.Add(FuzzyNeutralHistoryTypes.MuchNeutrals, new List<Point>() { new Point(0.0, 0.4), new Point(1.0, 1.0) });
 
-            _fuzzyCurvePoints.Add(FuzzyInteractionModeTypes.Solving, new List<Point>() { new Point(0.0, 1.0), new Point(1.0, 0.0) });
+            _fuzzyCurvePoints.Add(FuzzyInteractionModeTypes.Solving, new List<Point>() {   new Point(0.0, 1.0), new Point(1.0, 0.0) });
             _fuzzyCurvePoints.Add(FuzzyInteractionModeTypes.Learning,  new List<Point>() { new Point(0.0, 0.0), new Point(1.0, 1.0) });
 
 
@@ -45,13 +45,13 @@ namespace FillAPixRobot
 
             FuzzyObject<FuzzyInteractionModeTypes> resultOfNoErrorsAndMuchPositves =
                 If(FuzzyErrorHistoryTypes.NoErrors)
-                    .And(FuzzyPositiveHistoryTypes.MuchPositives)
+                    //.And(FuzzyPositiveHistoryTypes.MuchPositives)
                         .Then(FuzzyInteractionModeTypes.Solving);
 
             FuzzyObject<FuzzyInteractionModeTypes> resultOfMuchErrorsOrNoPositivesOrMuchNeutrals =
                 If(FuzzyErrorHistoryTypes.MuchErrors)
-                    .Or(FuzzyPositiveHistoryTypes.NoPositives)
-                        .Or(FuzzyNeutralHistoryTypes.MuchNeutrals)
+                    //.Or(FuzzyPositiveHistoryTypes.NoPositives)
+                        //.Or(FuzzyNeutralHistoryTypes.MuchNeutrals)
                             .Then(FuzzyInteractionModeTypes.Learning);
 
             _learningModeConditionResults.Clear();

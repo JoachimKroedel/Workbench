@@ -13,6 +13,16 @@ namespace ConceptisPuzzles.Robot
 {
     public partial class FillAPixRobotView : Form
     {
+        private enum PlayMode
+        {
+            Pause,
+            PlaySimulation,
+            RunInBackGround,
+            FindBest
+        }
+
+        private PlayMode _playMode = PlayMode.Pause;
+
         private PuzzleBoard _puzzleBoard = null;
         private RobotBrain _robotBrain;
         private PuzzleReferee _puzzleReferee;
@@ -640,7 +650,7 @@ namespace ConceptisPuzzles.Robot
                 {
                     _robotBrain.ActionFeedback += 100;
                 }
-                else if(stateChangeCount > 0)
+                else if (stateChangeCount > 0)
                 {
                     _robotBrain.ActionFeedback += stateChangeCount;
                 }
@@ -655,6 +665,10 @@ namespace ConceptisPuzzles.Robot
 
         private bool CheckIfTimerShouldBeActive()
         {
+            if (_playMode.Equals(PlayMode.FindBest))
+            {
+                return true;
+            }
             if ((_cbxRunInterations.Checked || _simulationRunsInBackground) && _nudRemainigIterationCount.Value > _nudRemainigIterationCount.Minimum)
             {
                 return true;
@@ -669,39 +683,100 @@ namespace ConceptisPuzzles.Robot
         {
             if (CheckIfTimerShouldBeActive())
             {
+                _playMode = PlayMode.PlaySimulation;
                 _timer.Interval = 10;
                 _timer.Enabled = true;
             }
             else
             {
+                _playMode = PlayMode.Pause;
                 _timer.Enabled = false;
             }
+        }
+
+        private void CbxFindBest_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_cbxFindBest.Checked)
+            {
+                if (_playMode != PlayMode.Pause)
+                {
+                    _cbxFindBest.Checked = false;
+                }
+                _scanPosition = new Point(0,0);
+                _bestActionMemoryQuartet = null;
+                _playMode = PlayMode.FindBest;
+                _timer.Interval = 10;
+                _timer.Enabled = true;
+            }
+            else
+            {
+                _playMode = PlayMode.Pause;
+            }
+        }
+
+        private Point _scanPosition = new Point(0, 0);
+        private Point _bestPosition = Point.Empty;
+        private IActionMemoryQuartet _bestActionMemoryQuartet = null;
+        private Point GetNextScanPoint(Point position, Size area)
+        {
+            Point result = new Point(position.X + 1, position.Y);
+            if (result.X >= area.Width)
+            {
+                result = new Point(0, result.Y + 1);
+            }
+            if (result.Y >= area.Height)
+            {
+                result = new Point(0, 0);
+            }
+            return result;
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             _timer.Enabled = false;
-            if (_simulationRunsInBackground)
+            if (_playMode.Equals(PlayMode.FindBest))
             {
-                _nudRemainigIterationCount.Value = _backgroundIterations;
-                _tbrSolvingPercentage.Value = (int)_robotBrain.PercentageSolving;
-                RefreshPlayGround();
-                RecreateCells();
+                var bestAction = _robotBrain.FindBestActionMemoryQuartet(_scanPosition);
+                Console.WriteLine($" {_scanPosition} \t--> bestAction: {bestAction}");
+                if (_bestActionMemoryQuartet == null || _bestActionMemoryQuartet.StepSize < bestAction.StepSize)
+                {
+                    _bestActionMemoryQuartet = bestAction;
+                    _bestPosition = _scanPosition;
+                }
+                _scanPosition = GetNextScanPoint(_scanPosition, _puzzleBoard.Size);
+
+                if (_scanPosition.Equals(Point.Empty))
+                {
+                    _robotBrain.Position = _bestPosition;
+                    _cbxDirectionTypes.SelectedItem = _bestActionMemoryQuartet.Action.Direction;
+                    _cbxFindBest.Checked = false;
+                    Console.WriteLine($"Best found for position:\t{_bestPosition} \taction:{_bestActionMemoryQuartet}");
+                }
             }
             else
             {
-                RunOneIteration(_cbxBehaviourOnError.SelectedIndex == 2);
-
-                _nudRemainigIterationCount.Value = _nudRemainigIterationCount.Value - 1;
-                if (_nudRemainigIterationCount.Value <= _nudRemainigIterationCount.Minimum)
+                if (_simulationRunsInBackground)
                 {
-                    _cbxRunInterations.Checked = false;
+                    _nudRemainigIterationCount.Value = _backgroundIterations;
+                    _tbrSolvingPercentage.Value = (int)_robotBrain.PercentageSolving;
+                    RefreshPlayGround();
+                    RecreateCells();
+                }
+                else
+                {
+                    RunOneIteration(_cbxBehaviourOnError.SelectedIndex == 2);
+
+                    _nudRemainigIterationCount.Value -= 1;
+                    if (_nudRemainigIterationCount.Value <= _nudRemainigIterationCount.Minimum)
+                    {
+                        _cbxRunInterations.Checked = false;
+                    }
                 }
             }
             _timer.Enabled = CheckIfTimerShouldBeActive();
         }
 
-        private void RunOneIteration(bool resetOnOrror = true)
+        private bool CheckPuzzle(bool resetOnOrror)
         {
             if (_puzzleBoard.IsWrong())
             {
@@ -710,7 +785,7 @@ namespace ConceptisPuzzles.Robot
                     _puzzleBoard.Reset();
                 }
                 else
-                { 
+                {
                     _puzzleBoard.Undo();
                 }
 
@@ -720,7 +795,7 @@ namespace ConceptisPuzzles.Robot
                     RecreateCells();
                 }
             }
-            else if(_puzzleBoard.IsComplete())
+            else if (_puzzleBoard.IsComplete())
             {
                 if (_simulationRunsInBackground || _timer.Enabled)
                 {
@@ -731,8 +806,17 @@ namespace ConceptisPuzzles.Robot
 
                 _cbxRunInterations.Checked = false;
                 MessageBox.Show("Puzzle solved!!!", "Robot");
+                return false;
             }
-            _robotBrain.DoSomething();
+            return true;
+        }
+
+        private void RunOneIteration(bool resetOnOrror)
+        {
+            if (CheckPuzzle(resetOnOrror))
+            {
+                _robotBrain.TryToLearn();
+            }
         }
 
         private void BtnStatisticForm_Click(object sender, EventArgs e)
@@ -756,6 +840,7 @@ namespace ConceptisPuzzles.Robot
                 return;
             }
 
+            _playMode = PlayMode.RunInBackGround;
             _simulationRunsInBackground = true;
 
             if (!CheckIfTimerShouldBeActive())
@@ -773,6 +858,7 @@ namespace ConceptisPuzzles.Robot
             _gbxRobot.Enabled = true;
 
             _simulationRunsInBackground = false;
+            _playMode = PlayMode.Pause;
         }
 
         private int _backgroundIterations = 0;
@@ -781,7 +867,7 @@ namespace ConceptisPuzzles.Robot
             _backgroundIterations = iterrations;
             while (_backgroundIterations > 0 && !cancellationToken.IsCancellationRequested)
             {
-                RunOneIteration();
+                RunOneIteration(true);
                 _backgroundIterations--;
             }
             return _backgroundIterations;
