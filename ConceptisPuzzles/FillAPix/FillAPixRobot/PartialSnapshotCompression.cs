@@ -169,15 +169,32 @@ namespace FillAPixRobot
             }
             return true;
         }
-        public override string ToString()
-        {
-            // ToDo: ToString depending on CompressionType and size of object
 
+        private string ToUnitString()
+        {
             var output = new StringBuilder();
-            output.Append($"{{ {CompressionType}, {FieldOfVision}, {Direction}");
-            if (SensoryPatternCounts.Any())
+            if (SensoryPatternCounts.Count == 1)
             {
-                output.Append($"\n, Pattern-Count[");
+                var sensoryPattern = SensoryPatternCounts.First().Key;
+                if (sensoryPattern.SensoryUnits.Count == 1)
+                {
+                    var sensoryUnit = sensoryPattern.SensoryUnits.First();
+                    output.Append(sensoryUnit.ToString());
+                }
+                else if (sensoryPattern.SensoryUnits.Any())
+                {
+                    output.Append(" Units[");
+                    foreach(var sensoryUnit in sensoryPattern.SensoryUnits)
+                    {
+                        output.Append($" {sensoryUnit},");
+                    }
+                    output.Remove(output.Length, 1);
+                    output.Append("]");
+                }
+            }
+            else
+            {
+                output.Append($" Pattern-Count[");
                 List<ISensoryPattern> sortedSensoryPatterns = SensoryPatternCounts.Keys.ToList();
                 sortedSensoryPatterns.Sort();
                 foreach (var sensoryPattern in sortedSensoryPatterns)
@@ -186,6 +203,22 @@ namespace FillAPixRobot
                 }
                 output.Remove(output.Length - 1, 1);
                 output.Append($"\n]");
+            }
+
+            return output.ToString();
+        }
+
+        public override string ToString()
+        {
+            var output = new StringBuilder();
+            output.Append($"{{ {CompressionType}, {FieldOfVision}, {Direction}");
+            if (CompressionType == CompressionTypes.Unit)
+            {
+                output.Append(ToUnitString());
+            }
+            else
+            {
+                output.Append($"!!! NOT IMPLEMENTED FOR COMPRESSION TYPE '{CompressionType}' !!!" );
             }
             output.Append("}");
             return output.ToString();
