@@ -26,4 +26,26 @@ namespace FillAPixRobot
             return output.ToString();
         }
     }
+
+    public class SensoryPatternCountContainer
+    {
+        public Dictionary<ISensoryPattern, (int Count, int Negative, int Positive)> PatternCountDictonary { get; }
+        public SensoryPatternCountContainer(Dictionary<ISensoryPattern, (int Count, int Negative, int Positive)> patternCountDictonary)
+        {
+            PatternCountDictonary = patternCountDictonary;
+        }
+
+        public override string ToString()
+        {
+            var output = new StringBuilder();
+            output.Append("{ PatternsDictonary: \n[\n");
+            foreach (var entry in PatternCountDictonary.OrderBy(e => e.Value.Negative + e.Value.Positive))
+            {
+                output.Append($"\t{entry.Key} \t Count: \t {entry.Value.Count} \t Negative: \t {entry.Value.Negative} \t Positive: \t {entry.Value.Positive} \n");
+            }
+            output.Append("]\n}");
+            return output.ToString();
+        }
+    }
+
 }

@@ -20,8 +20,9 @@ namespace FillAPixRobot.Interfaces
         Dictionary<ISensoryUnit, int> DifferentUnits { get; }
         Dictionary<ISensoryUnit, int> NoDifferentUnits { get; }
 
-        Dictionary<ISensoryUnit, int> PositveFeedbackUnits { get; }
-        Dictionary<ISensoryUnit, int> NegativeFeedbackUnits { get; }
+        Dictionary<IPartialSnapshotCompression, int> PositveDictPartialSnapshotCompressions { get; } 
+        Dictionary<IPartialSnapshotCompression, int> NegativeDictPartialSnapshotCompressions { get; }
+
 
         Dictionary<ISensationSnapshot, SensoryUnitCountContainer> NegativeUnitCountContainerDictonary { get; }
         Dictionary<ISensationSnapshot, SensoryUnitCountContainer> RemovedNegativeUnitCountContainerDictonary { get; }
@@ -41,8 +42,8 @@ namespace FillAPixRobot.Interfaces
         double CheckForNotNegativeFeedbackUnitCount(ISensationSnapshot snapshot);
         double CheckForPositiveFeedbackUnitCount(ISensationSnapshot snapshot);
 
-        double GetPositiveFeedbackPercentage(ISensoryUnit unit);
+        double GetPositiveFeedbackPercentage(IPartialSnapshotCompression partialSnapshotCompression);
 
-        double GetNegativeFeedbackPercentage(ISensoryUnit unit);
+        double GetNegativeFeedbackPercentage(IPartialSnapshotCompression partialSnapshotCompression);
     }
 }

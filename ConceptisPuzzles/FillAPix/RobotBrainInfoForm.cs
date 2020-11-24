@@ -77,7 +77,7 @@ namespace ConceptisPuzzles.Robot
                 if (_cbxShowNegativeFeedbackUnits.Checked)
                 {
                     infoText.Append("\t NegativeFeedbackUnits:\n");
-                    foreach (var entry in actionMemory.NegativeFeedbackUnits.OrderByDescending(x => x.Value))
+                    foreach (KeyValuePair<IPartialSnapshotCompression, int> entry in actionMemory.NegativeDictPartialSnapshotCompressions.OrderByDescending(x => x.Value))
                     {
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {actionMemory.GetNegativeFeedbackPercentage(entry.Key)} \n");
                     }
@@ -86,7 +86,7 @@ namespace ConceptisPuzzles.Robot
                 if (_cbxShowPositveFeedbackUnits.Checked)
                 {
                     infoText.Append("\t PositveFeedbackUnits:\n");
-                    foreach (var entry in actionMemory.PositveFeedbackUnits.OrderByDescending(x => x.Value))
+                    foreach (KeyValuePair<IPartialSnapshotCompression, int> entry in actionMemory.PositveDictPartialSnapshotCompressions.OrderByDescending(x => x.Value))
                     {
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {actionMemory.GetPositiveFeedbackPercentage(entry.Key)} \n");
                     }

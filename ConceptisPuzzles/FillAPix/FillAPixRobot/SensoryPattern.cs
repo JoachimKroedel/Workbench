@@ -31,7 +31,7 @@ namespace FillAPixRobot
                 {
                     var splittedSensoryUnits = new List<ISensoryUnit>();
                     splittedSensoryUnits.Add(leftUnit);
-                    ISensoryPattern newEntry = new SensoryPattern(directionType,  splittedSensoryUnits, false);
+                    ISensoryPattern newEntry = new SensoryPattern(directionType, splittedSensoryUnits);
                     result.Add(newEntry);
                 }
             }
@@ -53,7 +53,7 @@ namespace FillAPixRobot
                         var splittedSensoryUnits = new List<ISensoryUnit>();
                         splittedSensoryUnits.Add(leftUnit);
                         splittedSensoryUnits.AddRange(rightPattern.SensoryUnits);
-                        ISensoryPattern newEntry = new SensoryPattern(directionType, splittedSensoryUnits, false);
+                        ISensoryPattern newEntry = new SensoryPattern(directionType, splittedSensoryUnits);
                         result.Add(newEntry);
                     }
                 }
@@ -86,7 +86,7 @@ namespace FillAPixRobot
             }
         }
 
-        public SensoryPattern(DirectionTypes directionType, List<ISensoryUnit> sensoryUnits, bool saveable)
+        public SensoryPattern(DirectionTypes directionType, List<ISensoryUnit> sensoryUnits)
         {
             Id = -1;
             DirectionType = directionType;

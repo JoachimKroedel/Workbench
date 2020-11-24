@@ -16,7 +16,6 @@ namespace FillAPixRobot
     public class RobotBrain : INotifyPropertyChanged
     {
         private const bool IS_SAVEABLE_SNAPSHOT = false;
-        private const bool IS_SAVEABLE_PATTERN = false;
         private const bool IS_SAVEABLE_UNIT = false;
 
         private const int MAX_MEMORY_FOR_POSITIONS = 10;
@@ -41,29 +40,32 @@ namespace FillAPixRobot
 
         public RobotBrain()
         {
+
             _position = new Point();
             Area = new Rectangle();
 
             // ToDo: Only for testing it's allowed to reduce actions ... don't forget to release all possible actions again!
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.Center));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.North));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthEast));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.East));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.South));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthEast));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.West));
+
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthWest));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.NorthEast));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthWest));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsEmpty, DirectionTypes.SouthEast));
 
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.Center));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.North));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthEast));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.East));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.South));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthEast));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.West));
+
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthWest));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.NorthEast));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthWest));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.MarkAsFilled, DirectionTypes.SouthEast));
 
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.RemoveMarker, DirectionTypes.Center));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.Center));
@@ -73,10 +75,10 @@ namespace FillAPixRobot
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.South));
             _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.West));
 
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.NorthEast));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.NorthWest));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.SouthEast));
-            _allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.SouthWest));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.NorthEast));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.NorthWest));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.SouthEast));
+            //_allPossibleActions.Add(new PuzzleAction(ActionTypes.Move, DirectionTypes.SouthWest));
 
             foreach (IPuzzleAction action in _allPossibleActions)
             {
@@ -169,7 +171,7 @@ namespace FillAPixRobot
                         sensoryUnits.Add(sensoryUnitState);
                         sensoryUnits.Add(sensoryUnitValue);
 
-                        ISensoryPattern sensoryPattern = new SensoryPattern(directionType, sensoryUnits, IS_SAVEABLE_PATTERN);
+                        ISensoryPattern sensoryPattern = new SensoryPattern(directionType, sensoryUnits);
 
                         if (_kownSensoryPatterns.Contains(sensoryPattern))
                         {
@@ -208,7 +210,7 @@ namespace FillAPixRobot
             ISensationSnapshot sensationSnapshotAfterAction = _lastSensationSnapshot;
 
             var difference = SensationSnapshot.GetDifferencePatterns(sensationSnapshotBeforeAction, sensationSnapshotAfterAction);
-            var actionMemory = ActionMemoryDictonary[action];
+            IActionMemory actionMemory = ActionMemoryDictonary[action];
             bool isDifferent = difference.SensoryPatterns.Any();
             actionMemory.RememberDifference(isDifferent, sensationSnapshotBeforeAction);
             if (isDifferent)
@@ -268,14 +270,6 @@ namespace FillAPixRobot
 
             foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
             {
-                if (actionMemory.Action.Type.Equals(ActionTypes.Move))
-                {
-
-                }
-                if (position.Equals(new Point(0,8)))
-                {
-
-                }
                 var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(snapshot);
                 double posibilityForDifference = Math.Min(actionMemory.NegProcentualNoDifference, percentageForDifferenceByActualSnapshot);
                 sumeOfPosibilityForDifference += posibilityForDifference;

@@ -49,6 +49,7 @@
     <Compile Include="ActionMemory.cs" />
     <Compile Include="ActionMemoryQuartet.cs" />
     <Compile Include="ActionWantedEventArgs.cs" />
+    <Compile Include="Enums\CompressionTypes.cs" />
     <Compile Include="Enums\DirectionTypes.cs" />
     <Compile Include="Enums\FieldOfVisionTypes.cs" />
     <Compile Include="Enums\FuzzyErrorHistoryTypes.cs" />
@@ -58,6 +59,8 @@
     <Compile Include="Enums\FuzzyPositiveHistoryTypes.cs" />
     <Compile Include="FillAPixFuzzyLogic.cs" />
     <Compile Include="IActionMemoryQuartet.cs" />
+    <Compile Include="Interfaces\IPartialSnapshotCompression.cs" />
+    <Compile Include="PartialSnapshotCompression.cs" />
     <Compile Include="PuzzleAction.cs" />
     <Compile Include="Enums\ActionTypes.cs" />
     <Compile Include="PuzzleReferee.cs" />
