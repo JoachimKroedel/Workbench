@@ -77,6 +77,8 @@
             // _cbxShowNegativeFeedbackUnits
             // 
             this._cbxShowNegativeFeedbackUnits.AutoSize = true;
+            this._cbxShowNegativeFeedbackUnits.Checked = true;
+            this._cbxShowNegativeFeedbackUnits.CheckState = System.Windows.Forms.CheckState.Checked;
             this._cbxShowNegativeFeedbackUnits.Location = new System.Drawing.Point(430, 16);
             this._cbxShowNegativeFeedbackUnits.Name = "_cbxShowNegativeFeedbackUnits";
             this._cbxShowNegativeFeedbackUnits.Size = new System.Drawing.Size(147, 17);
@@ -87,6 +89,8 @@
             // _cbxShowPositveFeedbackUnits
             // 
             this._cbxShowPositveFeedbackUnits.AutoSize = true;
+            this._cbxShowPositveFeedbackUnits.Checked = true;
+            this._cbxShowPositveFeedbackUnits.CheckState = System.Windows.Forms.CheckState.Checked;
             this._cbxShowPositveFeedbackUnits.Location = new System.Drawing.Point(430, 39);
             this._cbxShowPositveFeedbackUnits.Name = "_cbxShowPositveFeedbackUnits";
             this._cbxShowPositveFeedbackUnits.Size = new System.Drawing.Size(139, 17);
@@ -159,8 +163,6 @@
             // _cbxShowNegativeFeedbackUnitsCount
             // 
             this._cbxShowNegativeFeedbackUnitsCount.AutoSize = true;
-            this._cbxShowNegativeFeedbackUnitsCount.Checked = true;
-            this._cbxShowNegativeFeedbackUnitsCount.CheckState = System.Windows.Forms.CheckState.Checked;
             this._cbxShowNegativeFeedbackUnitsCount.Location = new System.Drawing.Point(773, 16);
             this._cbxShowNegativeFeedbackUnitsCount.Name = "_cbxShowNegativeFeedbackUnitsCount";
             this._cbxShowNegativeFeedbackUnitsCount.Size = new System.Drawing.Size(178, 17);
@@ -171,8 +173,6 @@
             // _cbxShowPositiveFeedbackUnitsCount
             // 
             this._cbxShowPositiveFeedbackUnitsCount.AutoSize = true;
-            this._cbxShowPositiveFeedbackUnitsCount.Checked = true;
-            this._cbxShowPositiveFeedbackUnitsCount.CheckState = System.Windows.Forms.CheckState.Checked;
             this._cbxShowPositiveFeedbackUnitsCount.Location = new System.Drawing.Point(773, 39);
             this._cbxShowPositiveFeedbackUnitsCount.Name = "_cbxShowPositiveFeedbackUnitsCount";
             this._cbxShowPositiveFeedbackUnitsCount.Size = new System.Drawing.Size(172, 17);

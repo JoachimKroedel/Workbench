@@ -210,6 +210,24 @@ namespace FillAPixRobot
             return true;
         }
 
+        static public bool operator ==(SensationSnapshot lhs, SensationSnapshot rhs)
+        {
+            if (ReferenceEquals(lhs, null))
+            {
+                if (ReferenceEquals(rhs, null))
+                {
+                    return true;
+                }
+                return false;
+            }
+            return lhs.Equals(rhs);
+        }
+
+        static public bool operator !=(SensationSnapshot lhs, SensationSnapshot rhs)
+        {
+            return !(lhs == rhs);
+        }
+
         public override int GetHashCode()
         {
             if (Id >= 0)

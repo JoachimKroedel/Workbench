@@ -60,7 +60,9 @@
     <Compile Include="FillAPixFuzzyLogic.cs" />
     <Compile Include="IActionMemoryQuartet.cs" />
     <Compile Include="Interfaces\IPartialSnapshotCompression.cs" />
+    <Compile Include="Interfaces\IPartialSnapshotCompressionNode.cs" />
     <Compile Include="PartialSnapshotCompression.cs" />
+    <Compile Include="PartialSnapshotCompressionUnitNode.cs" />
     <Compile Include="PuzzleAction.cs" />
     <Compile Include="Enums\ActionTypes.cs" />
     <Compile Include="PuzzleReferee.cs" />

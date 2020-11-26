@@ -36,6 +36,24 @@ namespace FillAPixRobot
             return Direction.Equals(fillAPixAction.Direction) && Type.Equals(fillAPixAction.Type);
         }
 
+        static public bool operator ==(PuzzleAction lhs, PuzzleAction rhs)
+        {
+            if (ReferenceEquals(lhs, null))
+            {
+                if (ReferenceEquals(rhs, null))
+                {
+                    return true;
+                }
+                return false;
+            }
+            return lhs.Equals(rhs);
+        }
+
+        static public bool operator !=(PuzzleAction lhs, PuzzleAction rhs)
+        {
+            return !(lhs == rhs);
+        }
+
         public override int GetHashCode()
         {
             return Type.GetHashCode() + Direction.GetHashCode();

@@ -145,6 +145,24 @@ namespace FillAPixRobot
             return EqualsSensoryUnits(sensoryPattern);
         }
 
+        static public bool operator ==(SensoryPattern lhs, SensoryPattern rhs)
+        {
+            if (ReferenceEquals(lhs, null))
+            {
+                if (ReferenceEquals(rhs, null))
+                {
+                    return true;
+                }
+                return false;
+            }
+            return lhs.Equals(rhs);
+        }
+
+        static public bool operator !=(SensoryPattern lhs, SensoryPattern rhs)
+        {
+            return !(lhs == rhs);
+        }
+
         public override int GetHashCode()
         {
             if (Id >= 0)

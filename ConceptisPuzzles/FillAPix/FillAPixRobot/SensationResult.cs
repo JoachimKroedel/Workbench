@@ -49,6 +49,24 @@ namespace FillAPixRobot
             return result;
         }
 
+        static public bool operator ==(SensationResult lhs, SensationResult rhs)
+        {
+            if (ReferenceEquals(lhs, null))
+            {
+                if (ReferenceEquals(rhs, null))
+                {
+                    return true;
+                }
+                return false;
+            }
+            return lhs.Equals(rhs);
+        }
+
+        static public bool operator !=(SensationResult lhs, SensationResult rhs)
+        {
+            return !(lhs == rhs);
+        }
+
         public int CompareTo(object obj)
         {
             var sensationResult = obj as SensationResult;
