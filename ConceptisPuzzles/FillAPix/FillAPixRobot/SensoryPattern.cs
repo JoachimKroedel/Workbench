@@ -9,18 +9,6 @@ namespace FillAPixRobot
 {
     public class SensoryPattern : ISensoryPattern, IComparable
     {
-        static public bool CheckIfOnePatternIncludesAnother(ISensoryPattern a, ISensoryPattern b)
-        {
-            foreach (var otherSensoryUnit in b.SensoryUnits)
-            {
-                if (!a.SensoryUnits.Contains(otherSensoryUnit))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         static private List<ISensoryPattern> Split(DirectionTypes directionType, int level, List<ISensoryUnit> sensoryUnits)
         {
             List<ISensoryPattern> result = new List<ISensoryPattern>();

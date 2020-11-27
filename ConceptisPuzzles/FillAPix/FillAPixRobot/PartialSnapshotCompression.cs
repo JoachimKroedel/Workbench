@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using FillAPixRobot.Enums;
+using FillAPixRobot.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using FillAPixRobot.Enums;
-using FillAPixRobot.Interfaces;
 
 namespace FillAPixRobot
 {
@@ -24,35 +23,9 @@ namespace FillAPixRobot
                 result.Add(unitCompression);
             }
 
-            //if (maximumCompression >= CompressionTypes.DoubleUnits)
-            //{
-            //    // Find 1 and 8 if same field is marked as Filled or Empty (single pattern) --> fieldOfVision.Single
-            //    foreach (ISensoryPattern pattern in partialSnapshot.SensoryPatterns)
-            //    {
-            //        if (pattern.SensoryUnits.Count == 2)
-            //        {
-            //            var unitCompression = new PartialSnapshotCompression(CompressionTypes.DoubleUnits, fieldOfVision, DirectionTypes.Undefined);
-            //            unitCompression.ChildNodes.Add(new PartialSnapshotCompressionUnitNode(pattern.SensoryUnits[0]));
-            //            unitCompression.ChildNodes.Add(new PartialSnapshotCompressionUnitNode(pattern.SensoryUnits[1]));
-            //            result.Add(unitCompression);
-            //        }
-            //        else if (pattern.SensoryUnits.Count > 2)
-            //        {
-            //            List<ISensoryPattern> splitedPattern = SensoryPattern.Split(pattern);
-            //            foreach(var doublePattern in splitedPattern.Where(p => p.SensoryUnits.Count == 2))
-            //            {
-            //                var unitCompression = new PartialSnapshotCompression(CompressionTypes.DoubleUnits, fieldOfVision, DirectionTypes.Undefined);
-            //                unitCompression.ChildNodes.Add(new PartialSnapshotCompressionUnitNode(doublePattern.SensoryUnits[0]));
-            //                unitCompression.ChildNodes.Add(new PartialSnapshotCompressionUnitNode(doublePattern.SensoryUnits[1]));
-            //                result.Add(unitCompression);
-            //            }
-            //        }
-            //    }
-            //}
-
             if (maximumCompression >= CompressionTypes.UnitDoubleTree)
             {
-                // ToDo: Find 1 and 8 if a field around is marked as Filled or Empty (two pattern with single unit) --> fieldOfVision.ThreeByThree
+                // Find 1 and 8 if a field around is marked as Filled or Empty (two pattern with single unit) --> fieldOfVision.ThreeByThree
                 foreach (var unitCountEntry in unitCountDictonary)
                 {
                     var patterns = partialSnapshot.SensoryPatterns.Where(p => p.SensoryUnits.Contains(unitCountEntry.Key)).ToList();
@@ -122,18 +95,6 @@ namespace FillAPixRobot
                     {
                         switch(CompressionType)
                         {
-                            //case CompressionTypes.DoubleUnits:
-                            //    foreach (var entry in ChildNodes)
-                            //    {
-                            //        if (entry is PartialSnapshotCompressionUnitNode pscUnitNode)
-                            //        {
-                            //            if (pscUnitNode.Unit.Equals(otherUnitNode.Unit))
-                            //            {
-                            //                return true;
-                            //            }
-                            //        }
-                            //    }
-                            //    break;
                             case CompressionTypes.UnitDoubleTree:
                                 if (ChildNodes.First() is PartialSnapshotCompressionUnitNode pscUnitNode2)
                                 {

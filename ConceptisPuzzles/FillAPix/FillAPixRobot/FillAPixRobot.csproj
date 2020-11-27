@@ -79,7 +79,6 @@
     <Compile Include="SensoryPattern.cs" />
     <Compile Include="Enums\SensoryTypes.cs" />
     <Compile Include="SensoryUnit.cs" />
-    <Compile Include="SensoryUnitCountContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FuzzyLogic\FuzzyLogic.csproj">

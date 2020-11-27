@@ -33,14 +33,10 @@
             this._cbxShowDifferentUnits = new System.Windows.Forms.CheckBox();
             this._cbxShowNegativeFeedbackUnits = new System.Windows.Forms.CheckBox();
             this._cbxShowPositveFeedbackUnits = new System.Windows.Forms.CheckBox();
-            this._cbxShowNegativeFeedbackPattern3x3 = new System.Windows.Forms.CheckBox();
             this._cbxShowNoDifferencePattern3x3 = new System.Windows.Forms.CheckBox();
             this._cbxShowNoDifferencePattern1x1 = new System.Windows.Forms.CheckBox();
             this._cbxShowNoDifferentUnits = new System.Windows.Forms.CheckBox();
             this._cbxClearBefore = new System.Windows.Forms.CheckBox();
-            this._cbxShowRemovedNegativeUnitCount = new System.Windows.Forms.CheckBox();
-            this._cbxShowNegativeFeedbackUnitsCount = new System.Windows.Forms.CheckBox();
-            this._cbxShowPositiveFeedbackUnitsCount = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // _btnShowActionMemory
@@ -98,16 +94,6 @@
             this._cbxShowPositveFeedbackUnits.Text = "Positve Feedback Units";
             this._cbxShowPositveFeedbackUnits.UseVisualStyleBackColor = true;
             // 
-            // _cbxShowNegativeFeedbackPattern3x3
-            // 
-            this._cbxShowNegativeFeedbackPattern3x3.AutoSize = true;
-            this._cbxShowNegativeFeedbackPattern3x3.Location = new System.Drawing.Point(596, 16);
-            this._cbxShowNegativeFeedbackPattern3x3.Name = "_cbxShowNegativeFeedbackPattern3x3";
-            this._cbxShowNegativeFeedbackPattern3x3.Size = new System.Drawing.Size(157, 17);
-            this._cbxShowNegativeFeedbackPattern3x3.TabIndex = 5;
-            this._cbxShowNegativeFeedbackPattern3x3.Text = "Negative Feedback Pattern";
-            this._cbxShowNegativeFeedbackPattern3x3.UseVisualStyleBackColor = true;
-            // 
             // _cbxShowNoDifferencePattern3x3
             // 
             this._cbxShowNoDifferencePattern3x3.AutoSize = true;
@@ -150,49 +136,15 @@
             this._cbxClearBefore.Text = "Clear before";
             this._cbxClearBefore.UseVisualStyleBackColor = true;
             // 
-            // _cbxShowRemovedNegativeUnitCount
-            // 
-            this._cbxShowRemovedNegativeUnitCount.AutoSize = true;
-            this._cbxShowRemovedNegativeUnitCount.Location = new System.Drawing.Point(968, 16);
-            this._cbxShowRemovedNegativeUnitCount.Name = "_cbxShowRemovedNegativeUnitCount";
-            this._cbxShowRemovedNegativeUnitCount.Size = new System.Drawing.Size(171, 17);
-            this._cbxShowRemovedNegativeUnitCount.TabIndex = 11;
-            this._cbxShowRemovedNegativeUnitCount.Text = "Removed Negative Unit Count";
-            this._cbxShowRemovedNegativeUnitCount.UseVisualStyleBackColor = true;
-            // 
-            // _cbxShowNegativeFeedbackUnitsCount
-            // 
-            this._cbxShowNegativeFeedbackUnitsCount.AutoSize = true;
-            this._cbxShowNegativeFeedbackUnitsCount.Location = new System.Drawing.Point(773, 16);
-            this._cbxShowNegativeFeedbackUnitsCount.Name = "_cbxShowNegativeFeedbackUnitsCount";
-            this._cbxShowNegativeFeedbackUnitsCount.Size = new System.Drawing.Size(178, 17);
-            this._cbxShowNegativeFeedbackUnitsCount.TabIndex = 10;
-            this._cbxShowNegativeFeedbackUnitsCount.Text = "Negative Feedback Units Count";
-            this._cbxShowNegativeFeedbackUnitsCount.UseVisualStyleBackColor = true;
-            // 
-            // _cbxShowPositiveFeedbackUnitsCount
-            // 
-            this._cbxShowPositiveFeedbackUnitsCount.AutoSize = true;
-            this._cbxShowPositiveFeedbackUnitsCount.Location = new System.Drawing.Point(773, 39);
-            this._cbxShowPositiveFeedbackUnitsCount.Name = "_cbxShowPositiveFeedbackUnitsCount";
-            this._cbxShowPositiveFeedbackUnitsCount.Size = new System.Drawing.Size(172, 17);
-            this._cbxShowPositiveFeedbackUnitsCount.TabIndex = 12;
-            this._cbxShowPositiveFeedbackUnitsCount.Text = "Positive Feedback Units Count";
-            this._cbxShowPositiveFeedbackUnitsCount.UseVisualStyleBackColor = true;
-            // 
             // RobotBrainInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1214, 461);
-            this.Controls.Add(this._cbxShowPositiveFeedbackUnitsCount);
-            this.Controls.Add(this._cbxShowRemovedNegativeUnitCount);
-            this.Controls.Add(this._cbxShowNegativeFeedbackUnitsCount);
             this.Controls.Add(this._cbxClearBefore);
             this.Controls.Add(this._cbxShowNoDifferentUnits);
             this.Controls.Add(this._cbxShowNoDifferencePattern1x1);
             this.Controls.Add(this._cbxShowNoDifferencePattern3x3);
-            this.Controls.Add(this._cbxShowNegativeFeedbackPattern3x3);
             this.Controls.Add(this._cbxShowPositveFeedbackUnits);
             this.Controls.Add(this._cbxShowNegativeFeedbackUnits);
             this.Controls.Add(this._cbxShowDifferentUnits);
@@ -213,13 +165,9 @@
         private System.Windows.Forms.CheckBox _cbxShowDifferentUnits;
         private System.Windows.Forms.CheckBox _cbxShowNegativeFeedbackUnits;
         private System.Windows.Forms.CheckBox _cbxShowPositveFeedbackUnits;
-        private System.Windows.Forms.CheckBox _cbxShowNegativeFeedbackPattern3x3;
         private System.Windows.Forms.CheckBox _cbxShowNoDifferencePattern3x3;
         private System.Windows.Forms.CheckBox _cbxShowNoDifferencePattern1x1;
         private System.Windows.Forms.CheckBox _cbxShowNoDifferentUnits;
         private System.Windows.Forms.CheckBox _cbxClearBefore;
-        private System.Windows.Forms.CheckBox _cbxShowRemovedNegativeUnitCount;
-        private System.Windows.Forms.CheckBox _cbxShowNegativeFeedbackUnitsCount;
-        private System.Windows.Forms.CheckBox _cbxShowPositiveFeedbackUnitsCount;
     }
 }

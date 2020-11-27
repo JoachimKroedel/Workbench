@@ -1,5 +1,4 @@
 ﻿using FillAPixRobot.Interfaces;
-using System.Drawing;
 
 
 namespace FillAPixRobot

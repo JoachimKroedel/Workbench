@@ -1,11 +1,10 @@
-﻿using System;
+﻿using FillAPixRobot.Enums;
+using FillAPixRobot.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-
-using FillAPixRobot.Enums;
-using FillAPixRobot.Interfaces;
 
 namespace FillAPixRobot
 {
@@ -58,58 +57,6 @@ namespace FillAPixRobot
             throw new NotImplementedException();
         }
 
-        static public List<ISensationSnapshot> SplitSnapshot(ISensationSnapshot sensationSnapshot)
-        {
-            if(sensationSnapshot.FieldOfVision == FieldOfVisionTypes.FiveByFive)
-            {
-                var result = new List<ISensationSnapshot>();
-                for (int y = -1; y < 2; y++)
-                {
-                    for (int x = -1; x < 2; x++)
-                    {
-                        result.Add(ExtractSnapshot(sensationSnapshot, FieldOfVisionTypes.ThreeByThree, PuzzleReferee.ConvertToDirectionType(new Point(x, y))));
-                    }
-                }
-                return result;
-            }
-            throw new NotImplementedException();
-        }
-
-        static public bool CheckIfOneSnapshotIncludesAnother(ISensationSnapshot a, ISensationSnapshot b)
-        {
-            foreach (var otherSensoryPattern in b.SensoryPatterns)
-            {
-                bool matchFound = false;
-                foreach (var sensoryPatternToCompareWith in a.SensoryPatterns)
-                {
-                    if (SensoryPattern.CheckIfOnePatternIncludesAnother(sensoryPatternToCompareWith, otherSensoryPattern))
-                    {
-                        matchFound = true;
-                        break;
-                    }
-                }
-                if (!matchFound)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        static public ISensationSnapshot SplitPattern(ISensationSnapshot sensationSnapshot)
-        {
-            SensationSnapshot result = new SensationSnapshot(sensationSnapshot.Direction, sensationSnapshot.FieldOfVision, sensationSnapshot.SensoryPatterns, false);
-            foreach (ISensoryPattern pattern in sensationSnapshot.SensoryPatterns)
-            {
-                foreach (ISensoryPattern splitedPattern in SensoryPattern.Split(pattern))
-                {
-                    result.SensoryPatterns.Add(splitedPattern);
-                }
-            }
-            result.SensoryPatterns.Sort();
-            return result;
-        }
-
         static public ISensationSnapshot GetDifferencePatterns(ISensationSnapshot a, ISensationSnapshot b)
         {
             var result = new SensationSnapshot(a.Direction, a.FieldOfVision, a.SensoryPatterns, false);
@@ -119,21 +66,6 @@ namespace FillAPixRobot
                 if (a.SensoryPatterns.Contains(sensoryPattern))
                 {
                     result.SensoryPatterns.Remove(sensoryPattern);
-                }
-            }
-            result.SensoryPatterns.Sort();
-            return result;
-        }
-
-        static public ISensationSnapshot GetOverlapOfPatterns(ISensationSnapshot a, ISensationSnapshot b)
-        {
-            var result = new SensationSnapshot(a.Direction, a.FieldOfVision, a.SensoryPatterns, false);
-
-            foreach (ISensoryPattern sensoryPattern in b.SensoryPatterns)
-            {
-                if (a.SensoryPatterns.Contains(sensoryPattern))
-                {
-                    result.SensoryPatterns.Add(sensoryPattern);
                 }
             }
             result.SensoryPatterns.Sort();
@@ -155,15 +87,6 @@ namespace FillAPixRobot
                 }
             }
             return result;
-        }
-
-        public SensationSnapshot(ISensationSnapshot sensationSnapshot)
-        {
-            Id = sensationSnapshot.Id;
-            foreach (ISensoryPattern sensoryPattern in sensationSnapshot.SensoryPatterns)
-            {
-                SensoryPatterns.Add(new SensoryPattern(sensoryPattern));
-            }
         }
 
         public SensationSnapshot(DirectionTypes directionType, FieldOfVisionTypes fieldOfVisionType, List<ISensoryPattern> sensoryPatterns, bool saveable = true)
@@ -243,7 +166,6 @@ namespace FillAPixRobot
             // ToDo: Check integer overflow ... how should this be handled?
             return (int)result;
         }
-
 
         public int CompareTo(object obj)
         {

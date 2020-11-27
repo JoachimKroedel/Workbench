@@ -91,51 +91,6 @@ namespace ConceptisPuzzles.Robot
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {actionMemory.GetPositiveFeedbackPercentage(entry.Key)} \n");
                     }
                 }
-
-                if (_cbxShowNegativeFeedbackPattern3x3.Checked)
-                {
-                    var negativeFeedbackPattern3x3 = actionMemory.GetNegativeFeedbackPattern(FieldOfVisionTypes.ThreeByThree);
-                    var countPattern = negativeFeedbackPattern3x3.Count;
-                    var countReducedPattern = negativeFeedbackPattern3x3.Count(x => x.Value > ActionMemory.LOWER_FEEDBACK_PATTERN_COUNT);
-                    infoText.Append($"\t NegativeFeedbackPattern 3x3: \t ({countReducedPattern}/{countPattern}) \n");
-                    foreach (var entry in negativeFeedbackPattern3x3.OrderByDescending(x => x.Value))
-                    {
-                        if (entry.Value <= ActionMemory.LOWER_FEEDBACK_PATTERN_COUNT)
-                        {
-                            break;
-                        }
-                        double factorReduced = (double)entry.Value / countReducedPattern;
-                        double factorOverall = (double)entry.Value / countPattern;
-                        infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {factorReduced} \t {factorOverall} \n");
-                    }
-                }
-
-                if (_cbxShowNegativeFeedbackUnitsCount.Checked)
-                {
-                    infoText.Append($"--------------------------\t NegativeUnitCountContainerDictonary: \t {actionMemory.NegativeUnitCountContainerDictonary.Count} \n");
-                    foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.NegativeUnitCountContainerDictonary)
-                    {
-                        infoText.Append($"{entry} \n");
-                    }
-                }
-
-                if (_cbxShowRemovedNegativeUnitCount.Checked)
-                {
-                    infoText.Append($"+++++++++++++++++\t RemovedNegativeUnitCountContainerDictonary: \t {actionMemory.RemovedNegativeUnitCountContainerDictonary.Count} \n");
-                    foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.RemovedNegativeUnitCountContainerDictonary)
-                    {
-                        infoText.Append($"{entry} \n");
-                    }
-                }
-
-                if (_cbxShowPositiveFeedbackUnitsCount.Checked)
-                {
-                    infoText.Append($"--------------------------\t PositiveUnitCountContainerDictonary: \t {actionMemory.PositiveUnitCountContainerDictonary.Count} \n");
-                    foreach (KeyValuePair<ISensationSnapshot, SensoryUnitCountContainer> entry in actionMemory.PositiveUnitCountContainerDictonary)
-                    {
-                        infoText.Append($"{entry} \n");
-                    }
-                }
             }
             if (_cbxClearBefore.Checked)
             {
