@@ -8,42 +8,72 @@ namespace FillAPixRobot
 {
     public class PartialSnapshotCompression : IPartialSnapshotCompression
     {
-        static public List<IPartialSnapshotCompression> NewInstances(ISensationSnapshot snapShot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction, CompressionTypes maximumCompression)
-        {
-            var result = new List<IPartialSnapshotCompression>(); 
-            ISensationSnapshot partialSnapshot = SensationSnapshot.ExtractSnapshot(snapShot, fieldOfVision, direction);
 
+        static public List<IPartialSnapshotCompression> NewInstancesOfUnitCompression(Dictionary<ISensoryUnit, int> unitCountDictonary, FieldOfVisionTypes fieldOfVision)
+        {
             // Single units for fieldOfVision.Single and fieldOfVision.ThreeByThree allows to find 0 and 9
-            var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
-            foreach(var unitCountEntry in unitCountDictonary)
+            var result = new List<IPartialSnapshotCompression>();
+            foreach (var unitCountEntry in unitCountDictonary)
             {
                 var unitCompression = new PartialSnapshotCompression(CompressionTypes.Unit, fieldOfVision, DirectionTypes.Undefined);
                 var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
                 unitCompression.ChildNodes.Add(node);
                 result.Add(unitCompression);
             }
+            return result;
+        }
 
-            if (maximumCompression >= CompressionTypes.UnitDoubleTree)
+        static public List<IPartialSnapshotCompression> NewInstancesOfUnitDoubleTreeCompression(Dictionary<ISensoryUnit, int> unitCountDictonary, ISensationSnapshot partialSnapshot, ISensationSnapshot snapShot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction)
+        {
+            var result = new List<IPartialSnapshotCompression>();
+            // Single units for fieldOfVision.Single and fieldOfVision.ThreeByThree allows to find 0 and 9
+            // Find 1 and 8 if a field around is marked as Filled or Empty (two pattern with single unit) --> fieldOfVision.ThreeByThree
+            foreach (KeyValuePair<ISensoryUnit, int> unitCountEntry in unitCountDictonary)
             {
-                // Find 1 and 8 if a field around is marked as Filled or Empty (two pattern with single unit) --> fieldOfVision.ThreeByThree
-                foreach (var unitCountEntry in unitCountDictonary)
+                var patterns = partialSnapshot.SensoryPatterns.Where(p => p.SensoryUnits.Contains(unitCountEntry.Key)).ToList();
+                foreach (ISensoryPattern pattern in patterns)
                 {
-                    var patterns = partialSnapshot.SensoryPatterns.Where(p => p.SensoryUnits.Contains(unitCountEntry.Key)).ToList();
-                    foreach(var pattern in patterns)
+                    ISensationSnapshot partialSnapshot2 = SensationSnapshot.ExtractSnapshot(snapShot, fieldOfVision, PuzzleReferee.Addition(direction, pattern.DirectionType));
+                    var unitCountDictonary2 = SensationSnapshot.CountUnits(partialSnapshot2);
+                    foreach (KeyValuePair<ISensoryUnit, int> unitCountEntry2 in unitCountDictonary2)
                     {
-                        ISensationSnapshot partialSnapshot2 = SensationSnapshot.ExtractSnapshot(snapShot, fieldOfVision, PuzzleReferee.Addition(direction, pattern.DirectionType));
-                        var unitCountDictonary2 = SensationSnapshot.CountUnits(partialSnapshot2);
-                        foreach (var unitCountEntry2 in unitCountDictonary2)
+                        if (unitCountEntry2.Key.Equals(unitCountEntry.Key) && unitCountEntry2.Value <= 1)
                         {
-                            var unitCompression = new PartialSnapshotCompression(CompressionTypes.UnitDoubleTree, fieldOfVision, DirectionTypes.Undefined);
-                            var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
-                            var childNode = new PartialSnapshotCompressionUnitNode(unitCountEntry2.Key);
-                            node.ChildNodes.Add(childNode);
-                            unitCompression.ChildNodes.Add(node);
+                            // If the same unit found one time in the field of view, it must be the exact same one. 
+                            continue;
+                        }
+                        var unitCompression = new PartialSnapshotCompression(CompressionTypes.UnitDoubleTree, fieldOfVision, DirectionTypes.Undefined);
+                        var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
+                        var childNode = new PartialSnapshotCompressionUnitNode(unitCountEntry2.Key);
+                        node.ChildNodes.Add(childNode);
+                        unitCompression.ChildNodes.Add(node);
+                        if (!result.Contains(unitCompression))
+                        {
                             result.Add(unitCompression);
                         }
                     }
                 }
+            }
+            return result;
+        }
+
+
+
+        static public List<IPartialSnapshotCompression> NewInstances(ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction, CompressionTypes maximumCompression)
+        {
+            var result = new List<IPartialSnapshotCompression>();
+
+            ISensationSnapshot partialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, direction);
+
+            // Single units for fieldOfVision.Single and fieldOfVision.ThreeByThree allows to find 0 and 9
+            var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
+
+
+            result.AddRange(NewInstancesOfUnitCompression(unitCountDictonary, fieldOfVision));
+
+            if (maximumCompression >= CompressionTypes.UnitDoubleTree)
+            {
+                result.AddRange(NewInstancesOfUnitDoubleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, fieldOfVision, direction));
             }
 
             // ToDo: Find 2-7 if 2-7 fields around are marked as Filled or Empty (two pattern with counted units) --> fieldOfVision.ThreeByThree
@@ -89,29 +119,16 @@ namespace FillAPixRobot
         {
             if (other.CompressionType == CompressionTypes.Unit)
             {
-                if (other.ChildNodes.Count == 1)
+                if (other.ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode otherUnitNode)
                 {
-                    if (other.ChildNodes.First() is PartialSnapshotCompressionUnitNode otherUnitNode)
+                    switch (CompressionType)
                     {
-                        switch(CompressionType)
-                        {
-                            case CompressionTypes.UnitDoubleTree:
-                                if (ChildNodes.First() is PartialSnapshotCompressionUnitNode pscUnitNode2)
-                                {
-                                    if (pscUnitNode2.Unit.Equals(otherUnitNode.Unit))
-                                    {
-                                        return true;
-                                    }
-                                    else if (pscUnitNode2.ChildNodes.First() is PartialSnapshotCompressionUnitNode pscChildUnitNode)
-                                    {
-                                        if (pscChildUnitNode.Unit.Equals(otherUnitNode.Unit))
-                                        {
-                                            return true;
-                                        }
-                                    }
-                                }
-                                break;
-                        }
+                        case CompressionTypes.UnitDoubleTree:
+                            if (ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode thisUnitNode && thisUnitNode.Unit.Equals(otherUnitNode.Unit))
+                            {
+                                return true;
+                            }
+                            break;
                     }
                 }
             }

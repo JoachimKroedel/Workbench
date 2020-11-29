@@ -187,12 +187,7 @@ namespace FillAPixRobot
         public void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot)
         {
             FieldOfVisionTypes fieldOfVision = GetFieldOfVisionsForFeedback().Last();
-            CompressionTypes maximumCompression = CompressionTypes.Unit;
-            if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_UNIT_DOUBLE_TREE)
-            {
-                maximumCompression = CompressionTypes.UnitDoubleTree;
-            }
-            List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstances(snapshot, fieldOfVision, Action.Direction, maximumCompression);
+            List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstances(snapshot, fieldOfVision, Action.Direction, GetMaximumCompression());
 
             if (feedbackValue < 0)
             {
@@ -318,12 +313,22 @@ namespace FillAPixRobot
         public double CheckForNegativeFeedback(ISensationSnapshot snapshot)
         {
             double result = 0.0;
-            foreach (ISensationSnapshot partialSnapShot in GetActualPartialSnapshot(snapshot))
+            CompressionTypes maximumCompression = GetMaximumCompression();
+            foreach (ISensationSnapshot partialSnapshot in GetActualPartialSnapshot(snapshot))
             {
-                var singleUnits = SplitUnits(partialSnapShot);
+                var singleUnits = SplitUnits(partialSnapshot);
                 foreach (var unit in singleUnits)
                 {
                     result = Math.Max(result, GetNegativeFeedbackPercentage(unit));
+                }
+                if (maximumCompression >= CompressionTypes.UnitDoubleTree)
+                {
+                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
+                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitDoubleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
+                    foreach(var partialSnapshotCompression in partialSnapshotCompressions)
+                    {
+                        result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
+                    }
                 }
             }
             return result;
@@ -475,6 +480,16 @@ namespace FillAPixRobot
                         result.Add(unit);
                     }
                 }
+            }
+            return result;
+        }
+
+        private CompressionTypes GetMaximumCompression()
+        {
+            CompressionTypes result = CompressionTypes.Unit;
+            if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_UNIT_DOUBLE_TREE)
+            {
+                result = CompressionTypes.UnitDoubleTree;
             }
             return result;
         }
