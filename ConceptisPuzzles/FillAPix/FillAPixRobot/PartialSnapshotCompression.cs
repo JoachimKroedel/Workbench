@@ -23,10 +23,9 @@ namespace FillAPixRobot
             return result;
         }
 
-        static public List<IPartialSnapshotCompression> NewInstancesOfUnitDoubleTreeCompression(Dictionary<ISensoryUnit, int> unitCountDictonary, ISensationSnapshot partialSnapshot, ISensationSnapshot snapShot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction)
+        static public List<IPartialSnapshotCompression> NewInstancesOfUnitSimpleTreeCompression(Dictionary<ISensoryUnit, int> unitCountDictonary, ISensationSnapshot partialSnapshot, ISensationSnapshot snapShot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction)
         {
             var result = new List<IPartialSnapshotCompression>();
-            // Single units for fieldOfVision.Single and fieldOfVision.ThreeByThree allows to find 0 and 9
             // Find 1 and 8 if a field around is marked as Filled or Empty (two pattern with single unit) --> fieldOfVision.ThreeByThree
             foreach (KeyValuePair<ISensoryUnit, int> unitCountEntry in unitCountDictonary)
             {
@@ -42,7 +41,7 @@ namespace FillAPixRobot
                             // If the same unit found one time in the field of view, it must be the exact same one. 
                             continue;
                         }
-                        var unitCompression = new PartialSnapshotCompression(CompressionTypes.UnitDoubleTree, fieldOfVision, DirectionTypes.Undefined);
+                        var unitCompression = new PartialSnapshotCompression(CompressionTypes.UnitSimpleTree, fieldOfVision, DirectionTypes.Undefined);
                         var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
                         var childNode = new PartialSnapshotCompressionUnitNode(unitCountEntry2.Key);
                         node.ChildNodes.Add(childNode);
@@ -57,7 +56,40 @@ namespace FillAPixRobot
             return result;
         }
 
-
+        static public List<IPartialSnapshotCompression> NewInstancesOfUnitCountTreeCompression(Dictionary<ISensoryUnit, int> unitCountDictonary, ISensationSnapshot partialSnapshot, ISensationSnapshot snapShot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction)
+        {
+            var result = new List<IPartialSnapshotCompression>();
+            // Find 2-7 if 2-7 fields around are marked as Filled or Empty (two pattern with counted units) --> fieldOfVision.ThreeByThree
+            foreach (KeyValuePair<ISensoryUnit, int> unitCountEntry in unitCountDictonary)
+            {
+                var patterns = partialSnapshot.SensoryPatterns.Where(p => p.SensoryUnits.Contains(unitCountEntry.Key)).ToList();
+                foreach (ISensoryPattern pattern in patterns)
+                {
+                    ISensationSnapshot partialSnapshot2 = SensationSnapshot.ExtractSnapshot(snapShot, fieldOfVision, PuzzleReferee.Addition(direction, pattern.DirectionType));
+                    var unitCountDictonary2 = SensationSnapshot.CountUnits(partialSnapshot2);
+                    foreach (KeyValuePair<ISensoryUnit, int> unitCountEntry2 in unitCountDictonary2)
+                    {
+                        if (unitCountEntry2.Key.Equals(unitCountEntry.Key) && unitCountEntry2.Value <= 1)
+                        {
+                            // If the same unit found one time in the field of view, it must be the exact same one. 
+                            continue;
+                        }
+                        var unitCompression = new PartialSnapshotCompression(CompressionTypes.UnitCountTree, fieldOfVision, DirectionTypes.Undefined);
+                        var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
+                        for(int i = 0; i < unitCountEntry2.Value; i++)
+                        {
+                            node.ChildNodes.Add(new PartialSnapshotCompressionUnitNode(unitCountEntry2.Key));
+                        }
+                        unitCompression.ChildNodes.Add(node);
+                        if (!result.Contains(unitCompression))
+                        {
+                            result.Add(unitCompression);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
 
         static public List<IPartialSnapshotCompression> NewInstances(ISensationSnapshot snapshot, FieldOfVisionTypes fieldOfVision, DirectionTypes direction, CompressionTypes maximumCompression)
         {
@@ -71,12 +103,18 @@ namespace FillAPixRobot
 
             result.AddRange(NewInstancesOfUnitCompression(unitCountDictonary, fieldOfVision));
 
-            if (maximumCompression >= CompressionTypes.UnitDoubleTree)
+            if (maximumCompression >= CompressionTypes.UnitSimpleTree)
             {
-                result.AddRange(NewInstancesOfUnitDoubleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, fieldOfVision, direction));
+                // Find 1 and 8 if a field around is marked as Filled or Empty (two pattern with single unit) --> fieldOfVision.ThreeByThree
+                result.AddRange(NewInstancesOfUnitSimpleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, fieldOfVision, direction));
             }
 
-            // ToDo: Find 2-7 if 2-7 fields around are marked as Filled or Empty (two pattern with counted units) --> fieldOfVision.ThreeByThree
+            if (maximumCompression >= CompressionTypes.UnitCountTree)
+            {
+                // ToDo: Find 2-7 if 2-7 fields around are marked as Filled or Empty (two pattern with counted units) --> fieldOfVision.ThreeByThree
+                result.AddRange(NewInstancesOfUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, fieldOfVision, direction));
+            }
+
 
             return result;
         }
@@ -123,7 +161,7 @@ namespace FillAPixRobot
                 {
                     switch (CompressionType)
                     {
-                        case CompressionTypes.UnitDoubleTree:
+                        case CompressionTypes.UnitSimpleTree:
                             if (ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode thisUnitNode && thisUnitNode.Unit.Equals(otherUnitNode.Unit))
                             {
                                 return true;

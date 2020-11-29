@@ -51,7 +51,7 @@ namespace ConceptisPuzzles.Robot
             _cbxTypeOfRobot.SelectedIndex = 2;
             _ddbFieldOfVisionTypes.SelectedIndex = 2;
 
-            _cbxBehaviourOnError.SelectedIndex = 2;
+            _cbxBehaviourOnError.SelectedIndex = 3;
         }
 
         private void FillAPixRobotView_Load(object sender, EventArgs e)
@@ -764,7 +764,12 @@ namespace ConceptisPuzzles.Robot
                 }
                 else
                 {
-                    RunOneIteration(_cbxBehaviourOnError.SelectedIndex == 2);
+                    bool resetOnError = _cbxBehaviourOnError.SelectedIndex == 2;
+                    if (_cbxBehaviourOnError.SelectedIndex == 3)
+                    {
+                        resetOnError = _tbrSolvingPercentage.Value <= 50;
+                    }
+                    RunOneIteration(resetOnError);
 
                     _nudRemainigIterationCount.Value -= 1;
                     if (_nudRemainigIterationCount.Value <= _nudRemainigIterationCount.Minimum)
@@ -852,7 +857,7 @@ namespace ConceptisPuzzles.Robot
             _timer.Interval = 1000;
             _timer.Enabled = true;
 
-            _nudRemainigIterationCount.Value = await RunSimulationInBackgroundAsync();
+            _nudRemainigIterationCount.Value = await RunSimulationInBackgroundAsync(_cbxBehaviourOnError.SelectedIndex);
 
             _timer.Enabled = false;
             _gbxRobot.Enabled = true;
@@ -862,12 +867,18 @@ namespace ConceptisPuzzles.Robot
         }
 
         private int _backgroundIterations = 0;
-        private int RunSimulationInBackground(int iterrations, CancellationToken cancellationToken)
+        private int RunSimulationInBackground(int iterrations, int resetOnErrorIndex, CancellationToken cancellationToken)
         {
             _backgroundIterations = iterrations;
             while (_backgroundIterations > 0 && !cancellationToken.IsCancellationRequested)
             {
-                RunOneIteration(true);
+                bool resetOnError = resetOnErrorIndex == 2;
+                if (resetOnErrorIndex == 3)
+                {
+                    resetOnError = _robotBrain.PercentageSolving <= 50;
+                }
+
+                RunOneIteration(resetOnError);
                 _backgroundIterations--;
             }
             return _backgroundIterations;
@@ -875,10 +886,10 @@ namespace ConceptisPuzzles.Robot
 
         private Task<int> _backgroundTask = null;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private async Task<int> RunSimulationInBackgroundAsync()
+        private async Task<int> RunSimulationInBackgroundAsync(int resetOnErrorIndex)
         {
             _cancellationTokenSource = new CancellationTokenSource();
-            _backgroundTask = new Task<int>(() => RunSimulationInBackground((int)_nudRemainigIterationCount.Value, _cancellationTokenSource.Token));
+            _backgroundTask = new Task<int>(() => RunSimulationInBackground((int)_nudRemainigIterationCount.Value, resetOnErrorIndex, _cancellationTokenSource.Token));
             _backgroundTask.Start();
             int result = await _backgroundTask;
             _backgroundTask = null;

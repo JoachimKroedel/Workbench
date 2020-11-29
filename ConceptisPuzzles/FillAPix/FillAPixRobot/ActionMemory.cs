@@ -12,8 +12,9 @@ namespace FillAPixRobot
         private const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN = 10;
         private const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_3X3 = 20;
 
-        private const int MINIMUM_FEEDBACK_COUNT_FOR_DOUBLE_UNITS = 10;
-        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_DOUBLE_TREE = 20;
+        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT = 10;
+        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_SIMPLE_TREE = 20;
+        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_COUNT_TREE = 40;
 
         private const int MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS = 10;
 
@@ -55,7 +56,7 @@ namespace FillAPixRobot
                 {
                     return 0;
                 }
-                return 1.0 - (double)NegativeFeedbackCount / Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_DOUBLE_UNITS, PositiveFeedbackCount + NegativeFeedbackCount); 
+                return 1.0 - (double)NegativeFeedbackCount / Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_UNIT, PositiveFeedbackCount + NegativeFeedbackCount); 
             } 
         }
 
@@ -269,29 +270,32 @@ namespace FillAPixRobot
                         continue;
                     }
 
-                    if (!PositveDictPartialSnapshotCompressions.ContainsKey(pscEntry))
+                    if (pscEntry.CompressionType <= CompressionTypes.UnitSimpleTree)
                     {
-                        PositveDictPartialSnapshotCompressions.Add(pscEntry, 0);
-                    }
-                    else if (GetPositiveFeedbackPercentage(pscEntry) >= 0.99)
-                    {
-                        var entriesToRemove = new List<IPartialSnapshotCompression>();
-                        foreach (IPartialSnapshotCompression existingPsc in PositveDictPartialSnapshotCompressions.Keys.Where(p => p.CompressionType != pscEntry.CompressionType))
+                        if (!PositveDictPartialSnapshotCompressions.ContainsKey(pscEntry))
                         {
-                            if (existingPsc.Contains(pscEntry))
+                            PositveDictPartialSnapshotCompressions.Add(pscEntry, 0);
+                        }
+                        else if (GetPositiveFeedbackPercentage(pscEntry) >= 0.99)
+                        {
+                            var entriesToRemove = new List<IPartialSnapshotCompression>();
+                            foreach (IPartialSnapshotCompression existingPsc in PositveDictPartialSnapshotCompressions.Keys.Where(p => p.CompressionType != pscEntry.CompressionType))
                             {
-                                entriesToRemove.Add(existingPsc);
+                                if (existingPsc.Contains(pscEntry))
+                                {
+                                    entriesToRemove.Add(existingPsc);
+                                }
+                            }
+                            if (entriesToRemove.Any())
+                            {
+                                foreach (IPartialSnapshotCompression existingPsc in entriesToRemove)
+                                {
+                                    PositveDictPartialSnapshotCompressions.Remove(existingPsc);
+                                }
                             }
                         }
-                        if (entriesToRemove.Any())
-                        {
-                            foreach (IPartialSnapshotCompression existingPsc in entriesToRemove)
-                            {
-                                PositveDictPartialSnapshotCompressions.Remove(existingPsc);
-                            }
-                        }
+                        PositveDictPartialSnapshotCompressions[pscEntry]++;
                     }
-                    PositveDictPartialSnapshotCompressions[pscEntry]++;
                 }
             }
         }
@@ -321,11 +325,20 @@ namespace FillAPixRobot
                 {
                     result = Math.Max(result, GetNegativeFeedbackPercentage(unit));
                 }
-                if (maximumCompression >= CompressionTypes.UnitDoubleTree)
+                if (maximumCompression >= CompressionTypes.UnitSimpleTree)
                 {
                     var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
-                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitDoubleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
+                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitSimpleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
                     foreach(var partialSnapshotCompression in partialSnapshotCompressions)
+                    {
+                        result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
+                    }
+                }
+                if (maximumCompression >= CompressionTypes.UnitCountTree)
+                {
+                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
+                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
+                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
                     {
                         result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
                     }
@@ -487,9 +500,13 @@ namespace FillAPixRobot
         private CompressionTypes GetMaximumCompression()
         {
             CompressionTypes result = CompressionTypes.Unit;
-            if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_UNIT_DOUBLE_TREE)
+            if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_UNIT_SIMPLE_TREE)
             {
-                result = CompressionTypes.UnitDoubleTree;
+                result = CompressionTypes.UnitSimpleTree;
+            }
+            if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_UNIT_COUNT_TREE)
+            {
+                result = CompressionTypes.UnitCountTree;
             }
             return result;
         }

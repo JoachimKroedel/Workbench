@@ -260,7 +260,8 @@
             this._cbxBehaviourOnError.Items.AddRange(new object[] {
             "Nothing",
             "Undo",
-            "Reset"});
+            "Reset",
+            "By-Learning-Level"});
             this._cbxBehaviourOnError.Location = new System.Drawing.Point(188, 69);
             this._cbxBehaviourOnError.Name = "_cbxBehaviourOnError";
             this._cbxBehaviourOnError.Size = new System.Drawing.Size(123, 21);
