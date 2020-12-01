@@ -467,10 +467,11 @@ namespace FillAPixEngine
             {
                 return false;
             }
+            List<PuzzleCell> areaCells = GetArea(pos);
             int countFilled = 0;
-            int countEmpty = 0;
+            int countEmpty = 9 - areaCells.Count;
             int countNotMarked = 0;
-            foreach (PuzzleCell cell in GetArea(pos))
+            foreach (PuzzleCell cell in areaCells)
             {
                 if (cell.State == PuzzleCellStateTypes.NotMarked)
                 {
