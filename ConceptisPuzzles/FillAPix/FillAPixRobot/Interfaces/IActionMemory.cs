@@ -27,15 +27,15 @@ namespace FillAPixRobot.Interfaces
         void RememberDifference(bool isDifferent, ISensationSnapshot snapshot);
         double CheckForDifferencePattern(ISensationSnapshot snapshot);
 
-        Dictionary<ISensoryPattern, int> GetNegativeFeedbackPattern(FieldOfVisionTypes fieldOfVision);
         void RememberFeedback(int feedbackValue, ISensationSnapshot snapshot);
         double CheckForPositiveFeedback(ISensationSnapshot snapshot);
 
         double CheckForNegativeFeedback(ISensationSnapshot snapshot);
-        double CheckForNotNegativeFeedbackPattern(ISensationSnapshot snapshot);
 
         double GetPositiveFeedbackPercentage(IPartialSnapshotCompression partialSnapshotCompression);
 
         double GetNegativeFeedbackPercentage(IPartialSnapshotCompression partialSnapshotCompression);
+
+        void RefreshOverallNegativePscList(List<IActionMemory> actionMemories);
     }
 }

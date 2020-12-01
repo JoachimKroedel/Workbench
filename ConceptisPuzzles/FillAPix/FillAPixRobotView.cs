@@ -51,7 +51,7 @@ namespace ConceptisPuzzles.Robot
             _cbxTypeOfRobot.SelectedIndex = 2;
             _ddbFieldOfVisionTypes.SelectedIndex = 2;
 
-            _cbxBehaviourOnError.SelectedIndex = 3;
+            _cbxBehaviourOnError.SelectedIndex = 2;
         }
 
         private void FillAPixRobotView_Load(object sender, EventArgs e)

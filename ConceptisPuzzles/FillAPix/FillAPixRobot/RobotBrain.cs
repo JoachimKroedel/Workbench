@@ -222,6 +222,7 @@ namespace FillAPixRobot
                         Console.WriteLine("Error occurred!");
                     }
                     actionMemory.RememberFeedback(actionFeedback, sensationSnapshotBeforeAction);
+                    actionMemory.RefreshOverallNegativePscList(ActionMemoryDictonary.Values.ToList());
                 }
 
                 _actionFeedbackHistory.Add(actionFeedback);
@@ -285,8 +286,8 @@ namespace FillAPixRobot
                     posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFuzzyDegree);
 
                     double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
-                    double negativeFeedbackByPattern = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(snapshot));
-                    negativeFeedback = Math.Max(negativeFeedback, negativeFeedbackByPattern);
+                    //double negativeFeedbackByPattern = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(snapshot));
+                    //negativeFeedback = Math.Max(negativeFeedback, negativeFeedbackByPattern);
 
                     double negativeFuzzyDegree = GetFuzzyDegreeByNegativeFeedback(negativeFeedback);
                     sumeOfPosibilityForNegativeFeedback += negativeFuzzyDegree;
