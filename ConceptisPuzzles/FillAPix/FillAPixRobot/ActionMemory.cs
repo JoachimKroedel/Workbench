@@ -262,13 +262,33 @@ namespace FillAPixRobot
         public double CheckForPositiveFeedback(ISensationSnapshot snapshot)
         {
             double result = 0.0;
-            foreach (ISensationSnapshot partialSnapShot in GetActualPartialSnapshot(snapshot))
+            CompressionTypes maximumCompression = GetMaximumCompression();
+            foreach (ISensationSnapshot partialSnapshot in GetActualPartialSnapshot(snapshot))
             {
-                var singleUnits = SplitUnits(partialSnapShot);
+                var singleUnits = SplitUnits(partialSnapshot);
                 foreach (var unit in singleUnits)
                 {
                     result = Math.Max(result, GetPositiveFeedbackPercentage(unit));
                 }
+                if (maximumCompression >= CompressionTypes.UnitSimpleTree)
+                {
+                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
+                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitSimpleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
+                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
+                    {
+                        result = Math.Max(result, GetPositiveFeedbackPercentage(partialSnapshotCompression));
+                    }
+                }
+                if (maximumCompression >= CompressionTypes.UnitCountTree)
+                {
+                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
+                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
+                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
+                    {
+                        result = Math.Max(result, GetPositiveFeedbackPercentage(partialSnapshotCompression));
+                    }
+                }
+
             }
             return result;
         }

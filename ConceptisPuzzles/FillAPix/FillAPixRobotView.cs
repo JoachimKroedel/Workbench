@@ -820,6 +820,7 @@ namespace ConceptisPuzzles.Robot
         {
             if (CheckPuzzle(resetOnOrror))
             {
+                _robotBrain.RiskFactor = (double)_nudRiskFactor.Value / 100;
                 _robotBrain.TryToLearn();
             }
         }

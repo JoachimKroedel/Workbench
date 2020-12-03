@@ -24,6 +24,8 @@ namespace FillAPixRobot
 
         private Point _position;
         private double _percentageSolving;
+        private double _riskFactor;
+        
         private ISensationSnapshot _lastSensationSnapshot;
         private readonly List<ISensoryUnit> _kownSensoryUnits = new List<ISensoryUnit>();
         private readonly List<ISensoryPattern> _kownSensoryPatterns = new List<ISensoryPattern>();
@@ -124,6 +126,19 @@ namespace FillAPixRobot
             }
         }
 
+        public double RiskFactor
+        {
+            get { return _riskFactor; }
+            set
+            {
+                if (_riskFactor != value)
+                {
+                    _riskFactor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ObservableCollection<Point> LastPositions { get; } = new ObservableCollection<Point>();
 
         public int ActionFeedback { get; set; }
@@ -200,6 +215,10 @@ namespace FillAPixRobot
 
             // Nun wird entschieden welche Aktion ausgeführt werden soll 
             IPuzzleAction action = GetDecisionByMemory(sensationSnapshotBeforeAction);
+            if (action == null)
+            {
+
+            }
 
             // Nun eine Aktion ausführen und Reaktion erkennen
             RaiseActionWanted(action);
@@ -247,7 +266,7 @@ namespace FillAPixRobot
         private IActionMemoryQuartet GetBestActionMemoryQuartet(Point position, ISensationSnapshot snapshot)
         {
             // ToDo JK: Find all possible actions for that snapshot
-            Dictionary<IPuzzleAction, IActionMemoryQuartet> rangeOfActions = GetRangeOfActions(snapshot);
+            Dictionary<IPuzzleAction, IActionMemoryQuartet> rangeOfActions = GetRangeOfActions(snapshot, 0.0);
 
             if (rangeOfActions.Any())
             {
@@ -260,7 +279,7 @@ namespace FillAPixRobot
             return null;
         }
 
-        private Dictionary<IPuzzleAction, IActionMemoryQuartet> GetRangeOfActions(ISensationSnapshot snapshot)
+        private Dictionary<IPuzzleAction, IActionMemoryQuartet> GetRangeOfActions(ISensationSnapshot snapshot, double riskFactor)
         {
             double sumeOfPosibilityForDifference = 0.0;
             double sumeOfPosibilityForPositiveFeedback = 0.0;
@@ -280,14 +299,32 @@ namespace FillAPixRobot
                 {
                     double positiveFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
                     positiveFeedback = Math.Max(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
-                    double positiveFuzzyDegree = GetFuzzyDegreeByPositiveFeedback(positiveFeedback);
+                    double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
+                    if (positiveFeedback >= (1.0 - riskFactor) && positiveFeedback > negativeFeedback)
+                    {
+                        negativeFeedback = 0.0;
+                    }
+                    else if (negativeFeedback >= riskFactor &&  negativeFeedback > positiveFeedback)
+                    {
+                        positiveFeedback = 0.0;
+                    }
 
+                    if (positiveFeedback < 1.0 - riskFactor)
+                    {
+                        positiveFeedback = 0.0;
+                        if (actionMemory.NegativeFeedbackCount > 0)
+                        {
+                            negativeFeedback = Math.Max(1.0 - actionMemory.NegProcentualNegativeFeedback, negativeFeedback);
+                        }
+                    }
+                    if (negativeFeedback > riskFactor)
+                    {
+                        negativeFeedback = 1.0;
+                    }
+
+                    double positiveFuzzyDegree = GetFuzzyDegreeByPositiveFeedback(positiveFeedback);
                     sumeOfPosibilityForPositiveFeedback += positiveFuzzyDegree;
                     posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFuzzyDegree);
-
-                    double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
-                    //double negativeFeedbackByPattern = Math.Min(1.0, 1.0 - actionMemory.CheckForNotNegativeFeedbackPattern(snapshot));
-                    //negativeFeedback = Math.Max(negativeFeedback, negativeFeedbackByPattern);
 
                     double negativeFuzzyDegree = GetFuzzyDegreeByNegativeFeedback(negativeFeedback);
                     sumeOfPosibilityForNegativeFeedback += negativeFuzzyDegree;
@@ -297,6 +334,7 @@ namespace FillAPixRobot
 
             var rangeOfActions = new Dictionary<IPuzzleAction, IActionMemoryQuartet>();
             double rangeSize = 0.0;
+            double positvieMultiplicator = 1.0 + (1.0 - riskFactor) * 100;
 
             foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
             {
@@ -313,6 +351,10 @@ namespace FillAPixRobot
                 if (posibilityForNegativeFeedbackByAction.ContainsKey(action))
                 {
                     memoryQuartet.NegativeFeedback = posibilityForNegativeFeedbackByAction[action];
+                }
+                if (memoryQuartet.PositiveFeedback >= 1.0 && memoryQuartet.NegativeFeedback <= 0.0)
+                {
+                    memoryQuartet.PositiveFeedback *= positvieMultiplicator;
                 }
                 var stepSize = memoryQuartet.StepSize;
                 if (stepSize > 0.0)
@@ -364,7 +406,7 @@ namespace FillAPixRobot
             }
 
             double positionInRangeByRandom = _random.NextDouble();
-            Dictionary<IPuzzleAction, IActionMemoryQuartet> rangeOfActions = GetRangeOfActions(snapshot);
+            Dictionary<IPuzzleAction, IActionMemoryQuartet> rangeOfActions = GetRangeOfActions(snapshot, RiskFactor);
             foreach (var rangeOfAction in rangeOfActions)
             {
                 var stepSize = rangeOfAction.Value.StepSize;

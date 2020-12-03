@@ -22,6 +22,10 @@ namespace FillAPixRobot
                 {
                     return double.PositiveInfinity;
                 }
+                //if (PositiveFeedback + NegativeFeedback <= 0)
+                //{
+                //    return 0;
+                //}
                 return (Difference * (1.0 + PositiveFeedback) * (1.0 - NegativeFeedback)) / RangeSize; 
             }
         }
