@@ -465,10 +465,11 @@ namespace FillAPixRobot
 
         public void RefreshOverallNegativePscList(List<IActionMemory> actionMemories)
         {
+            int minimumCount = MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS;
             OverallNegativePartialSnapshotCompressions.Clear();
             foreach (IActionMemory actionMemoryEntry in actionMemories)
             {
-                foreach (var dictPscEntry in actionMemoryEntry.NegativeDictPartialSnapshotCompressions.Where(e => e.Value >= MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS))
+                foreach (var dictPscEntry in actionMemoryEntry.NegativeDictPartialSnapshotCompressions.Where(e => e.Value >= minimumCount))
                 {
                     if (!OverallNegativePartialSnapshotCompressions.Contains(dictPscEntry.Key))
                     {

@@ -300,11 +300,11 @@ namespace FillAPixRobot
                     double positiveFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
                     positiveFeedback = Math.Max(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
                     double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
-                    if (positiveFeedback >= (1.0 - riskFactor) && positiveFeedback > negativeFeedback)
+                    if (positiveFeedback >= (1.0 - riskFactor) && positiveFeedback > negativeFeedback && negativeFeedback < riskFactor)
                     {
                         negativeFeedback = 0.0;
                     }
-                    else if (negativeFeedback >= riskFactor &&  negativeFeedback > positiveFeedback)
+                    else if (negativeFeedback > positiveFeedback && negativeFeedback >= riskFactor)
                     {
                         positiveFeedback = 0.0;
                     }
@@ -322,13 +322,11 @@ namespace FillAPixRobot
                         negativeFeedback = 1.0;
                     }
 
-                    double positiveFuzzyDegree = GetFuzzyDegreeByPositiveFeedback(positiveFeedback);
-                    sumeOfPosibilityForPositiveFeedback += positiveFuzzyDegree;
-                    posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFuzzyDegree);
+                    sumeOfPosibilityForPositiveFeedback += positiveFeedback;
+                    posibilityForPositiveFeedbackByAction.Add(actionMemory.Action, positiveFeedback);
 
-                    double negativeFuzzyDegree = GetFuzzyDegreeByNegativeFeedback(negativeFeedback);
-                    sumeOfPosibilityForNegativeFeedback += negativeFuzzyDegree;
-                    posibilityForNegativeFeedbackByAction.Add(actionMemory.Action, negativeFuzzyDegree);
+                    sumeOfPosibilityForNegativeFeedback += negativeFeedback;
+                    posibilityForNegativeFeedbackByAction.Add(actionMemory.Action, negativeFeedback);
                 }
             }
 
@@ -417,36 +415,6 @@ namespace FillAPixRobot
                 positionInRangeByRandom -= stepSize;
             }
             return null;
-        }
-
-        private double GetFuzzyDegreeByPositiveFeedback(double positiveFeedback)
-        {
-            // ToDo Deactivate FUZZY if useful
-            return positiveFeedback;
-            _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfPositiveFeedbackTypes>(positiveFeedback);
-            _fillAPixFuzzyLogic.CalculateOutput();
-            double expectationPositiveFactor = _fillAPixFuzzyLogic.GetValue(FuzzyExpectationFactorTypes.PositiveFeedback);
-            double diff = expectationPositiveFactor - positiveFeedback;
-            if (Math.Abs(diff) > 0.001)
-            {
-                Console.WriteLine("Positive --> GetFuzzyDegreeByPositiveFeedback different input output! " + diff);
-            }
-            return expectationPositiveFactor;
-        }
-
-        private double GetFuzzyDegreeByNegativeFeedback(double negativeFeedback)
-        {
-            // ToDo Deactivate FUZZY if useful
-            return negativeFeedback;
-            _fillAPixFuzzyLogic.SetValue<FuzzyPlausibilityOfNegativeFeedbackTypes>(negativeFeedback);
-            _fillAPixFuzzyLogic.CalculateOutput();
-            double expectationNegativeFactor = _fillAPixFuzzyLogic.GetValue(FuzzyExpectationFactorTypes.NegativeFeedback);
-            double diff = expectationNegativeFactor - negativeFeedback;
-            if (Math.Abs(diff) > 0.001)
-            {
-                Console.WriteLine("Negative --> GetFuzzyDegreeByPositiveFeedback different input output! " + diff);
-            }
-            return expectationNegativeFactor;
         }
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
