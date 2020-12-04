@@ -6,5 +6,6 @@
         Unit,
         UnitSimpleTree,
         UnitCountTree,
+        MultiUnitCountTree,
     }
 }

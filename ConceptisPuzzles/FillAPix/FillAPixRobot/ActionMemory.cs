@@ -17,6 +17,7 @@ namespace FillAPixRobot
         private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT = 10;
         private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_SIMPLE_TREE = 20;
         private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_COUNT_TREE = 40;
+        private const int MINIMUM_FEEDBACK_COUNT_FOR_MULTI_UNIT_COUNT_TREE = 80000;
 
         private const int MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS = 10;
 
@@ -288,6 +289,15 @@ namespace FillAPixRobot
                         result = Math.Max(result, GetPositiveFeedbackPercentage(partialSnapshotCompression));
                     }
                 }
+                if (maximumCompression >= CompressionTypes.MultiUnitCountTree)
+                {
+                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
+                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfMultiUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
+                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
+                    {
+                        result = Math.Max(result, GetPositiveFeedbackPercentage(partialSnapshotCompression));
+                    }
+                }
 
             }
             return result;
@@ -317,6 +327,15 @@ namespace FillAPixRobot
                 {
                     var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
                     List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
+                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
+                    {
+                        result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
+                    }
+                }
+                if (maximumCompression >= CompressionTypes.MultiUnitCountTree)
+                {
+                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
+                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfMultiUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
                     foreach (var partialSnapshotCompression in partialSnapshotCompressions)
                     {
                         result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
@@ -459,6 +478,10 @@ namespace FillAPixRobot
             if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_UNIT_COUNT_TREE)
             {
                 result = CompressionTypes.UnitCountTree;
+            }
+            if (NegativeFeedbackCount > MINIMUM_FEEDBACK_COUNT_FOR_MULTI_UNIT_COUNT_TREE)
+            {
+                result = CompressionTypes.MultiUnitCountTree;
             }
             return result;
         }

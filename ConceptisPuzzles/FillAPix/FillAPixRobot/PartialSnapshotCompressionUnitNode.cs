@@ -118,9 +118,18 @@ namespace FillAPixRobot
             else
             {
                 StringBuilder output = new StringBuilder($"{Unit}:{{");
-                foreach(var child in ChildNodes)
+                var countChild = new Dictionary<IPartialSnapshotCompressionNode, int>();
+                foreach (IPartialSnapshotCompressionNode child in ChildNodes)
                 {
-                    output.Append($" {child},");
+                    if (!countChild.ContainsKey(child))
+                    {
+                        countChild.Add(child, 0);
+                    }
+                    countChild[child]++;
+                }
+                foreach(var entry in countChild)
+                { 
+                    output.Append($" {entry.Value}x{entry.Key},");
                 }
                 output.Remove(output.Length - 1, 1);
                 output.Append("}");
