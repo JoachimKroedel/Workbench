@@ -81,13 +81,21 @@ namespace FillAPixRobot
                 return false;
             }
 
-            foreach (IPartialSnapshotCompressionNode entry in ChildNodes)
+            var sortedNodes = new List<IPartialSnapshotCompressionNode>();
+            var otherSortedNodes = new List<IPartialSnapshotCompressionNode>();
+            sortedNodes.AddRange(ChildNodes);
+            otherSortedNodes.AddRange(other.ChildNodes);
+            sortedNodes.Sort();
+            otherSortedNodes.Sort();
+
+            for (int i = 0; i < sortedNodes.Count; i++)
             {
-                if (!other.ChildNodes.Contains(entry))
+                if (otherSortedNodes.Count <= i || !sortedNodes[i].Equals(otherSortedNodes[i]))
                 {
                     return false;
                 }
             }
+
             return true;
         }
 
