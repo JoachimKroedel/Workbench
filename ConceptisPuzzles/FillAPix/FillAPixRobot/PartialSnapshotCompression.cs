@@ -269,6 +269,7 @@ namespace FillAPixRobot
                         }
                     }
                     break;
+                case CompressionTypes.UnitSimpleTree:
                 case CompressionTypes.UnitCountTree:
                 case CompressionTypes.MultiUnitCountTree:
                     if (other.ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode otherUnitCountTreeNode)

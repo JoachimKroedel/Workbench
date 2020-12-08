@@ -14,12 +14,10 @@ namespace FillAPixRobot
         private const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN = 10;
         private const int MINIMUM_CALL_COUNT_FOR_DIFFERENT_PATTERN_3X3 = 20;
 
-        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT = 10;
-        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_SIMPLE_TREE = 20;
-        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_COUNT_TREE = 40;
-        private const int MINIMUM_FEEDBACK_COUNT_FOR_MULTI_UNIT_COUNT_TREE = 80;
-
-        private const int MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS = 10;
+        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT = 20;
+        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_SIMPLE_TREE = 50;
+        private const int MINIMUM_FEEDBACK_COUNT_FOR_UNIT_COUNT_TREE = 200;
+        private const int MINIMUM_FEEDBACK_COUNT_FOR_MULTI_UNIT_COUNT_TREE = 400;
 
         private readonly Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>> _noDifferencePatternDictonary = new Dictionary<FieldOfVisionTypes, Dictionary<ISensoryPattern, int>>();
 
@@ -211,7 +209,7 @@ namespace FillAPixRobot
 
                     if (!NegativeDictPartialSnapshotCompressions.ContainsKey(pscEntry))
                     {
-                        NegativeDictPartialSnapshotCompressions.Add(pscEntry, new FeedbackCounter(CallCount));
+                        NegativeDictPartialSnapshotCompressions.Add(pscEntry, new FeedbackCounter(PositiveFeedbackCount, NegativeFeedbackCount));
                     }
                     else if (GetNegativeFeedbackPercentage(pscEntry) >= 0.99)
                     {
@@ -233,7 +231,7 @@ namespace FillAPixRobot
                     }
                     else
                     {
-                        NegativeDictPartialSnapshotCompressions[pscEntry].LifeCycleStamp = CallCount;
+                        NegativeDictPartialSnapshotCompressions[pscEntry].NegativeLifeCycleStamp = NegativeFeedbackCount;
                         NegativeDictPartialSnapshotCompressions[pscEntry].NegativeCount++;
                     }
                 }
@@ -253,14 +251,41 @@ namespace FillAPixRobot
                     {
                         if (!PositveDictPartialSnapshotCompressions.ContainsKey(pscEntry))
                         {
-                            PositveDictPartialSnapshotCompressions.Add(pscEntry, new FeedbackCounter(CallCount));
+                            PositveDictPartialSnapshotCompressions.Add(pscEntry, new FeedbackCounter(PositiveFeedbackCount, NegativeFeedbackCount));
                         }
                         else
                         {
-                            PositveDictPartialSnapshotCompressions[pscEntry].LifeCycleStamp = CallCount;
+                            PositveDictPartialSnapshotCompressions[pscEntry].PositiveLifeCycleStamp = PositiveFeedbackCount;
                             PositveDictPartialSnapshotCompressions[pscEntry].PositiveCount++;
                         }
                     }
+                }
+            }
+        
+            if (feedbackValue != 0)
+            {
+                List<IPartialSnapshotCompression> sortedKeys = NegativeDictPartialSnapshotCompressions.Keys.ToList();
+                sortedKeys.Sort();
+                var keysToRemove = new List<IPartialSnapshotCompression>();
+                for (int i = 0; i < sortedKeys.Count - 1; i++)
+                {
+                    for (int j = i + 1; j < sortedKeys.Count; j++)
+                    {
+                        var a = sortedKeys[i];
+                        var b = sortedKeys[j];
+                        if (a.Contains(b) && NegativeDictPartialSnapshotCompressions[a].NegativeCount < NegativeDictPartialSnapshotCompressions[b].NegativeCount)
+                        {
+                            keysToRemove.Add(a);
+                        }
+                        else if (b.Contains(a) && NegativeDictPartialSnapshotCompressions[b].NegativeCount < NegativeDictPartialSnapshotCompressions[a].NegativeCount)
+                        {
+                            keysToRemove.Add(b);
+                        }
+                    }
+                }
+                foreach(var key in keysToRemove)
+                {
+                    NegativeDictPartialSnapshotCompressions.Remove(key);
                 }
             }
         }
@@ -354,7 +379,7 @@ namespace FillAPixRobot
         {
             double negativeCount = NegativeDictPartialSnapshotCompressions.ContainsKey(partialSnapshotCompression) ? NegativeDictPartialSnapshotCompressions[partialSnapshotCompression].NegativeCount : 0;
             double positivCount = PositveDictPartialSnapshotCompressions.ContainsKey(partialSnapshotCompression) ? PositveDictPartialSnapshotCompressions[partialSnapshotCompression].PositiveCount : 0;
-            double sum = Math.Max(MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS, positivCount + negativeCount);
+            double sum = Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_UNIT, positivCount + negativeCount);
             if (sum > 0)
             {
                 return positivCount / sum;
@@ -366,7 +391,7 @@ namespace FillAPixRobot
         {
             double negativeCount = NegativeDictPartialSnapshotCompressions.ContainsKey(partialSnapshotCompression) ? NegativeDictPartialSnapshotCompressions[partialSnapshotCompression].NegativeCount : 0;
             double positivCount = PositveDictPartialSnapshotCompressions.ContainsKey(partialSnapshotCompression) ? PositveDictPartialSnapshotCompressions[partialSnapshotCompression].PositiveCount : 0;
-            double sum = Math.Max(MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS, positivCount + negativeCount);
+            double sum = Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_UNIT, positivCount + negativeCount);
             if (sum > 0)
             {
                 return negativeCount / sum;
@@ -378,7 +403,7 @@ namespace FillAPixRobot
         {
             double negativeCount = PartialSnapshotCompression.GetNegativeCountOfSensoryUnit(NegativeDictPartialSnapshotCompressions.Where(p => p.Value.NegativeCount > 0), unit);
             double positivCount = PartialSnapshotCompression.GetPositiveCountOfSensoryUnit(PositveDictPartialSnapshotCompressions.Where(p => p.Value.PositiveCount > 0), unit);
-            double sum = Math.Max(MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS, positivCount + negativeCount);
+            double sum = Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_UNIT, positivCount + negativeCount);
             if (sum > 0)
             {
                 return positivCount / sum;
@@ -390,7 +415,7 @@ namespace FillAPixRobot
         {
             double negativeCount = PartialSnapshotCompression.GetNegativeCountOfSensoryUnit(NegativeDictPartialSnapshotCompressions.Where(p => p.Value.NegativeCount > 0), unit);
             double positivCount = PartialSnapshotCompression.GetPositiveCountOfSensoryUnit(PositveDictPartialSnapshotCompressions.Where(p => p.Value.PositiveCount > 0), unit);
-            double sum = Math.Max(MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS, positivCount + negativeCount);
+            double sum = Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_UNIT, positivCount + negativeCount);
             if (sum > 0)
             {
                 return negativeCount / sum;
@@ -492,7 +517,7 @@ namespace FillAPixRobot
 
         public void RefreshOverallNegativePscList(List<IActionMemory> actionMemories)
         {
-            int minimumCount = MINIMUM_COUNT_TO_CHECK_NEGATIVE_FEEDBACK_FOR_UNITS;
+            int minimumCount = MINIMUM_FEEDBACK_COUNT_FOR_UNIT;
             OverallNegativePartialSnapshotCompressions.Clear();
             foreach (IActionMemory actionMemoryEntry in actionMemories)
             {

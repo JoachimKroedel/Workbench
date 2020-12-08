@@ -4,6 +4,7 @@
     {
         int PositiveCount { get; set; }
         int NegativeCount { get; set; }
-        int LifeCycleStamp { get; set; }
+        int PositiveLifeCycleStamp { get; set; }
+        int NegativeLifeCycleStamp { get; set; }
     }
 }

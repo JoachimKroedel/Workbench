@@ -4,18 +4,20 @@ namespace FillAPixRobot
 {
     public class FeedbackCounter : IFeedbackCounter
     {
-        public FeedbackCounter(int lifeCycleStamp)
+        public FeedbackCounter(int positiveLifeCycleStamp, int negativeLifeCycleStamp)
         {
-            LifeCycleStamp = lifeCycleStamp;
+            PositiveLifeCycleStamp = positiveLifeCycleStamp;
+            NegativeLifeCycleStamp = negativeLifeCycleStamp;
         }
 
         public int PositiveCount { get; set; }
         public int NegativeCount { get; set; }
-        public int LifeCycleStamp { get; set; }
+        public int PositiveLifeCycleStamp { get; set; }
+        public int NegativeLifeCycleStamp { get; set; }
 
         public override string ToString()
         {
-            return $"{{pos={PositiveCount}, neg={NegativeCount}, lifeCycle={LifeCycleStamp}}}";
+            return $"{{pos={PositiveCount}, posLifeCycle={PositiveLifeCycleStamp}, neg={NegativeCount}, negLifeCycle={NegativeLifeCycleStamp}}}";
         }
     }
 }
