@@ -37,6 +37,8 @@
             this._cbxShowNoDifferencePattern1x1 = new System.Windows.Forms.CheckBox();
             this._cbxShowNoDifferentUnits = new System.Windows.Forms.CheckBox();
             this._cbxClearBefore = new System.Windows.Forms.CheckBox();
+            this._btnCleanNegativeFeedbackUnits = new System.Windows.Forms.Button();
+            this._btnCleanPositiveFeedbackUnits = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnShowActionMemory
@@ -136,11 +138,33 @@
             this._cbxClearBefore.Text = "Clear before";
             this._cbxClearBefore.UseVisualStyleBackColor = true;
             // 
+            // _btnCleanNegativeFeedbackUnits
+            // 
+            this._btnCleanNegativeFeedbackUnits.Location = new System.Drawing.Point(583, 12);
+            this._btnCleanNegativeFeedbackUnits.Name = "_btnCleanNegativeFeedbackUnits";
+            this._btnCleanNegativeFeedbackUnits.Size = new System.Drawing.Size(178, 23);
+            this._btnCleanNegativeFeedbackUnits.TabIndex = 10;
+            this._btnCleanNegativeFeedbackUnits.Text = "Clean negative feedback units";
+            this._btnCleanNegativeFeedbackUnits.UseVisualStyleBackColor = true;
+            this._btnCleanNegativeFeedbackUnits.Click += new System.EventHandler(this._btnCleanNegativeFeedbackUnits_Click);
+            // 
+            // _btnCleanPositiveFeedbackUnits
+            // 
+            this._btnCleanPositiveFeedbackUnits.Location = new System.Drawing.Point(583, 35);
+            this._btnCleanPositiveFeedbackUnits.Name = "_btnCleanPositiveFeedbackUnits";
+            this._btnCleanPositiveFeedbackUnits.Size = new System.Drawing.Size(178, 23);
+            this._btnCleanPositiveFeedbackUnits.TabIndex = 11;
+            this._btnCleanPositiveFeedbackUnits.Text = "Clean positive feedback units";
+            this._btnCleanPositiveFeedbackUnits.UseVisualStyleBackColor = true;
+            this._btnCleanPositiveFeedbackUnits.Click += new System.EventHandler(this._btnCleanPositiveFeedbackUnits_Click);
+            // 
             // RobotBrainInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1214, 461);
+            this.Controls.Add(this._btnCleanPositiveFeedbackUnits);
+            this.Controls.Add(this._btnCleanNegativeFeedbackUnits);
             this.Controls.Add(this._cbxClearBefore);
             this.Controls.Add(this._cbxShowNoDifferentUnits);
             this.Controls.Add(this._cbxShowNoDifferencePattern1x1);
@@ -169,5 +193,7 @@
         private System.Windows.Forms.CheckBox _cbxShowNoDifferencePattern1x1;
         private System.Windows.Forms.CheckBox _cbxShowNoDifferentUnits;
         private System.Windows.Forms.CheckBox _cbxClearBefore;
+        private System.Windows.Forms.Button _btnCleanNegativeFeedbackUnits;
+        private System.Windows.Forms.Button _btnCleanPositiveFeedbackUnits;
     }
 }

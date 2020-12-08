@@ -10,7 +10,6 @@ namespace FillAPixRobot.Interfaces
         CompressionTypes CompressionType { get; set; }
         DirectionTypes Direction { get; set; }
         FieldOfVisionTypes FieldOfVision { get; set; }
-
         List<IPartialSnapshotCompressionNode> ChildNodes { get; }
 
         bool Contains(IPartialSnapshotCompression other);

@@ -190,26 +190,45 @@ namespace FillAPixRobot
                 result.AddRange(NewInstancesOfUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, fieldOfVision, direction));
             }
 
-            //if (maximumCompression >= CompressionTypes.MultiUnitCountTree)
-            //{
-            //    // ToDo: Find 1-5 fields at the boarder with combination of Empty and Outside  --> fieldOfVision.ThreeByThree
-            //    result.AddRange(NewInstancesOfMultiUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, fieldOfVision, direction));
-            //}
+            if (maximumCompression >= CompressionTypes.MultiUnitCountTree)
+            {
+                // ToDo: Find 1-5 fields at the boarder with combination of Empty and Outside  --> fieldOfVision.ThreeByThree
+                result.AddRange(NewInstancesOfMultiUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, fieldOfVision, direction));
+            }
 
             return result;
         }
 
-        static public int GetCountOfSensoryUnit(IEnumerable<KeyValuePair<IPartialSnapshotCompression, int>> dictPartialSnapshotCompressions, ISensoryUnit sensoryUnit)
+        static public int GetPositiveCountOfSensoryUnit(IEnumerable<KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter>> dictPartialSnapshotCompressions, ISensoryUnit sensoryUnit)
         {
             int result = 0;
 
-            foreach (KeyValuePair<IPartialSnapshotCompression, int> entry in dictPartialSnapshotCompressions.Where(e => e.Key.CompressionType == CompressionTypes.Unit))
+            foreach (KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter> entry in dictPartialSnapshotCompressions.Where(e => e.Key.CompressionType == CompressionTypes.Unit))
             {
-                foreach(var node in entry.Key.ChildNodes)
+                foreach (var node in entry.Key.ChildNodes)
                 {
                     if (node is PartialSnapshotCompressionUnitNode pscUnit && pscUnit.Unit.Equals(sensoryUnit))
                     {
-                        result += entry.Value;
+                        result += entry.Value.PositiveCount;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        static public int GetNegativeCountOfSensoryUnit(IEnumerable<KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter>> dictPartialSnapshotCompressions, ISensoryUnit sensoryUnit)
+        {
+            int result = 0;
+
+            foreach (KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter> entry in dictPartialSnapshotCompressions.Where(e => e.Key.CompressionType == CompressionTypes.Unit))
+            {
+                foreach (var node in entry.Key.ChildNodes)
+                {
+                    if (node is PartialSnapshotCompressionUnitNode pscUnit && pscUnit.Unit.Equals(sensoryUnit))
+                    {
+                        result += entry.Value.NegativeCount;
                         break;
                     }
                 }
@@ -256,15 +275,15 @@ namespace FillAPixRobot
                     {
                         if (ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode thisUnitNode && thisUnitNode.Unit.Equals(otherUnitCountTreeNode.Unit))
                         {
-                            var a = CountEntries(thisUnitNode.ChildNodes);
-                            var b = CountEntries(otherUnitCountTreeNode.ChildNodes);
-                            foreach(var xxx in b)
+                            var unitCountDict = CountEntries(thisUnitNode.ChildNodes);
+                            var otherUnitCountDict = CountEntries(otherUnitCountTreeNode.ChildNodes);
+                            foreach(KeyValuePair<IPartialSnapshotCompressionNode, int> otherEntry in otherUnitCountDict)
                             {
-                                if (!a.ContainsKey(xxx.Key))
+                                if (!unitCountDict.ContainsKey(otherEntry.Key))
                                 {
                                     return false;
                                 }
-                                if (a[xxx.Key] < b[xxx.Key])
+                                if (unitCountDict[otherEntry.Key] < otherUnitCountDict[otherEntry.Key])
                                 {
                                     return false;
                                 }

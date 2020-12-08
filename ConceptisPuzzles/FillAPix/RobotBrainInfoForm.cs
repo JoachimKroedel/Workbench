@@ -77,7 +77,7 @@ namespace ConceptisPuzzles.Robot
                 if (_cbxShowNegativeFeedbackUnits.Checked)
                 {
                     infoText.Append("\t NegativeFeedbackUnits:\n");
-                    foreach (KeyValuePair<IPartialSnapshotCompression, int> entry in actionMemory.NegativeDictPartialSnapshotCompressions.OrderByDescending(x => x.Value))
+                    foreach (KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter> entry in actionMemory.NegativeDictPartialSnapshotCompressions.OrderByDescending(x => x.Value.NegativeCount))
                     {
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {actionMemory.GetNegativeFeedbackPercentage(entry.Key)} \n");
                     }
@@ -86,7 +86,7 @@ namespace ConceptisPuzzles.Robot
                 if (_cbxShowPositveFeedbackUnits.Checked)
                 {
                     infoText.Append("\t PositveFeedbackUnits:\n");
-                    foreach (KeyValuePair<IPartialSnapshotCompression, int> entry in actionMemory.PositveDictPartialSnapshotCompressions.OrderByDescending(x => x.Value))
+                    foreach (KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter> entry in actionMemory.PositveDictPartialSnapshotCompressions.OrderByDescending(x => x.Value.PositiveCount))
                     {
                         infoText.Append($"\t \t {entry.Key}\t {entry.Value} \t {actionMemory.GetPositiveFeedbackPercentage(entry.Key)} \n");
                     }
@@ -101,6 +101,22 @@ namespace ConceptisPuzzles.Robot
                 _txtInfoOutput.Text += "=======================================================================\n";
             }
             _txtInfoOutput.Text += infoText.ToString();
+        }
+
+        private void _btnCleanNegativeFeedbackUnits_Click(object sender, System.EventArgs e)
+        {
+            foreach (IActionMemory actionMemory in RobotBrain.ActionMemoryDictonary.Values)
+            {
+                actionMemory.CleanNegativeFeedbackUnits(0);
+            }
+        }
+
+        private void _btnCleanPositiveFeedbackUnits_Click(object sender, System.EventArgs e)
+        {
+            foreach (IActionMemory actionMemory in RobotBrain.ActionMemoryDictonary.Values)
+            {
+                actionMemory.CleanPositiveFeedbackUnits(0);
+            }
         }
     }
 }

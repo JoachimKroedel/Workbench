@@ -20,8 +20,8 @@ namespace FillAPixRobot.Interfaces
         Dictionary<ISensoryUnit, int> DifferentUnits { get; }
         Dictionary<ISensoryUnit, int> NoDifferentUnits { get; }
 
-        Dictionary<IPartialSnapshotCompression, int> PositveDictPartialSnapshotCompressions { get; } 
-        Dictionary<IPartialSnapshotCompression, int> NegativeDictPartialSnapshotCompressions { get; }
+        Dictionary<IPartialSnapshotCompression, IFeedbackCounter> PositveDictPartialSnapshotCompressions { get; } 
+        Dictionary<IPartialSnapshotCompression, IFeedbackCounter> NegativeDictPartialSnapshotCompressions { get; }
 
         Dictionary<ISensoryPattern, int> GetNoDifferencePattern(FieldOfVisionTypes fieldOfVision);
         void RememberDifference(bool isDifferent, ISensationSnapshot snapshot);
@@ -37,5 +37,8 @@ namespace FillAPixRobot.Interfaces
         double GetNegativeFeedbackPercentage(IPartialSnapshotCompression partialSnapshotCompression);
 
         void RefreshOverallNegativePscList(List<IActionMemory> actionMemories);
+        void CleanNegativeFeedbackUnits(int count);
+
+        void CleanPositiveFeedbackUnits(int count);
     }
 }
