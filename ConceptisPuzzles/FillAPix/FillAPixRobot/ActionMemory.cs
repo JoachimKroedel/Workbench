@@ -33,8 +33,8 @@ namespace FillAPixRobot
         public IPuzzleAction Action { get; private set; }
 
         public int CallCount { get { return DifferenceCount + NoDifferenceCount; } }
-        public int DifferenceCount { get; private set; }
-        public int NoDifferenceCount { get; private set; }
+        public int DifferenceCount { get; protected set; }
+        public int NoDifferenceCount { get; protected set; }
         public double NegProcentualNoDifference 
         { 
             get 
@@ -43,8 +43,8 @@ namespace FillAPixRobot
             } 
         }
 
-        public int PositiveFeedbackCount { get; private set; }
-        public int NegativeFeedbackCount { get; private set; }
+        public int PositiveFeedbackCount { get; protected set; }
+        public int NegativeFeedbackCount { get; protected set; }
         public double NegProcentualNegativeFeedback 
         { 
             get

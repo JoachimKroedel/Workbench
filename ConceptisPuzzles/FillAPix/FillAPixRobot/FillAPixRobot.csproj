@@ -58,13 +58,15 @@
     <Compile Include="Enums\FuzzyPlausibilityOfOositiveFeedbackTypes.cs" />
     <Compile Include="Enums\FuzzyPositiveHistoryTypes.cs" />
     <Compile Include="FeedbackCounter.cs" />
+    <Compile Include="FilePersistance\FileActionMemory.cs" />
+    <Compile Include="FilePersistance\FilePersistanceManager.cs" />
     <Compile Include="FillAPixFuzzyLogic.cs" />
     <Compile Include="IActionMemoryQuartet.cs" />
     <Compile Include="Interfaces\IFeedbackCounter.cs" />
     <Compile Include="Interfaces\IPartialSnapshotCompression.cs" />
     <Compile Include="Interfaces\IPartialSnapshotCompressionNode.cs" />
     <Compile Include="PartialSnapshotCompression.cs" />
-    <Compile Include="PartialSnapshotCompressionUnitNode.cs" />
+    <Compile Include="PartialSnapshotCompressionNode.cs" />
     <Compile Include="PuzzleAction.cs" />
     <Compile Include="Enums\ActionTypes.cs" />
     <Compile Include="PuzzleReferee.cs" />

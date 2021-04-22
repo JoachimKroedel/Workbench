@@ -60,6 +60,7 @@ namespace ConceptisPuzzles.Robot
             _robotBrain.PropertyChanged += RobotBrain_PropertyChanged;
             _robotBrain.ExperienceWanted += RobotBrain_ExperienceWanted;
             _robotBrain.ActionWanted += RobotBrain_ActionWanted;
+            _robotBrain.ConflictDetected += RobotBrain_ConflictDetected;
         }
 
         private void BtnLoadPuzzle_Click(object sender, EventArgs e)
@@ -656,6 +657,23 @@ namespace ConceptisPuzzles.Robot
                 }
             }
 
+            if (!_simulationRunsInBackground && _cbxAutoRefreshPlayground.Checked)
+            {
+                RefreshPlayGround();
+                RecreateCells();
+            }
+        }
+
+        private void RobotBrain_ConflictDetected(object sender, EventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                MethodInvoker del = delegate { RobotBrain_ConflictDetected(this, e); };
+                Invoke(del);
+                return;
+            }
+
+            _puzzleBoard.Reset();
             if (!_simulationRunsInBackground && _cbxAutoRefreshPlayground.Checked)
             {
                 RefreshPlayGround();

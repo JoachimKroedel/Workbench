@@ -39,6 +39,8 @@
             this._cbxClearBefore = new System.Windows.Forms.CheckBox();
             this._btnCleanNegativeFeedbackUnits = new System.Windows.Forms.Button();
             this._btnCleanPositiveFeedbackUnits = new System.Windows.Forms.Button();
+            this._btnSaveMemories = new System.Windows.Forms.Button();
+            this._btnLoadMemories = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnShowActionMemory
@@ -158,11 +160,33 @@
             this._btnCleanPositiveFeedbackUnits.UseVisualStyleBackColor = true;
             this._btnCleanPositiveFeedbackUnits.Click += new System.EventHandler(this._btnCleanPositiveFeedbackUnits_Click);
             // 
+            // _btnSaveMemories
+            // 
+            this._btnSaveMemories.Location = new System.Drawing.Point(798, 12);
+            this._btnSaveMemories.Name = "_btnSaveMemories";
+            this._btnSaveMemories.Size = new System.Drawing.Size(75, 23);
+            this._btnSaveMemories.TabIndex = 12;
+            this._btnSaveMemories.Text = "Save";
+            this._btnSaveMemories.UseVisualStyleBackColor = true;
+            this._btnSaveMemories.Click += new System.EventHandler(this._btnSaveMemories_Click);
+            // 
+            // _btnLoadMemories
+            // 
+            this._btnLoadMemories.Location = new System.Drawing.Point(879, 12);
+            this._btnLoadMemories.Name = "_btnLoadMemories";
+            this._btnLoadMemories.Size = new System.Drawing.Size(75, 23);
+            this._btnLoadMemories.TabIndex = 13;
+            this._btnLoadMemories.Text = "Load";
+            this._btnLoadMemories.UseVisualStyleBackColor = true;
+            this._btnLoadMemories.Click += new System.EventHandler(this._btnLoadMemories_Click);
+            // 
             // RobotBrainInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1214, 461);
+            this.Controls.Add(this._btnLoadMemories);
+            this.Controls.Add(this._btnSaveMemories);
             this.Controls.Add(this._btnCleanPositiveFeedbackUnits);
             this.Controls.Add(this._btnCleanNegativeFeedbackUnits);
             this.Controls.Add(this._cbxClearBefore);
@@ -195,5 +219,7 @@
         private System.Windows.Forms.CheckBox _cbxClearBefore;
         private System.Windows.Forms.Button _btnCleanNegativeFeedbackUnits;
         private System.Windows.Forms.Button _btnCleanPositiveFeedbackUnits;
+        private System.Windows.Forms.Button _btnSaveMemories;
+        private System.Windows.Forms.Button _btnLoadMemories;
     }
 }

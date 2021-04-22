@@ -5,11 +5,14 @@ using System.Windows.Forms;
 using System.Linq;
 using FillAPixRobot.Enums;
 using System.Collections.Generic;
+using FillAPixRobot.FilePersistance;
 
 namespace ConceptisPuzzles.Robot
 {
     public partial class RobotBrainInfoForm : Form
     {
+        private FilePersistanceManager _filePersistanceManager = new FilePersistanceManager();
+
         public RobotBrainInfoForm()
         {
             InitializeComponent();
@@ -116,6 +119,22 @@ namespace ConceptisPuzzles.Robot
             foreach (IActionMemory actionMemory in RobotBrain.ActionMemoryDictonary.Values)
             {
                 actionMemory.CleanPositiveFeedbackUnits(0);
+            }
+        }
+
+        private void _btnSaveMemories_Click(object sender, System.EventArgs e)
+        {
+            _filePersistanceManager.SaveActionMemories(RobotBrain.ActionMemoryDictonary.Values.ToList());
+        }
+
+        private void _btnLoadMemories_Click(object sender, System.EventArgs e)
+        {
+            ICollection<IActionMemory> actionMemories = _filePersistanceManager.LoadActionMemories();
+
+            RobotBrain.ActionMemoryDictonary.Clear();
+            foreach(var actionMemory in actionMemories)
+            {
+                RobotBrain.ActionMemoryDictonary.Add(actionMemory.Action, actionMemory);
             }
         }
     }

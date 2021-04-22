@@ -9,6 +9,46 @@ namespace FillAPixRobot
 {
     public class SensoryPattern : ISensoryPattern, IComparable
     {
+        static public ISensoryPattern Parse(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            string parseText = text.Trim();
+            if (!parseText.StartsWith("{") || !parseText.EndsWith("}"))
+            {
+                return null;
+            }
+            parseText = parseText.Substring(1, parseText.Length - 2);
+
+            string[] splits = parseText.Split(new[] { ',' });
+            if (splits.Length != 2)
+            {
+                return null;
+            }
+
+            DirectionTypes direction = (DirectionTypes)Enum.Parse(typeof(DirectionTypes), splits[0].Trim(), true);
+            string sensoryUnitsText = splits[1].Trim();
+            if (sensoryUnitsText.Length >= 2)
+            {
+                sensoryUnitsText = sensoryUnitsText.Substring(1, sensoryUnitsText.Length - 2);
+            }
+            else
+            {
+                sensoryUnitsText = string.Empty;
+            }
+            string[] sensoryUnitSplittedText = sensoryUnitsText.Split(new[] { ';' });
+            List<ISensoryUnit> sensoryUnits = new List<ISensoryUnit>();
+            foreach(string sensoryUnitText in sensoryUnitSplittedText)
+            {
+                sensoryUnits.Add(SensoryUnit.Parse(sensoryUnitText));
+            }
+
+            return new SensoryPattern(direction, sensoryUnits);
+        }
+
         static private List<ISensoryPattern> Split(DirectionTypes directionType, int level, List<ISensoryUnit> sensoryUnits)
         {
             List<ISensoryPattern> result = new List<ISensoryPattern>();
@@ -202,18 +242,18 @@ namespace FillAPixRobot
         public override string ToString()
         {
             var outputBuilder = new StringBuilder();
-            outputBuilder.Append($"{{{DirectionType}, [");
+            outputBuilder.Append($"{{{DirectionType},[");
             if (SensoryUnits.Any())
             {
                 var sortedSensoryUnits = SensoryUnits;
                 sortedSensoryUnits.Sort();
                 foreach (var sensoryUnit in sortedSensoryUnits)
                 {
-                    outputBuilder.Append(sensoryUnit + ", ");
+                    outputBuilder.Append(sensoryUnit + ";");
                 }
-                outputBuilder.Remove(outputBuilder.Length - 2, 2);
+                outputBuilder.Remove(outputBuilder.Length - 1, 1);
             }
-            outputBuilder.Append("]}");
+            outputBuilder.Append($"]}}");
             return outputBuilder.ToString();
         }
     }

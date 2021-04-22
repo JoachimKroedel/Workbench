@@ -6,6 +6,32 @@ namespace FillAPixRobot
 {
     public class PuzzleAction : IPuzzleAction, IComparable
     {
+        static public IPuzzleAction Parse(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            string parseText = text.Trim();
+            if (!parseText.StartsWith("{") || !parseText.EndsWith("}"))
+            {
+                return null;
+            }
+            parseText = parseText.Substring(1, parseText.Length - 2);
+
+            string[] splits = parseText.Split(new[] { ',' });
+            if (splits.Length != 2)
+            {
+                return null;
+            }
+
+            ActionTypes type = (ActionTypes)Enum.Parse(typeof(ActionTypes), splits[0].Trim(), true);
+            DirectionTypes direction = (DirectionTypes)Enum.Parse(typeof(DirectionTypes), splits[1].Trim(), true);
+
+            return new PuzzleAction(type, direction); ;
+        }
+
         public PuzzleAction(IPuzzleAction action)
         {
             Id = action.Id;

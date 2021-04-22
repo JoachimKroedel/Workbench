@@ -1,5 +1,6 @@
 ﻿using FillAPixRobot.Enums;
 using FillAPixRobot.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,63 @@ namespace FillAPixRobot
 {
     public class PartialSnapshotCompression : IPartialSnapshotCompression
     {
+        static internal readonly string IdentifierChildNodes = "ChildNodes:[";
+
+        static public IPartialSnapshotCompression Parse(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            string parseText = text.Trim();
+            if (!parseText.StartsWith("{") || !parseText.EndsWith("}"))
+            {
+                return null;
+            }
+            parseText = parseText.Substring(1, parseText.Length - 2);
+
+            string[] splits = parseText.Split(new[] { ',' });
+            if (splits.Length <= 2)
+            {
+                return null;
+            }
+
+            CompressionTypes compressionType = (CompressionTypes)Enum.Parse(typeof(CompressionTypes), splits[0].Trim(), true);
+            FieldOfVisionTypes fieldOfVision = (FieldOfVisionTypes)Enum.Parse(typeof(FieldOfVisionTypes), splits[1].Trim(), true);
+            DirectionTypes direction = DirectionTypes.Undefined;
+            string childNodesText = splits[2].Trim();
+
+            if (!childNodesText.Contains("{"))
+            {
+                direction = (DirectionTypes)Enum.Parse(typeof(DirectionTypes), childNodesText, true);
+                childNodesText = splits[3].Trim();
+            }
+
+            var result = new PartialSnapshotCompression(compressionType, fieldOfVision, direction);
+
+            if (!childNodesText.Contains("<Empty>"))
+            {
+                if (!childNodesText.StartsWith(IdentifierChildNodes))
+                {
+                    result.ChildNodes.Add(PartialSnapshotCompressionNode.Parse(childNodesText));
+                }
+                else
+                {
+                    // =======================================================================================================================
+                    // ToDo: Check ChildNodeTree also!!! Up to now it's only one single child handled! (Think about regular expressions maybe)
+                    // =======================================================================================================================
+                    childNodesText = childNodesText.Substring(IdentifierChildNodes.Length);
+                    childNodesText = IdentifierChildNodes.Substring(0, childNodesText.Length - 1);
+                    var splitedChildNodesText = childNodesText.Split(new[] { ';' });
+                    foreach (var childNodeText in splitedChildNodesText)
+                    {
+                        result.ChildNodes.Add(PartialSnapshotCompressionNode.Parse(childNodeText));
+                    }
+                }
+            }
+            return result;
+        }
 
         static public List<IPartialSnapshotCompression> NewInstancesOfUnitCompression(Dictionary<ISensoryUnit, int> unitCountDictonary, FieldOfVisionTypes fieldOfVision)
         {
@@ -16,7 +74,7 @@ namespace FillAPixRobot
             foreach (var unitCountEntry in unitCountDictonary)
             {
                 var unitCompression = new PartialSnapshotCompression(CompressionTypes.Unit, fieldOfVision, DirectionTypes.Undefined);
-                var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
+                var node = new PartialSnapshotCompressionNode(unitCountEntry.Key);
                 unitCompression.ChildNodes.Add(node);
                 result.Add(unitCompression);
             }
@@ -42,8 +100,8 @@ namespace FillAPixRobot
                             continue;
                         }
                         var unitCompression = new PartialSnapshotCompression(CompressionTypes.UnitSimpleTree, fieldOfVision, DirectionTypes.Undefined);
-                        var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
-                        var childNode = new PartialSnapshotCompressionUnitNode(unitCountEntry2.Key);
+                        var node = new PartialSnapshotCompressionNode(unitCountEntry.Key);
+                        var childNode = new PartialSnapshotCompressionNode(unitCountEntry2.Key);
                         node.ChildNodes.Add(childNode);
                         unitCompression.ChildNodes.Add(node);
                         if (!result.Contains(unitCompression))
@@ -75,10 +133,10 @@ namespace FillAPixRobot
                             continue;
                         }
                         var unitCompression = new PartialSnapshotCompression(CompressionTypes.UnitCountTree, fieldOfVision, DirectionTypes.Undefined);
-                        var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
+                        var node = new PartialSnapshotCompressionNode(unitCountEntry.Key);
                         for (int i = 0; i < unitCountEntry2.Value; i++)
                         {
-                            node.ChildNodes.Add(new PartialSnapshotCompressionUnitNode(unitCountEntry2.Key));
+                            node.ChildNodes.Add(new PartialSnapshotCompressionNode(unitCountEntry2.Key));
                         }
                         unitCompression.ChildNodes.Add(node);
                         if (!result.Contains(unitCompression))
@@ -132,15 +190,15 @@ namespace FillAPixRobot
                                 }
                             }
                             var unitCompression = new PartialSnapshotCompression(CompressionTypes.MultiUnitCountTree, fieldOfVision, DirectionTypes.Undefined);
-                            var node = new PartialSnapshotCompressionUnitNode(unitCountEntry.Key);
+                            var node = new PartialSnapshotCompressionNode(unitCountEntry.Key);
 
                             for (int q = 0; q < unitValue1; q++)
                             {
-                                node.ChildNodes.Add(new PartialSnapshotCompressionUnitNode(unitKey1));
+                                node.ChildNodes.Add(new PartialSnapshotCompressionNode(unitKey1));
                             }
                             for (int q = 0; q < unitValue2; q++)
                             {
-                                node.ChildNodes.Add(new PartialSnapshotCompressionUnitNode(unitKey2));
+                                node.ChildNodes.Add(new PartialSnapshotCompressionNode(unitKey2));
                             }
 
                             unitCompression.ChildNodes.Add(node);
@@ -207,7 +265,7 @@ namespace FillAPixRobot
             {
                 foreach (var node in entry.Key.ChildNodes)
                 {
-                    if (node is PartialSnapshotCompressionUnitNode pscUnit && pscUnit.Unit.Equals(sensoryUnit))
+                    if (node is PartialSnapshotCompressionNode pscUnit && pscUnit.Unit.Equals(sensoryUnit))
                     {
                         result += entry.Value.PositiveCount;
                         break;
@@ -226,7 +284,7 @@ namespace FillAPixRobot
             {
                 foreach (var node in entry.Key.ChildNodes)
                 {
-                    if (node is PartialSnapshotCompressionUnitNode pscUnit && pscUnit.Unit.Equals(sensoryUnit))
+                    if (node is PartialSnapshotCompressionNode pscUnit && pscUnit.Unit.Equals(sensoryUnit))
                     {
                         result += entry.Value.NegativeCount;
                         break;
@@ -261,9 +319,9 @@ namespace FillAPixRobot
             switch (other.CompressionType)
             {
                 case CompressionTypes.Unit:
-                    if (other.ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode otherUnitNode)
+                    if (other.ChildNodes.FirstOrDefault() is PartialSnapshotCompressionNode otherUnitNode)
                     {
-                        if (ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode thisUnitNode && thisUnitNode.Unit.Equals(otherUnitNode.Unit))
+                        if (ChildNodes.FirstOrDefault() is PartialSnapshotCompressionNode thisUnitNode && thisUnitNode.Unit.Equals(otherUnitNode.Unit))
                         {
                             return true;
                         }
@@ -272,9 +330,9 @@ namespace FillAPixRobot
                 case CompressionTypes.UnitSimpleTree:
                 case CompressionTypes.UnitCountTree:
                 case CompressionTypes.MultiUnitCountTree:
-                    if (other.ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode otherUnitCountTreeNode)
+                    if (other.ChildNodes.FirstOrDefault() is PartialSnapshotCompressionNode otherUnitCountTreeNode)
                     {
-                        if (ChildNodes.FirstOrDefault() is PartialSnapshotCompressionUnitNode thisUnitNode && thisUnitNode.Unit.Equals(otherUnitCountTreeNode.Unit))
+                        if (ChildNodes.FirstOrDefault() is PartialSnapshotCompressionNode thisUnitNode && thisUnitNode.Unit.Equals(otherUnitCountTreeNode.Unit))
                         {
                             var unitCountDict = CountEntries(thisUnitNode.ChildNodes);
                             var otherUnitCountDict = CountEntries(otherUnitCountTreeNode.ChildNodes);
@@ -435,7 +493,7 @@ namespace FillAPixRobot
         public override string ToString()
         {
             var output = new StringBuilder();
-            output.Append($"{{ {CompressionType}, {FieldOfVision}, ");
+            output.Append($"{{{CompressionType},{FieldOfVision},");
             if (Direction != DirectionTypes.Undefined)
             {
                 output.Append($"{Direction},");
@@ -443,23 +501,23 @@ namespace FillAPixRobot
 
             if (ChildNodes.Count == 0)
             {
-                output.Append($" <Empty>");
+                output.Append($"{{<Empty>}}");
             }
             else if (ChildNodes.Count == 1)
             {
-                output.Append($" {ChildNodes.First()}");
+                output.Append($"{ChildNodes.First()}");
             }
             else
             {
-                output.Append(" ChildNodes:{");
+                output.Append(IdentifierChildNodes);
                 foreach (IPartialSnapshotCompressionNode node in ChildNodes)
                 {
-                    output.Append($" {node},");
+                    output.Append($"{node};");
                 }
                 output.Remove(output.Length - 1, 1);
-                output.Append(" }");
+                output.Append("]");
             }
-            output.Append(" }");
+            output.Append($"}}");
             return output.ToString();
         }
     }

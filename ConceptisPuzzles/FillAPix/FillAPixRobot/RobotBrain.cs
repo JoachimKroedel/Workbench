@@ -36,6 +36,8 @@ namespace FillAPixRobot
         public event EventHandler<EventArgs> ExperienceWanted;
         public event EventHandler<ActionWantedEventArgs> ActionWanted;
 
+        public event EventHandler<EventArgs> ConflictDetected;
+
         private readonly List<IPuzzleAction> _allPossibleActions = new List<IPuzzleAction>();
 
         private readonly IFuzzyLogic _fillAPixFuzzyLogic = new FillAPixFuzzyLogic();

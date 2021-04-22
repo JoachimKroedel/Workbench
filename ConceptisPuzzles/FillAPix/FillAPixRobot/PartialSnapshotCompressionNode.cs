@@ -5,14 +5,51 @@ using System.Text;
 
 namespace FillAPixRobot
 {
-    public class PartialSnapshotCompressionUnitNode : IPartialSnapshotCompressionNode
+    public class PartialSnapshotCompressionNode : IPartialSnapshotCompressionNode
     {
-        public PartialSnapshotCompressionUnitNode(ISensoryUnit unit)
+        static public IPartialSnapshotCompressionNode Parse(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            string parseText = text.Trim();
+            if (!parseText.StartsWith("{") || !parseText.EndsWith("}"))
+            {
+                return null;
+            }
+            parseText = parseText.Substring(1, parseText.Length - 2);
+            int seperatorIndex = parseText.IndexOf(':');
+            var unitParseText = seperatorIndex > 0 ? parseText.Substring(0, seperatorIndex) : parseText;
+
+            var unit = SensoryUnit.Parse(unitParseText);
+            var result = new PartialSnapshotCompressionNode(unit);
+            if (seperatorIndex > 0)
+            {
+                string childCountParseText = parseText.Substring(seperatorIndex + 1).Trim();
+                if (childCountParseText.Length > 2)
+                {
+                    childCountParseText = childCountParseText.Substring(1, childCountParseText.Length - 2);
+                    int multiplierIndex = childCountParseText.IndexOf('*');
+                    int childCount = int.Parse(childCountParseText.Substring(0, multiplierIndex));
+                    string childParseText = childCountParseText.Substring(multiplierIndex + 1);
+                    var child = Parse(childParseText);
+                    for (int i = 0; i < childCount; i++)
+                    {
+                        result.ChildNodes.Add(new PartialSnapshotCompressionNode(child.Unit));
+                    }
+                }
+            }
+            return result;
+        }
+
+        public PartialSnapshotCompressionNode(ISensoryUnit unit)
         {
             Unit = unit;
         }
 
-        public ISensoryUnit Unit { get; set; }
+        public ISensoryUnit Unit { get; private set; }
         public List<IPartialSnapshotCompressionNode> ChildNodes { get; } = new List<IPartialSnapshotCompressionNode>();
 
         public override int GetHashCode()
@@ -65,7 +102,7 @@ namespace FillAPixRobot
 
         public override bool Equals(object obj)
         {
-            var other = obj as PartialSnapshotCompressionUnitNode;
+            var other = obj as PartialSnapshotCompressionNode;
             if (other == null)
             {
                 return false;
@@ -99,7 +136,7 @@ namespace FillAPixRobot
             return true;
         }
 
-        static public bool operator ==(PartialSnapshotCompressionUnitNode lhs, PartialSnapshotCompressionUnitNode rhs)
+        static public bool operator ==(PartialSnapshotCompressionNode lhs, PartialSnapshotCompressionNode rhs)
         {
             if (ReferenceEquals(lhs, null))
             {
@@ -112,20 +149,20 @@ namespace FillAPixRobot
             return lhs.Equals(rhs);
         }
 
-        static public bool operator !=(PartialSnapshotCompressionUnitNode lhs, PartialSnapshotCompressionUnitNode rhs)
+        static public bool operator !=(PartialSnapshotCompressionNode lhs, PartialSnapshotCompressionNode rhs)
         {
             return !(lhs == rhs);
         }
 
         public override string ToString()
         {
-            if (!ChildNodes.Any())
+            //if (!ChildNodes.Any())
+            //{
+            //    return Unit.ToString();
+            //}
+            //else
             {
-                return Unit.ToString();
-            }
-            else
-            {
-                StringBuilder output = new StringBuilder($"{Unit}:{{");
+                StringBuilder output = new StringBuilder($"{{{Unit}:[");
                 var countChild = new Dictionary<IPartialSnapshotCompressionNode, int>();
                 foreach (IPartialSnapshotCompressionNode child in ChildNodes)
                 {
@@ -135,12 +172,15 @@ namespace FillAPixRobot
                     }
                     countChild[child]++;
                 }
-                foreach(var entry in countChild)
-                { 
-                    output.Append($" {entry.Value}x{entry.Key},");
+                if (countChild.Any())
+                {
+                    foreach (var entry in countChild)
+                    {
+                        output.Append($"{entry.Value}*{entry.Key};");
+                    }
+                    output.Remove(output.Length - 1, 1);
                 }
-                output.Remove(output.Length - 1, 1);
-                output.Append("}");
+                output.Append($"]}}");
                 return output.ToString();
             }
         }

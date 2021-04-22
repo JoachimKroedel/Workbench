@@ -5,6 +5,7 @@ namespace FillAPixRobot.Interfaces
 {
     public interface IPartialSnapshotCompressionNode : IComparable
     {
-        List<IPartialSnapshotCompressionNode> ChildNodes { get; }
+            ISensoryUnit Unit { get; }
+            List<IPartialSnapshotCompressionNode> ChildNodes { get; }
     }
 }

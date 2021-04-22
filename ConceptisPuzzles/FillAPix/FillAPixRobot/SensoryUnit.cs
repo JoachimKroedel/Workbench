@@ -6,6 +6,41 @@ namespace FillAPixRobot
 {
     public class SensoryUnit : ISensoryUnit, IComparable
     {
+
+        static public ISensoryUnit Parse(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            string parseText = text.Trim();
+            if (!parseText.StartsWith("{") || !parseText.EndsWith("}"))
+            {
+                return null;
+            }
+            parseText = parseText.Substring(1, parseText.Length - 2);
+
+            string[] splits = parseText.Split(new[] { '=' });
+            if (splits.Length != 2)
+            {
+                return null;
+            }
+
+            SensoryTypes type = (SensoryTypes)Enum.Parse(typeof(SensoryTypes), splits[0].Trim(), true);
+            string value = splits[1].Trim();
+            if (value.Length >= 2)
+            {
+                value = value.Substring(1, value.Length - 2);
+            }
+            else
+            {
+                value = string.Empty;
+            }
+
+            return new SensoryUnit(type, value);
+        }
+
         public SensoryUnit(ISensoryUnit sensoryUnit)
         {
             Id = sensoryUnit.Id;
