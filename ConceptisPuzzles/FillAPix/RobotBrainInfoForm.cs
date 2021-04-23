@@ -6,6 +6,7 @@ using System.Linq;
 using FillAPixRobot.Enums;
 using System.Collections.Generic;
 using FillAPixRobot.FilePersistance;
+using System.IO;
 
 namespace ConceptisPuzzles.Robot
 {
@@ -124,18 +125,34 @@ namespace ConceptisPuzzles.Robot
 
         private void _btnSaveMemories_Click(object sender, System.EventArgs e)
         {
-            _filePersistanceManager.SaveActionMemories(RobotBrain.ActionMemoryDictonary.Values.ToList());
+            _saveFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+            if (_saveFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            if (_filePersistanceManager.SaveActionMemories(_saveFileDialog.FileName, RobotBrain.ActionMemoryDictonary.Values))
+            {
+                MessageBox.Show("Memory saved successfully.", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
         }
 
         private void _btnLoadMemories_Click(object sender, System.EventArgs e)
         {
-            ICollection<IActionMemory> actionMemories = _filePersistanceManager.LoadActionMemories();
+            _openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+            if (_openFileDialog.ShowDialog() != DialogResult.OK || !File.Exists(_openFileDialog.FileName))
+            {
+                return;
+            }
+            ICollection<IActionMemory> actionMemories = _chbAppendMemory.Checked ? RobotBrain.ActionMemoryDictonary.Values : null;
+            actionMemories = _filePersistanceManager.LoadActionMemories(_openFileDialog.FileName, actionMemories);
 
             RobotBrain.ActionMemoryDictonary.Clear();
             foreach(var actionMemory in actionMemories)
             {
                 RobotBrain.ActionMemoryDictonary.Add(actionMemory.Action, actionMemory);
             }
+            MessageBox.Show("Memory loaded successfully.", "Load", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

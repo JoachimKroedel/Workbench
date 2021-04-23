@@ -6,16 +6,12 @@ namespace FillAPixRobot.FilePersistance
 {
     public class FilePersistanceManager
     {
-        private readonly string _fileName = @"D:\Temp\Conceptis Puzzles\ActionMemory.cpm"; // .cpm = conceptis puzzles memory
-
-        public ICollection<IActionMemory> LoadActionMemories()
+        public ICollection<IActionMemory> LoadActionMemories(string fileName, ICollection<IActionMemory> actionMemories = null)
         {
             List<IActionMemory> result = new List<IActionMemory>();
-
-
             List<string> lines = new List<string>();
 
-            System.IO.StreamReader file = new System.IO.StreamReader(_fileName);
+            System.IO.StreamReader file = new System.IO.StreamReader(fileName);
             string line;
             while ((line = file.ReadLine()) != null)
             {
@@ -23,12 +19,12 @@ namespace FillAPixRobot.FilePersistance
             }
             file.Close();
 
-            result.AddRange(FileActionMemory.Parse(lines, null));
+            result.AddRange(FileActionMemory.Parse(lines, actionMemories));
 
             return result;
         }
 
-        public bool SaveActionMemories(IList<IActionMemory> actionMemories)
+        public bool SaveActionMemories(string fileName, ICollection<IActionMemory> actionMemories)
         {
             StringBuilder fileContent = new StringBuilder();
 
@@ -37,7 +33,7 @@ namespace FillAPixRobot.FilePersistance
                 fileContent.AppendLine(FileActionMemory.Convert(actionMemory));
             }
 
-            System.IO.File.WriteAllText(_fileName, fileContent.ToString());
+            System.IO.File.WriteAllText(fileName, fileContent.ToString());
             return true;
         }
     }

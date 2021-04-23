@@ -37,6 +37,9 @@
             this._btnStatisticForm = new System.Windows.Forms.Button();
             this._cbxTypeOfRobot = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this._nudRiskFactor = new System.Windows.Forms.NumericUpDown();
             this._cbxFindBest = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -74,12 +77,10 @@
             this._pbxPlayGround = new System.Windows.Forms.PictureBox();
             this._timer = new System.Windows.Forms.Timer(this.components);
             this.fillAPixRobotBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this._nudRiskFactor = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this._nudZoomFactor)).BeginInit();
             this._gbxRobot.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._nudRiskFactor)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._tbrSolvingPercentage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._nudRemainigIterationCount)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -95,7 +96,6 @@
             this._panelPlayground.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._pbxPlayGround)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fillAPixRobotBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this._nudRiskFactor)).BeginInit();
             this.SuspendLayout();
             // 
             // _btnLoadPuzzle
@@ -228,6 +228,37 @@
             this.groupBox4.TabIndex = 16;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Action";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(122, 73);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(15, 13);
+            this.label8.TabIndex = 38;
+            this.label8.Text = "%";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(8, 72);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(61, 13);
+            this.label6.TabIndex = 37;
+            this.label6.Text = "Risk factor:";
+            // 
+            // _nudRiskFactor
+            // 
+            this._nudRiskFactor.Location = new System.Drawing.Point(75, 71);
+            this._nudRiskFactor.Name = "_nudRiskFactor";
+            this._nudRiskFactor.Size = new System.Drawing.Size(41, 20);
+            this._nudRiskFactor.TabIndex = 36;
+            this._nudRiskFactor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._nudRiskFactor.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // _cbxFindBest
             // 
@@ -654,37 +685,6 @@
             // 
             this.fillAPixRobotBindingSource.DataSource = typeof(FillAPixRobot.RobotBrain);
             // 
-            // _nudRiskFactor
-            // 
-            this._nudRiskFactor.Location = new System.Drawing.Point(75, 71);
-            this._nudRiskFactor.Name = "_nudRiskFactor";
-            this._nudRiskFactor.Size = new System.Drawing.Size(41, 20);
-            this._nudRiskFactor.TabIndex = 36;
-            this._nudRiskFactor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this._nudRiskFactor.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 72);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(61, 13);
-            this.label6.TabIndex = 37;
-            this.label6.Text = "Risk factor:";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(122, 73);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(15, 13);
-            this.label8.TabIndex = 38;
-            this.label8.Text = "%";
-            // 
             // FillAPixRobotView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -700,6 +700,7 @@
             this._gbxRobot.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._nudRiskFactor)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._tbrSolvingPercentage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._nudRemainigIterationCount)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -717,7 +718,6 @@
             this._panelPlayground.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._pbxPlayGround)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fillAPixRobotBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this._nudRiskFactor)).EndInit();
             this.ResumeLayout(false);
 
         }

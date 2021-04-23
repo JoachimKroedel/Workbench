@@ -82,7 +82,7 @@ namespace FillAPixRobot.FilePersistance
             return content.ToString();
         }
 
-        static public IList<IActionMemory> Parse(IList<string> lines, IList<IActionMemory> actionMemories)
+        static public IList<IActionMemory> Parse(IList<string> lines, ICollection<IActionMemory> actionMemories)
         {
             _fileActionMemories.Clear();
             if (actionMemories != null)
@@ -134,19 +134,19 @@ namespace FillAPixRobot.FilePersistance
 
                 if (line.StartsWith(IdentifierDifferenceCount))
                 {
-                    fileActionMemory.DifferenceCount = int.Parse(line.Substring(IdentifierDifferenceCount.Length));
+                    fileActionMemory.DifferenceCount += int.Parse(line.Substring(IdentifierDifferenceCount.Length));
                 }
                 else if (line.StartsWith(IdentifierNoDifferenceCount))
                 {
-                    fileActionMemory.NoDifferenceCount = int.Parse(line.Substring(IdentifierNoDifferenceCount.Length));
+                    fileActionMemory.NoDifferenceCount += int.Parse(line.Substring(IdentifierNoDifferenceCount.Length));
                 }
                 else if (line.StartsWith(IdentifierPositiveFeedbackCount))
                 {
-                    fileActionMemory.PositiveFeedbackCount = int.Parse(line.Substring(IdentifierPositiveFeedbackCount.Length));
+                    fileActionMemory.PositiveFeedbackCount += int.Parse(line.Substring(IdentifierPositiveFeedbackCount.Length));
                 }
                 else if (line.StartsWith(IdentifierNegativeFeedbackCount))
                 {
-                    fileActionMemory.NegativeFeedbackCount = int.Parse(line.Substring(IdentifierNegativeFeedbackCount.Length));
+                    fileActionMemory.NegativeFeedbackCount += int.Parse(line.Substring(IdentifierNegativeFeedbackCount.Length));
                 }
                 else if (line.StartsWith(IdentifierDifferentUnits))
                 {

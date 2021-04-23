@@ -41,6 +41,9 @@
             this._btnCleanPositiveFeedbackUnits = new System.Windows.Forms.Button();
             this._btnSaveMemories = new System.Windows.Forms.Button();
             this._btnLoadMemories = new System.Windows.Forms.Button();
+            this._openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this._saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this._chbAppendMemory = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // _btnShowActionMemory
@@ -162,7 +165,7 @@
             // 
             // _btnSaveMemories
             // 
-            this._btnSaveMemories.Location = new System.Drawing.Point(798, 12);
+            this._btnSaveMemories.Location = new System.Drawing.Point(789, 35);
             this._btnSaveMemories.Name = "_btnSaveMemories";
             this._btnSaveMemories.Size = new System.Drawing.Size(75, 23);
             this._btnSaveMemories.TabIndex = 12;
@@ -172,7 +175,7 @@
             // 
             // _btnLoadMemories
             // 
-            this._btnLoadMemories.Location = new System.Drawing.Point(879, 12);
+            this._btnLoadMemories.Location = new System.Drawing.Point(789, 10);
             this._btnLoadMemories.Name = "_btnLoadMemories";
             this._btnLoadMemories.Size = new System.Drawing.Size(75, 23);
             this._btnLoadMemories.TabIndex = 13;
@@ -180,11 +183,22 @@
             this._btnLoadMemories.UseVisualStyleBackColor = true;
             this._btnLoadMemories.Click += new System.EventHandler(this._btnLoadMemories_Click);
             // 
+            // _chbAppendMemory
+            // 
+            this._chbAppendMemory.AutoSize = true;
+            this._chbAppendMemory.Location = new System.Drawing.Point(870, 14);
+            this._chbAppendMemory.Name = "_chbAppendMemory";
+            this._chbAppendMemory.Size = new System.Drawing.Size(63, 17);
+            this._chbAppendMemory.TabIndex = 14;
+            this._chbAppendMemory.Text = "Append";
+            this._chbAppendMemory.UseVisualStyleBackColor = true;
+            // 
             // RobotBrainInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1214, 461);
+            this.Controls.Add(this._chbAppendMemory);
             this.Controls.Add(this._btnLoadMemories);
             this.Controls.Add(this._btnSaveMemories);
             this.Controls.Add(this._btnCleanPositiveFeedbackUnits);
@@ -221,5 +235,8 @@
         private System.Windows.Forms.Button _btnCleanPositiveFeedbackUnits;
         private System.Windows.Forms.Button _btnSaveMemories;
         private System.Windows.Forms.Button _btnLoadMemories;
+        private System.Windows.Forms.OpenFileDialog _openFileDialog;
+        private System.Windows.Forms.SaveFileDialog _saveFileDialog;
+        private System.Windows.Forms.CheckBox _chbAppendMemory;
     }
 }

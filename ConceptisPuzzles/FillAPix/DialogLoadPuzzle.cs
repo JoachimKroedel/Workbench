@@ -108,7 +108,7 @@ namespace ConceptisPuzzles
         private void _btnChangeDirectory_Click(object sender, EventArgs e)
         {
             _folderBrowserDialog.SelectedPath = InitialDirectory;
-            if (_folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (_folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 InitialDirectory = _folderBrowserDialog.SelectedPath;
                 RefreshFiles();
