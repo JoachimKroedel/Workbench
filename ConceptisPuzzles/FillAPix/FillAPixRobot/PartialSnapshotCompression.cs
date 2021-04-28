@@ -67,6 +67,49 @@ namespace FillAPixRobot
             return result;
         }
 
+        static public bool Contains(Dictionary<Tuple<FieldOfVisionTypes, DirectionTypes>, ISensationSnapshot> dictDirectionToSnapshot, IPartialSnapshotCompression partialSnapshotCompression)
+        {
+            ISensoryUnit baseUnit = partialSnapshotCompression.ChildNodes.FirstOrDefault().Unit;
+            var baseDirection = DirectionTypes.Center;
+            FieldOfVisionTypes fieldOfVision = partialSnapshotCompression.FieldOfVision;
+            ISensationSnapshot basePartialSnapshot = dictDirectionToSnapshot[new Tuple<FieldOfVisionTypes, DirectionTypes>(fieldOfVision, baseDirection)];
+            switch(partialSnapshotCompression.CompressionType)
+            {
+                case CompressionTypes.Unit:
+                    return basePartialSnapshot.SensoryPatterns.Any(p => p.SensoryUnits.Contains(baseUnit));
+                case CompressionTypes.UnitSimpleTree:
+                case CompressionTypes.UnitCountTree:
+                case CompressionTypes.MultiUnitCountTree:
+                    IEnumerable<ISensoryPattern> patterns = basePartialSnapshot.SensoryPatterns.Where(p => p.SensoryUnits.Contains(baseUnit));
+                    IEnumerable<ISensoryUnit> childUnits = partialSnapshotCompression.ChildNodes.FirstOrDefault().ChildNodes.Select(p => p.Unit);
+                    foreach (var direction in patterns.Select(p => p.DirectionType))
+                    {
+                        var childPartialSnapshot = dictDirectionToSnapshot[new Tuple<FieldOfVisionTypes, DirectionTypes>(fieldOfVision, direction)];
+                        bool areChildNodesIncluded = false;
+                        foreach (var childUnit in childUnits.Distinct())
+                        {
+                            var minCount = childUnits.Count(u => u.Equals(childUnit));
+                            if (baseUnit.Equals(childUnit))
+                            {
+                                minCount++;
+                            }
+                            areChildNodesIncluded = childPartialSnapshot.SensoryPatterns.Count(p => p.SensoryUnits.Contains(childUnit)) >= minCount;
+                            if (!areChildNodesIncluded)
+                            {
+                                break;
+                            }
+                        }
+                        if (areChildNodesIncluded)
+                        {
+                            return true;
+                        }
+                    }
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            return false;
+        }
         static public List<IPartialSnapshotCompression> NewInstancesOfUnitCompression(Dictionary<ISensoryUnit, int> unitCountDictonary, FieldOfVisionTypes fieldOfVision)
         {
             // Single units for fieldOfVision.Single and fieldOfVision.ThreeByThree allows to find 0 and 9
@@ -257,9 +300,9 @@ namespace FillAPixRobot
             return result;
         }
 
-        static public int GetPositiveCountOfSensoryUnit(IEnumerable<KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter>> dictPartialSnapshotCompressions, ISensoryUnit sensoryUnit)
+        static public IEnumerable<IFeedbackCounter> GetFeedbackCounters(IEnumerable<KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter>> dictPartialSnapshotCompressions, ISensoryUnit sensoryUnit)
         {
-            int result = 0;
+            var result = new List<IFeedbackCounter>();
 
             foreach (KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter> entry in dictPartialSnapshotCompressions.Where(e => e.Key.CompressionType == CompressionTypes.Unit))
             {
@@ -267,10 +310,22 @@ namespace FillAPixRobot
                 {
                     if (node is PartialSnapshotCompressionNode pscUnit && pscUnit.Unit.Equals(sensoryUnit))
                     {
-                        result += entry.Value.PositiveCount;
+                        result.Add(entry.Value);
                         break;
                     }
                 }
+            }
+
+            return result;
+        }
+
+        static public int GetPositiveCountOfSensoryUnit(IEnumerable<KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter>> dictPartialSnapshotCompressions, ISensoryUnit sensoryUnit)
+        {
+            int result = 0;
+
+            foreach(var feedbackCount in GetFeedbackCounters(dictPartialSnapshotCompressions, sensoryUnit))
+            {
+                result += feedbackCount.PositiveCount;
             }
 
             return result;
@@ -280,16 +335,9 @@ namespace FillAPixRobot
         {
             int result = 0;
 
-            foreach (KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter> entry in dictPartialSnapshotCompressions.Where(e => e.Key.CompressionType == CompressionTypes.Unit))
+            foreach (var feedbackCount in GetFeedbackCounters(dictPartialSnapshotCompressions, sensoryUnit))
             {
-                foreach (var node in entry.Key.ChildNodes)
-                {
-                    if (node is PartialSnapshotCompressionNode pscUnit && pscUnit.Unit.Equals(sensoryUnit))
-                    {
-                        result += entry.Value.NegativeCount;
-                        break;
-                    }
-                }
+                result += feedbackCount.NegativeCount;
             }
 
             return result;

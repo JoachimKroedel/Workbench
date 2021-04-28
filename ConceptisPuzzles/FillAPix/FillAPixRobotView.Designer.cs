@@ -37,6 +37,11 @@
             this._btnStatisticForm = new System.Windows.Forms.Button();
             this._cbxTypeOfRobot = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this._txtConflictCount = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this._txtErrorCount = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this._nudRiskFactor = new System.Windows.Forms.NumericUpDown();
@@ -160,7 +165,7 @@
             this._gbxRobot.Enabled = false;
             this._gbxRobot.Location = new System.Drawing.Point(3, 3);
             this._gbxRobot.Name = "_gbxRobot";
-            this._gbxRobot.Size = new System.Drawing.Size(343, 452);
+            this._gbxRobot.Size = new System.Drawing.Size(343, 477);
             this._gbxRobot.TabIndex = 19;
             this._gbxRobot.TabStop = false;
             this._gbxRobot.Text = "Robot";
@@ -177,7 +182,7 @@
             // _btnStatisticForm
             // 
             this._btnStatisticForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._btnStatisticForm.Location = new System.Drawing.Point(0, 422);
+            this._btnStatisticForm.Location = new System.Drawing.Point(0, 447);
             this._btnStatisticForm.Name = "_btnStatisticForm";
             this._btnStatisticForm.Size = new System.Drawing.Size(92, 23);
             this._btnStatisticForm.TabIndex = 26;
@@ -205,6 +210,11 @@
             // 
             this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.button1);
+            this.groupBox4.Controls.Add(this.label10);
+            this.groupBox4.Controls.Add(this._txtConflictCount);
+            this.groupBox4.Controls.Add(this.label9);
+            this.groupBox4.Controls.Add(this._txtErrorCount);
             this.groupBox4.Controls.Add(this.label8);
             this.groupBox4.Controls.Add(this.label6);
             this.groupBox4.Controls.Add(this._nudRiskFactor);
@@ -224,10 +234,58 @@
             this.groupBox4.Controls.Add(this._btnMarkAsFilled);
             this.groupBox4.Location = new System.Drawing.Point(9, 232);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(317, 184);
+            this.groupBox4.Size = new System.Drawing.Size(317, 209);
             this.groupBox4.TabIndex = 16;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Action";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(235, 181);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 43;
+            this.button1.Text = "Clear";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(117, 186);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(50, 13);
+            this.label10.TabIndex = 42;
+            this.label10.Text = "Conflicts:";
+            // 
+            // _txtConflictCount
+            // 
+            this._txtConflictCount.Location = new System.Drawing.Point(173, 183);
+            this._txtConflictCount.Name = "_txtConflictCount";
+            this._txtConflictCount.ReadOnly = true;
+            this._txtConflictCount.Size = new System.Drawing.Size(47, 20);
+            this._txtConflictCount.TabIndex = 41;
+            this._txtConflictCount.Text = "0";
+            this._txtConflictCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 186);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(37, 13);
+            this.label9.TabIndex = 40;
+            this.label9.Text = "Errors:";
+            // 
+            // _txtErrorCount
+            // 
+            this._txtErrorCount.Location = new System.Drawing.Point(46, 183);
+            this._txtErrorCount.Name = "_txtErrorCount";
+            this._txtErrorCount.ReadOnly = true;
+            this._txtErrorCount.Size = new System.Drawing.Size(56, 20);
+            this._txtErrorCount.TabIndex = 39;
+            this._txtErrorCount.Text = "0";
+            this._txtErrorCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label8
             // 
@@ -592,7 +650,7 @@
             // 
             this._btnRunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._btnRunInBackground.Enabled = false;
-            this._btnRunInBackground.Location = new System.Drawing.Point(222, 477);
+            this._btnRunInBackground.Location = new System.Drawing.Point(222, 486);
             this._btnRunInBackground.Name = "_btnRunInBackground";
             this._btnRunInBackground.Size = new System.Drawing.Size(124, 21);
             this._btnRunInBackground.TabIndex = 28;
@@ -772,5 +830,10 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown _nudRiskFactor;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox _txtConflictCount;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox _txtErrorCount;
+        private System.Windows.Forms.Button button1;
     }
 }

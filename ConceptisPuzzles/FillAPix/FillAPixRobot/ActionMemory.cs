@@ -31,7 +31,6 @@ namespace FillAPixRobot
         }
 
         public IPuzzleAction Action { get; private set; }
-
         public int CallCount { get { return DifferenceCount + NoDifferenceCount; } }
         public int DifferenceCount { get; protected set; }
         public int NoDifferenceCount { get; protected set; }
@@ -293,83 +292,61 @@ namespace FillAPixRobot
         public double CheckForPositiveFeedback(ISensationSnapshot snapshot)
         {
             double result = 0.0;
-            CompressionTypes maximumCompression = GetMaximumCompression();
-            foreach (ISensationSnapshot partialSnapshot in GetActualPartialSnapshot(snapshot))
-            {
-                var singleUnits = SplitUnits(partialSnapshot);
-                foreach (var unit in singleUnits)
-                {
-                    result = Math.Max(result, GetPositiveFeedbackPercentage(unit));
-                }
-                if (maximumCompression >= CompressionTypes.UnitSimpleTree)
-                {
-                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
-                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitSimpleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
-                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
-                    {
-                        result = Math.Max(result, GetPositiveFeedbackPercentage(partialSnapshotCompression));
-                    }
-                }
-                if (maximumCompression >= CompressionTypes.UnitCountTree)
-                {
-                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
-                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
-                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
-                    {
-                        result = Math.Max(result, GetPositiveFeedbackPercentage(partialSnapshotCompression));
-                    }
-                }
-                if (maximumCompression >= CompressionTypes.MultiUnitCountTree)
-                {
-                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
-                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfMultiUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
-                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
-                    {
-                        result = Math.Max(result, GetPositiveFeedbackPercentage(partialSnapshotCompression));
-                    }
-                }
 
+            IEnumerable<FieldOfVisionTypes> fieldOfVisions = PositveDictPartialSnapshotCompressions.Keys.Select(e => e.FieldOfVision).Distinct();
+            var dictDirectionToSnapshot = new Dictionary<Tuple<FieldOfVisionTypes, DirectionTypes>, ISensationSnapshot>();
+            var baseDirection = DirectionTypes.Center;
+            foreach (FieldOfVisionTypes fieldOfVision in fieldOfVisions)
+            {
+                var basePartialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, baseDirection);
+                dictDirectionToSnapshot.Add(new Tuple<FieldOfVisionTypes, DirectionTypes>(fieldOfVision, baseDirection), basePartialSnapshot);
+                foreach (var childDirection in basePartialSnapshot.SensoryPatterns.Select(p => p.DirectionType))
+                {
+                    if (childDirection != baseDirection)
+                    {
+                        var childPartialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, childDirection);
+                        dictDirectionToSnapshot.Add(new Tuple<FieldOfVisionTypes, DirectionTypes>(fieldOfVision, childDirection), childPartialSnapshot);
+                    }
+                }
             }
+
+            foreach (IPartialSnapshotCompression partialSnapshotCompression in PositveDictPartialSnapshotCompressions.Keys)
+            {
+                if (PartialSnapshotCompression.Contains(dictDirectionToSnapshot, partialSnapshotCompression))
+                {
+                    result = Math.Max(result, GetPositiveFeedbackPercentage(partialSnapshotCompression));
+                }
+            }
+
             return result;
         }
 
         public double CheckForNegativeFeedback(ISensationSnapshot snapshot)
         {
             double result = 0.0;
-            CompressionTypes maximumCompression = GetMaximumCompression();
-            foreach (ISensationSnapshot partialSnapshot in GetActualPartialSnapshot(snapshot))
+
+            IEnumerable<FieldOfVisionTypes> fieldOfVisions = NegativeDictPartialSnapshotCompressions.Keys.Select(e => e.FieldOfVision).Distinct();
+            var dictDirectionToSnapshot = new Dictionary<Tuple<FieldOfVisionTypes, DirectionTypes>, ISensationSnapshot>();
+            var baseDirection = Action.Direction;
+            foreach (FieldOfVisionTypes fieldOfVision in fieldOfVisions)
             {
-                var singleUnits = SplitUnits(partialSnapshot);
-                foreach (var unit in singleUnits)
+                var basePartialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, baseDirection);
+                dictDirectionToSnapshot.Add(new Tuple<FieldOfVisionTypes, DirectionTypes>(fieldOfVision, baseDirection), basePartialSnapshot);
+                foreach(var childDirection in basePartialSnapshot.SensoryPatterns.Select(p => p.DirectionType))
                 {
-                    result = Math.Max(result, GetNegativeFeedbackPercentage(unit));
-                }
-                if (maximumCompression >= CompressionTypes.UnitSimpleTree)
-                {
-                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
-                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitSimpleTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
-                    foreach(var partialSnapshotCompression in partialSnapshotCompressions)
+                    if (childDirection != baseDirection)
                     {
-                        result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
+                        var childPartialSnapshot = SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, childDirection);
+                        dictDirectionToSnapshot.Add(new Tuple<FieldOfVisionTypes, DirectionTypes>(fieldOfVision, childDirection), childPartialSnapshot);
                     }
                 }
-                if (maximumCompression >= CompressionTypes.UnitCountTree)
+            }
+
+            foreach (IPartialSnapshotCompression partialSnapshotCompression in NegativeDictPartialSnapshotCompressions.Keys)
+            {
+                if (PartialSnapshotCompression.Contains(dictDirectionToSnapshot, partialSnapshotCompression))
                 {
-                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
-                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
-                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
-                    {
-                        result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
-                    }
-                }
-                if (maximumCompression >= CompressionTypes.MultiUnitCountTree)
-                {
-                    var unitCountDictonary = SensationSnapshot.CountUnits(partialSnapshot);
-                    List<IPartialSnapshotCompression> partialSnapshotCompressions = PartialSnapshotCompression.NewInstancesOfMultiUnitCountTreeCompression(unitCountDictonary, partialSnapshot, snapshot, GetFieldOfVisionsForFeedback().LastOrDefault(), Action.Direction);
-                    foreach (var partialSnapshotCompression in partialSnapshotCompressions)
-                    {
-                        result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
-                    }
+                    result = Math.Max(result, GetNegativeFeedbackPercentage(partialSnapshotCompression));
                 }
             }
             return result;
@@ -397,40 +374,6 @@ namespace FillAPixRobot
                 return negativeCount / sum;
             }
             return -1.0;
-        }
-
-        private double GetPositiveFeedbackPercentage(ISensoryUnit unit)
-        {
-            double negativeCount = PartialSnapshotCompression.GetNegativeCountOfSensoryUnit(NegativeDictPartialSnapshotCompressions.Where(p => p.Value.NegativeCount > 0), unit);
-            double positivCount = PartialSnapshotCompression.GetPositiveCountOfSensoryUnit(PositveDictPartialSnapshotCompressions.Where(p => p.Value.PositiveCount > 0), unit);
-            double sum = Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_UNIT, positivCount + negativeCount);
-            if (sum > 0)
-            {
-                return positivCount / sum;
-            }
-            return -1.0;
-        }
-
-        private double GetNegativeFeedbackPercentage(ISensoryUnit unit)
-        {
-            double negativeCount = PartialSnapshotCompression.GetNegativeCountOfSensoryUnit(NegativeDictPartialSnapshotCompressions.Where(p => p.Value.NegativeCount > 0), unit);
-            double positivCount = PartialSnapshotCompression.GetPositiveCountOfSensoryUnit(PositveDictPartialSnapshotCompressions.Where(p => p.Value.PositiveCount > 0), unit);
-            double sum = Math.Max(MINIMUM_FEEDBACK_COUNT_FOR_UNIT, positivCount + negativeCount);
-            if (sum > 0)
-            {
-                return negativeCount / sum;
-            }
-            return -1.0;
-        }
-
-        private List<ISensationSnapshot> GetActualPartialSnapshot(ISensationSnapshot snapshot)
-        {
-            var result = new List<ISensationSnapshot>();
-            foreach(var fieldOfVision in GetFieldOfVisionsForFeedback())
-            {
-                result.Add(SensationSnapshot.ExtractSnapshot(snapshot, fieldOfVision, Action.Direction));
-            }
-            return result;
         }
 
         private List<FieldOfVisionTypes> GetFieldOfVisionsForDifferences()
@@ -560,6 +503,33 @@ namespace FillAPixRobot
         public override string ToString()
         {
             return $"{{{Action}: {CallCount}={DifferenceCount}+{NoDifferenceCount} -> {NegProcentualNoDifference}}}";
+        }
+
+        public IPartialSnapshotCompression GetMaxPositivePartialSnapshotCompression(ISensationSnapshot snapshot)
+        {
+
+            IPartialSnapshotCompression result = null;
+            double maxPercentage = 0.0;
+
+            foreach (KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter> entry in PositveDictPartialSnapshotCompressions.Where(p => p.Value.PositiveCount > 0))
+            {
+                // ToDo: Check in given snapshot if partialSnapshotCompression included.
+            }
+
+            return result;
+        }
+
+        public IPartialSnapshotCompression GetMaxNegativePartialSnapshotCompression(ISensationSnapshot snapshot)
+        {
+            IPartialSnapshotCompression result = null;
+            double maxPercentage = 0.0;
+
+            foreach (KeyValuePair<IPartialSnapshotCompression, IFeedbackCounter> entry in NegativeDictPartialSnapshotCompressions.Where(p => p.Value.PositiveCount > 0))
+            {
+                // ToDo: Check in given snapshot if partialSnapshotCompression included.
+            }
+
+            return result;
         }
     }
 }

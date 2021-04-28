@@ -207,6 +207,32 @@ namespace FillAPixRobot
             _lastSensationSnapshot = new SensationSnapshot(DirectionTypes.Center, fieldOfVisionType, sensoryPatterns, IS_SAVEABLE_SNAPSHOT);
         }
 
+        private bool CheckForConflicts(ISensationSnapshot snapshot)
+        {
+            foreach (IActionMemory actionMemory in ActionMemoryDictonary.Values)
+            {
+                var percentageForDifferenceByActualSnapshot = actionMemory.CheckForDifferencePattern(snapshot);
+                double posibilityForDifference = Math.Min(actionMemory.NegProcentualNoDifference, percentageForDifferenceByActualSnapshot);
+
+                if (posibilityForDifference > 0.0)
+                {
+                    var positivePartialSnapshotCompression = actionMemory.GetMaxPositivePartialSnapshotCompression(snapshot);
+                    var negativePartialSnapshotCompression = actionMemory.GetMaxNegativePartialSnapshotCompression(snapshot);
+                    if (positivePartialSnapshotCompression != null && negativePartialSnapshotCompression != null)
+                    {
+                        var positivPercentage = actionMemory.GetPositiveFeedbackPercentage(positivePartialSnapshotCompression);
+                        var negativePercentage = actionMemory.GetNegativeFeedbackPercentage(negativePartialSnapshotCompression);
+                        if (positivPercentage + negativePercentage > 1.5)
+                        {
+                            RaiseConflictDetected();
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         public void TryToLearn()
         {
             ActionFeedback = 0;
@@ -214,6 +240,11 @@ namespace FillAPixRobot
             // Zuerst mal die Lage erkunden
             RaiseExperienceWanted();
             ISensationSnapshot sensationSnapshotBeforeAction = _lastSensationSnapshot;
+
+            if (CheckForConflicts(sensationSnapshotBeforeAction))
+            {
+                return;
+            }
 
             // Nun wird entschieden welche Aktion ausgeführt werden soll 
             IPuzzleAction action = GetDecisionByMemory(sensationSnapshotBeforeAction);
@@ -299,6 +330,17 @@ namespace FillAPixRobot
 
                 if (posibilityForDifference > 0.0)
                 {
+                    //var positivePartialSnapshotCompression = actionMemory.GetMaxPositivePartialSnapshotCompression(snapshot);
+                    //var negativePartialSnapshotCompression = actionMemory.GetMaxNegativePartialSnapshotCompression(snapshot);
+                    //if (positivePartialSnapshotCompression != null && negativePartialSnapshotCompression != null)
+                    //{
+                    //    var positivPercentage = actionMemory.GetPositiveFeedbackPercentage(positivePartialSnapshotCompression);
+                    //    var negativePercentage = actionMemory.GetNegativeFeedbackPercentage(negativePartialSnapshotCompression);
+                    //    if (positivPercentage + negativePercentage > 1.5)
+                    //    {
+                    //        RaiseConflictDetected();
+                    //    }
+                    //}
                     double positiveFeedback = actionMemory.CheckForPositiveFeedback(snapshot);
                     positiveFeedback = Math.Max(actionMemory.NegProcentualNegativeFeedback, positiveFeedback);
                     double negativeFeedback = actionMemory.CheckForNegativeFeedback(snapshot);
@@ -447,6 +489,11 @@ namespace FillAPixRobot
         private void RaiseActionWanted(IPuzzleAction action)
         {
             ActionWanted?.Invoke(this, new ActionWantedEventArgs(action));
+        }
+
+        private void RaiseConflictDetected()
+        {
+            ConflictDetected?.Invoke(this, EventArgs.Empty);
         }
     }
 }

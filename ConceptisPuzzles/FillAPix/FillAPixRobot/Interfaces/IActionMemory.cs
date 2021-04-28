@@ -40,5 +40,8 @@ namespace FillAPixRobot.Interfaces
         void CleanNegativeFeedbackUnits(int count);
 
         void CleanPositiveFeedbackUnits(int count);
+
+        IPartialSnapshotCompression GetMaxPositivePartialSnapshotCompression(ISensationSnapshot snapshot);
+        IPartialSnapshotCompression GetMaxNegativePartialSnapshotCompression(ISensationSnapshot snapshot);
     }
 }

@@ -34,6 +34,9 @@ namespace ConceptisPuzzles.Robot
         private List<DirectionTypes> _allowedDirectionTypes = new List<DirectionTypes>();
         private List<FieldOfVisionTypes> _allowedFieldOfVisionTypes = new List<FieldOfVisionTypes>();
 
+        private int _conflictCounter = 0;
+        private int _errorCounter = 0;
+
         public FillAPixRobotView()
         {
             InitializeComponent();
@@ -673,6 +676,14 @@ namespace ConceptisPuzzles.Robot
                 return;
             }
 
+            //if (_simulationRunsInBackground)
+            //{
+            //    BtnRunInBackground_Click(sender, e);
+            //}
+            //_cbxRunInterations.Checked = false;
+
+            _conflictCounter++;
+            _txtConflictCount.Text = _conflictCounter.ToString();
             _puzzleBoard.Reset();
             if (!_simulationRunsInBackground && _cbxAutoRefreshPlayground.Checked)
             {
@@ -801,8 +812,17 @@ namespace ConceptisPuzzles.Robot
 
         private bool CheckPuzzle(bool resetOnOrror)
         {
+            if (InvokeRequired)
+            {
+                MethodInvoker del = delegate { CheckPuzzle(resetOnOrror); };
+                Invoke(del);
+                return true;
+            }
+
             if (_puzzleBoard.IsWrong())
             {
+                _errorCounter++;
+                _txtErrorCount.Text = _errorCounter.ToString();
                 if (resetOnOrror)
                 {
                     _puzzleBoard.Reset();
@@ -913,6 +933,14 @@ namespace ConceptisPuzzles.Robot
             int result = await _backgroundTask;
             _backgroundTask = null;
             return result;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            _errorCounter = 0;
+            _conflictCounter = 0;
+            _txtErrorCount.Text = "";
+            _txtConflictCount.Text = "";
         }
     }
 }
